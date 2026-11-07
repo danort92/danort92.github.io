@@ -1,0 +1,48 @@
+// =====================================================================
+//  Seconde richieste: dopo il salvataggio alcuni animali chiedono ancora
+//  una piccola cosa. Le posizioni sono state scelte e verificate con
+//  tools/dopo_pos.js (raggiungibili, lontane tra loro).
+// =====================================================================
+const SECONDE = {
+  1: { tipo: 'raccogli', frame: 'fiore_rosa', nome: 'Fiori', dove: [[17, 15], [2, 2], [20, 1]],
+    chiede: [{ who: 'pisolo', text: 'Posso chiederti ancora una cosa? Nella mia nuova cuccia vorrei tre fiori rosa. Così mi sembra subito casa.' }, { who: 'mordicchio', text: 'Fiori rosa. Uno in basso a destra, due in alto. Io li ho già visti, ovviamente.' }],
+    fatto: [{ who: 'pisolo', text: 'Tre fiori rosa... Sono perfetti. Non so come ringraziarti.' }, { who: 'mordicchio', text: 'Lui non lo sa. Io sì: con un pisolino, tutti insieme.' }],
+    indizio: 'I fiori rosa: uno in basso a destra, due in alto, ai due lati.' },
+  2: { tipo: 'raccogli', frame: 'mela', nome: 'Mele', dove: [[16, 2], [2, 5], [21, 13]],
+    chiede: [{ who: 'ciuffo', text: 'Aspetta! Prima di andare: Pisolo mi ha detto che ama la frutta. Gli portiamo tre mele?' }],
+    fatto: [{ who: 'ciuffo', text: 'Tre mele per Pisolo! Arriverò al rifugio con un regalo. Che bello farsi un amico così.' }],
+    indizio: 'Le mele: in alto a destra, in alto a sinistra e in basso a destra.' },
+  4: { tipo: 'raccogli', frame: 'ghianda', nome: 'Ghiande', dove: [[2, 4], [20, 1], [21, 12], [11, 6]],
+    chiede: [{ who: 'ghianda', text: 'Mi hai trovata! Ma non posso partire senza la mia scorta per l\'inverno. Quattro ghiande, sparse per il bosco.' }, { who: 'mordicchio', text: 'Uno scoiattolo che si chiama Ghianda e colleziona ghiande. Certo.' }],
+    fatto: [{ who: 'ghianda', text: 'Quattro! La scorta è completa. Adesso sì che possiamo andare.' }],
+    indizio: 'Le ghiande sono negli angoli del bosco e una al centro.' },
+  6: { tipo: 'visita', nome: 'Il suo angolo', dove: [[18, 1]],
+    chiede: [{ who: 'thiago', text: 'Prima di andare vorrei salutare il mio angolo al sole, in alto a destra. Ci passavo i pomeriggi quando ero piccolo.' }, { who: 'anastasia', text: 'Andiamo insieme.' }],
+    fatto: [{ who: 'thiago', text: 'Ecco. È sempre caldo come allora. Grazie per avermi accompagnato.' }, { who: 'mordicchio', text: 'Il sole è buono ovunque. Ma al rifugio c\'è anche il calorifero.' }],
+    indizio: 'L\'angolo al sole di Thiago è in alto a destra.' },
+  12: { tipo: 'raccogli', frame: 'fiore_giallo', nome: 'Fiori gialli', dove: [[21, 3], [3, 1], [12, 3]],
+    chiede: [{ who: 'margherita', text: 'Una cosa ancora. Wilma ama i colori, me l\'hai detto tu. Le portiamo tre fiori gialli del pascolo?' }],
+    fatto: [{ who: 'margherita', text: 'Che belli. Wilma sarà felicissima. Si comincia sempre così, un\'amicizia: con un fiore.' }],
+    indizio: 'I fiori gialli sono in alto: a destra, a sinistra e al centro.' },
+  13: { tipo: 'visita', nome: 'La pozza', dove: [[2, 5]],
+    chiede: [{ who: 'maky', text: 'Prima di andare... un ultimo bagno nella pozza più fangosa, quella in alto a sinistra. Ti prego, ti prego, ti prego.' }, { who: 'mordicchio', text: 'Io la guardo da lontano. Molto da lontano.' }],
+    fatto: [{ who: 'maky', text: 'Splash! Perfetto. Adesso sono pronta. E bellissima.' }],
+    indizio: 'La pozza di Maky è in alto a sinistra.' },
+  17: { tipo: 'raccogli', frame: 'mela', nome: 'Mele', dove: [[14, 10], [20, 1], [4, 3]],
+    chiede: [{ who: 'tempesta', text: 'Il viaggio fino al rifugio è lungo. Mi aiuti a raccogliere tre mele per la strada?' }],
+    fatto: [{ who: 'tempesta', text: 'Tre mele rosse. Ne darò una a Margherita e una a Maky. L\'ultima è mia, però.' }],
+    indizio: 'Le mele: una in basso al centro, una in alto a destra, una in alto a sinistra.' },
+  20: { tipo: 'visita', nome: 'Il ruscello', dove: [[18, 3]],
+    chiede: [{ who: 'fragola', text: 'Ho tanta sete, ma da sola ho ancora paura. Mi accompagni a bere all\'acqua, in alto a destra?' }],
+    fatto: [{ who: 'fragola', text: 'L\'acqua è fresca... e non ho avuto paura nemmeno un po\'. Perché c\'eri tu.' }],
+    indizio: 'L\'acqua è in alto a destra.' },
+  23: { tipo: 'visita', nome: 'Il suo box', dove: [[17, 2]],
+    chiede: [{ who: 'briciola', text: 'Prima di andare vorrei salutare il mio box. Quello in alto a destra. Ci ho passato tanti anni.' }, { who: 'anastasia', text: 'Ti accompagno. Piano piano.' }],
+    fatto: [{ who: 'briciola', text: 'Ciao, box. Grazie di avermi tenuta al riparo. Adesso ho una casa vera.' }, { who: 'mordicchio', text: '...Non sto piangendo. Mi è entrato del pelo nell\'occhio.' }],
+    indizio: 'Il box di Briciola è in alto a destra.' },
+  26: { tipo: 'raccogli', frame: 'fiore_rosa2', nome: 'Fiori di ciliegio', dove: [[10, 2], [19, 6], [4, 5]],
+    chiede: [{ who: 'hana', text: 'In Giappone, a chi si vuole bene si regala una ghirlanda di fiori. Mi aiuti a raccoglierne tre? È per te.' }],
+    fatto: [{ who: 'hana', text: 'Ecco la tua ghirlanda. Un giorno vedrai i ciliegi veri. Fino ad allora, porta questa.' }],
+    indizio: 'I fiori: uno in alto al centro, uno a destra, uno a sinistra.' },
+};
+Object.entries(SECONDE).forEach(([id, D]) => { const L = LIVELLI.find(l => l.id === +id); if (L) { L.dopo = D; L.indizi = Object.assign({}, L.indizi, { dopo: D.indizio }); } });

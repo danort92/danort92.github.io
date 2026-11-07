@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Il Rifugio">
+<meta name="theme-color" content="#9bd4c3">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Il Rifugio di Mordicchio</title>
+<style>
+  @font-face { font-family: "Pixelify Sans"; font-weight: 400; font-display: swap; src: url(vendor/pixelify-400.woff2) format("woff2"); }
+  @font-face { font-family: "Pixelify Sans"; font-weight: 600; font-display: swap; src: url(vendor/pixelify-600.woff2) format("woff2"); }
+  html, body { margin: 0; }
+</style>
+</head>
+<body>
+<style>
+  /* Gioco a schermo intero, un solo tema: acqua e prato di Sprout Lands */
+  :root { --acqua: #9bd4c3; --notte: #3b2f4a; --testo: #504086; color-scheme: light; }
+  html, body { height: 100%; overflow: hidden; background: var(--acqua); color: var(--testo); touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; overscroll-behavior: none; }
+  #gioco { position: fixed; left: 0; right: 0; top: env(safe-area-inset-top, 0px); bottom: env(safe-area-inset-bottom, 0px); }
+  canvas { display: block; image-rendering: pixelated; }
+  noscript { font-family: "Pixelify Sans", system-ui, sans-serif; padding: 16px; display: block; }
+</style>
+<div id="gioco"></div>
+<noscript>Questo gioco ha bisogno di JavaScript.</noscript>
+<script src="vendor/phaser.min.js?v=0cbbed52eb"></script>
+<script src="data.js?v=0cbbed52eb"></script>
+<script src="data2.js?v=0cbbed52eb"></script>
+<script src="data3.js?v=0cbbed52eb"></script>
+<script src="data4.js?v=0cbbed52eb"></script>
+<script src="data5.js?v=0cbbed52eb"></script>
+<script src="economia.js?v=0cbbed52eb"></script>
+<script src="game.js?v=0cbbed52eb"></script>
+<script src="vita.js?v=0cbbed52eb"></script>
+<script src="sogno.js?v=0cbbed52eb"></script>
+<script src="pulizie.js?v=0cbbed52eb"></script>
+<script src="eventi.js?v=0cbbed52eb"></script>
+<script src="seconda.js?v=0cbbed52eb"></script>
+<script src="meteo.js?v=0cbbed52eb"></script>
+<script src="chiacchiere.js?v=0cbbed52eb"></script>
+<script src="giardino.js?v=0cbbed52eb"></script>
+<script src="ricordi.js?v=0cbbed52eb"></script>
+<script src="rocky.js?v=0cbbed52eb"></script>
+
+<script>
+  // offline e aggiornamenti: il file sw.js tiene una copia del gioco sul telefono
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+</script>
+</body>
+</html>

@@ -1,0 +1,572 @@
+{
+"frames": {
+"quadro_rosa": {
+"frame": {
+"x": 1,
+"y": 6,
+"w": 15,
+"h": 7
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 15,
+"h": 7
+},
+"sourceSize": {
+"w": 15,
+"h": 7
+}
+},
+"quadro_prato": {
+"frame": {
+"x": 19,
+"y": 6,
+"w": 11,
+"h": 7
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 11,
+"h": 7
+},
+"sourceSize": {
+"w": 11,
+"h": 7
+}
+},
+"quadro_notte": {
+"frame": {
+"x": 35,
+"y": 5,
+"w": 12,
+"h": 8
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 12,
+"h": 8
+},
+"sourceSize": {
+"w": 12,
+"h": 8
+}
+},
+"girasole_vaso": {
+"frame": {
+"x": 51,
+"y": 0,
+"w": 11,
+"h": 15
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 11,
+"h": 15
+},
+"sourceSize": {
+"w": 11,
+"h": 15
+}
+},
+"pianta": {
+"frame": {
+"x": 68,
+"y": 4,
+"w": 8,
+"h": 9
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 8,
+"h": 9
+},
+"sourceSize": {
+"w": 8,
+"h": 9
+}
+},
+"fiore_vaso": {
+"frame": {
+"x": 84,
+"y": 1,
+"w": 7,
+"h": 12
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 7,
+"h": 12
+},
+"sourceSize": {
+"w": 7,
+"h": 12
+}
+},
+"lampada_verde": {
+"frame": {
+"x": 51,
+"y": 16,
+"w": 10,
+"h": 11
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 10,
+"h": 11
+},
+"sourceSize": {
+"w": 10,
+"h": 11
+}
+},
+"lampada_azzurra": {
+"frame": {
+"x": 67,
+"y": 16,
+"w": 10,
+"h": 11
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 10,
+"h": 11
+},
+"sourceSize": {
+"w": 10,
+"h": 11
+}
+},
+"lampada_rosa": {
+"frame": {
+"x": 83,
+"y": 16,
+"w": 10,
+"h": 11
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 10,
+"h": 11
+},
+"sourceSize": {
+"w": 10,
+"h": 11
+}
+},
+"letto_verde": {
+"frame": {
+"x": 1,
+"y": 26,
+"w": 14,
+"h": 22
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 14,
+"h": 22
+},
+"sourceSize": {
+"w": 14,
+"h": 22
+}
+},
+"letto_azzurro": {
+"frame": {
+"x": 17,
+"y": 26,
+"w": 14,
+"h": 22
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 14,
+"h": 22
+},
+"sourceSize": {
+"w": 14,
+"h": 22
+}
+},
+"letto_rosa": {
+"frame": {
+"x": 33,
+"y": 26,
+"w": 14,
+"h": 22
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 14,
+"h": 22
+},
+"sourceSize": {
+"w": 14,
+"h": 22
+}
+},
+"cassettiera": {
+"frame": {
+"x": 49,
+"y": 32,
+"w": 14,
+"h": 16
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 14,
+"h": 16
+},
+"sourceSize": {
+"w": 14,
+"h": 16
+}
+},
+"sedia": {
+"frame": {
+"x": 67,
+"y": 33,
+"w": 10,
+"h": 13
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 10,
+"h": 13
+},
+"sourceSize": {
+"w": 10,
+"h": 13
+}
+},
+"sedia2": {
+"frame": {
+"x": 83,
+"y": 33,
+"w": 10,
+"h": 13
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 10,
+"h": 13
+},
+"sourceSize": {
+"w": 10,
+"h": 13
+}
+},
+"poltroncina": {
+"frame": {
+"x": 99,
+"y": 33,
+"w": 10,
+"h": 13
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 10,
+"h": 13
+},
+"sourceSize": {
+"w": 10,
+"h": 13
+}
+},
+"sgabello": {
+"frame": {
+"x": 115,
+"y": 36,
+"w": 10,
+"h": 10
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 10,
+"h": 10
+},
+"sourceSize": {
+"w": 10,
+"h": 10
+}
+},
+"tavolino": {
+"frame": {
+"x": 49,
+"y": 49,
+"w": 14,
+"h": 14
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 14,
+"h": 14
+},
+"sourceSize": {
+"w": 14,
+"h": 14
+}
+},
+"panchetta": {
+"frame": {
+"x": 67,
+"y": 51,
+"w": 10,
+"h": 9
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 10,
+"h": 9
+},
+"sourceSize": {
+"w": 10,
+"h": 9
+}
+},
+"pendola": {
+"frame": {
+"x": 81,
+"y": 48,
+"w": 13,
+"h": 15
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 13,
+"h": 15
+},
+"sourceSize": {
+"w": 13,
+"h": 15
+}
+},
+"orologio": {
+"frame": {
+"x": 98,
+"y": 50,
+"w": 13,
+"h": 13
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 13,
+"h": 13
+},
+"sourceSize": {
+"w": 13,
+"h": 13
+}
+},
+"orologino": {
+"frame": {
+"x": 116,
+"y": 52,
+"w": 9,
+"h": 9
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 9,
+"h": 9
+},
+"sourceSize": {
+"w": 9,
+"h": 9
+}
+},
+"tappetino_verde": {
+"frame": {
+"x": 0,
+"y": 82,
+"w": 16,
+"h": 13
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 16,
+"h": 13
+},
+"sourceSize": {
+"w": 16,
+"h": 13
+}
+},
+"tappetino_rosa": {
+"frame": {
+"x": 16,
+"y": 82,
+"w": 16,
+"h": 13
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 16,
+"h": 13
+},
+"sourceSize": {
+"w": 16,
+"h": 13
+}
+},
+"tappetino_azzurro": {
+"frame": {
+"x": 32,
+"y": 82,
+"w": 16,
+"h": 13
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 16,
+"h": 13
+},
+"sourceSize": {
+"w": 16,
+"h": 13
+}
+},
+"tappeto_verde": {
+"frame": {
+"x": 52,
+"y": 82,
+"w": 24,
+"h": 13
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 24,
+"h": 13
+},
+"sourceSize": {
+"w": 24,
+"h": 13
+}
+},
+"tappeto_rosa": {
+"frame": {
+"x": 84,
+"y": 82,
+"w": 24,
+"h": 13
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 24,
+"h": 13
+},
+"sourceSize": {
+"w": 24,
+"h": 13
+}
+},
+"tappeto_azzurro": {
+"frame": {
+"x": 116,
+"y": 82,
+"w": 24,
+"h": 13
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 24,
+"h": 13
+},
+"sourceSize": {
+"w": 24,
+"h": 13
+}
+}
+},
+"meta": {
+"image": "mobili.png",
+"size": {
+"w": 144,
+"h": 96
+},
+"scale": "1"
+}
+}

@@ -1,0 +1,592 @@
+{
+"frames": {
+"alberello": {
+"frame": {
+"x": 1,
+"y": 0,
+"w": 14,
+"h": 29
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 14,
+"h": 29
+},
+"sourceSize": {
+"w": 14,
+"h": 29
+}
+},
+"albero": {
+"frame": {
+"x": 20,
+"y": 1,
+"w": 24,
+"h": 31
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 24,
+"h": 31
+},
+"sourceSize": {
+"w": 24,
+"h": 31
+}
+},
+"melo": {
+"frame": {
+"x": 52,
+"y": 1,
+"w": 24,
+"h": 31
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 24,
+"h": 31
+},
+"sourceSize": {
+"w": 24,
+"h": 31
+}
+},
+"funghi": {
+"frame": {
+"x": 82,
+"y": 2,
+"w": 13,
+"h": 13
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 13,
+"h": 13
+},
+"sourceSize": {
+"w": 13,
+"h": 13
+}
+},
+"fungo": {
+"frame": {
+"x": 100,
+"y": 4,
+"w": 10,
+"h": 11
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 10,
+"h": 11
+},
+"sourceSize": {
+"w": 10,
+"h": 11
+}
+},
+"fungo_viola": {
+"frame": {
+"x": 115,
+"y": 3,
+"w": 7,
+"h": 8
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 7,
+"h": 8
+},
+"sourceSize": {
+"w": 7,
+"h": 8
+}
+},
+"germoglio": {
+"frame": {
+"x": 97,
+"y": 18,
+"w": 8,
+"h": 5
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 8,
+"h": 5
+},
+"sourceSize": {
+"w": 8,
+"h": 5
+}
+},
+"sasso": {
+"frame": {
+"x": 114,
+"y": 18,
+"w": 10,
+"h": 8
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 10,
+"h": 8
+},
+"sourceSize": {
+"w": 10,
+"h": 8
+}
+},
+"masso": {
+"frame": {
+"x": 128,
+"y": 18,
+"w": 16,
+"h": 12
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 16,
+"h": 12
+},
+"sourceSize": {
+"w": 16,
+"h": 12
+}
+},
+"ciliegie": {
+"frame": {
+"x": 20,
+"y": 36,
+"w": 7,
+"h": 8
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 7,
+"h": 8
+},
+"sourceSize": {
+"w": 7,
+"h": 8
+}
+},
+"mela": {
+"frame": {
+"x": 33,
+"y": 33,
+"w": 13,
+"h": 14
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 13,
+"h": 14
+},
+"sourceSize": {
+"w": 13,
+"h": 14
+}
+},
+"ghianda": {
+"frame": {
+"x": 52,
+"y": 36,
+"w": 8,
+"h": 10
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 8,
+"h": 10
+},
+"sourceSize": {
+"w": 8,
+"h": 10
+}
+},
+"ceppo": {
+"frame": {
+"x": 67,
+"y": 36,
+"w": 10,
+"h": 10
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 10,
+"h": 10
+},
+"sourceSize": {
+"w": 10,
+"h": 10
+}
+},
+"tronco": {
+"frame": {
+"x": 80,
+"y": 35,
+"w": 16,
+"h": 10
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 16,
+"h": 10
+},
+"sourceSize": {
+"w": 16,
+"h": 10
+}
+},
+"fiore_giallo": {
+"frame": {
+"x": 99,
+"y": 39,
+"w": 9,
+"h": 6
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 9,
+"h": 6
+},
+"sourceSize": {
+"w": 9,
+"h": 6
+}
+},
+"fiore_giallo2": {
+"frame": {
+"x": 114,
+"y": 37,
+"w": 11,
+"h": 9
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 11,
+"h": 9
+},
+"sourceSize": {
+"w": 11,
+"h": 9
+}
+},
+"girasole": {
+"frame": {
+"x": 129,
+"y": 34,
+"w": 14,
+"h": 29
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 14,
+"h": 29
+},
+"sourceSize": {
+"w": 14,
+"h": 29
+}
+},
+"cespuglio_more": {
+"frame": {
+"x": 0,
+"y": 48,
+"w": 16,
+"h": 16
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 16,
+"h": 16
+},
+"sourceSize": {
+"w": 16,
+"h": 16
+}
+},
+"cespuglio": {
+"frame": {
+"x": 16,
+"y": 48,
+"w": 16,
+"h": 16
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 16,
+"h": 16
+},
+"sourceSize": {
+"w": 16,
+"h": 16
+}
+},
+"more": {
+"frame": {
+"x": 64,
+"y": 49,
+"w": 16,
+"h": 14
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 16,
+"h": 14
+},
+"sourceSize": {
+"w": 16,
+"h": 14
+}
+},
+"fiore_blu": {
+"frame": {
+"x": 83,
+"y": 50,
+"w": 11,
+"h": 12
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 11,
+"h": 12
+},
+"sourceSize": {
+"w": 11,
+"h": 12
+}
+},
+"fiore_rosa": {
+"frame": {
+"x": 99,
+"y": 54,
+"w": 9,
+"h": 6
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 9,
+"h": 6
+},
+"sourceSize": {
+"w": 9,
+"h": 6
+}
+},
+"fiore_rosa2": {
+"frame": {
+"x": 114,
+"y": 52,
+"w": 11,
+"h": 9
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 11,
+"h": 9
+},
+"sourceSize": {
+"w": 11,
+"h": 9
+}
+},
+"siepe": {
+"frame": {
+"x": 2,
+"y": 68,
+"w": 30,
+"h": 12
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 30,
+"h": 12
+},
+"sourceSize": {
+"w": 30,
+"h": 12
+}
+},
+"siepe2": {
+"frame": {
+"x": 36,
+"y": 64,
+"w": 32,
+"h": 16
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 32,
+"h": 16
+},
+"sourceSize": {
+"w": 32,
+"h": 16
+}
+},
+"masso2": {
+"frame": {
+"x": 80,
+"y": 67,
+"w": 16,
+"h": 12
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 16,
+"h": 12
+},
+"sourceSize": {
+"w": 16,
+"h": 12
+}
+},
+"sassolino": {
+"frame": {
+"x": 99,
+"y": 68,
+"w": 10,
+"h": 8
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 10,
+"h": 8
+},
+"sourceSize": {
+"w": 10,
+"h": 8
+}
+},
+"ninfea": {
+"frame": {
+"x": 112,
+"y": 68,
+"w": 13,
+"h": 9
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 13,
+"h": 9
+},
+"sourceSize": {
+"w": 13,
+"h": 9
+}
+},
+"ninfea_fiore": {
+"frame": {
+"x": 128,
+"y": 64,
+"w": 16,
+"h": 15
+},
+"rotated": false,
+"trimmed": false,
+"spriteSourceSize": {
+"x": 0,
+"y": 0,
+"w": 16,
+"h": 15
+},
+"sourceSize": {
+"w": 16,
+"h": 15
+}
+}
+},
+"meta": {
+"image": "natura.png",
+"size": {
+"w": 144,
+"h": 80
+},
+"scale": "1"
+}
+}
