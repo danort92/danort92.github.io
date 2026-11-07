@@ -13,15 +13,19 @@ Object.assign(Rifugio.prototype, {
   },
   // ---- due amici che parlano tra loro ----
   avviaChiacchiera() {
+    if (this.hud.quieto && this.hud.quieto()) return false;
     const qui = k => this.ospiti.find(o => o.chiave === k);
-    const coppie = AMICIZIE.map(([a, b, battute, tipo]) => [qui(a), qui(b), battute, tipo]).filter(([a, b]) => this.liberoPerChiacchiere(a) && this.liberoPerChiacchiere(b));
+    const adatte = bb => typeof frasiAdatte === 'function' ? bb.filter(([d, r]) => frasiAdatte([d, r]).length === 2) : bb;
+    const coppie = AMICIZIE.map(([a, b, battute, tipo]) => [qui(a), qui(b), adatte(battute), tipo]).filter(([a, b, bb]) => this.liberoPerChiacchiere(a) && this.liberoPerChiacchiere(b) && bb.length);
     if (!coppie.length) return false;
     const [a, b, battute, tipo] = Phaser.Utils.Array.GetRandom(coppie);
     const usate = this.battuteUsate = this.battuteUsate || [];
-    const scelta = battute.filter(x => !usate.includes(x)); const [d, r] = scelta.length ? Phaser.Utils.Array.GetRandom(scelta) : Phaser.Utils.Array.GetRandom(battute);
+    const dS = Frasi.scegli(battute.map(x => x[0]), 'coppia:' + a.chiave + '+' + b.chiave); if (!dS) return false; const [d, r] = battute.find(x => x[0] === dS);
     usate.push([d, r].join()); if (usate.length > 12) usate.shift();
     this.inChiacchiera = true; a.evento = b.evento = true; a.meta = b.meta = null;
-    const fine = () => { [a, b].forEach(o => { if (o.active) { o.evento = false; o.pausa = 2; } }); this.inChiacchiera = false; };
+    const tok = this.chiacchieraTok = {};
+    const fine = () => { if (this.chiacchieraTok !== tok) return; this.chiacchieraTok = null; [a, b].forEach(o => { if (o.active) { o.evento = false; o.pausa = 2; } }); this.inChiacchiera = false; };
+    this.time.delayedCall(15000, fine);   // rete di sicurezza: una chiacchiera non può restare appesa
     const ok = () => a.active && b.active && !this.hud.dialog && !(this.hud.ctrl && this.hud.ctrl.frozen) && this.modo === 'gioca';
     const x = Phaser.Math.Clamp(b.x + (a.x < b.x ? -16 : 16), 12, STANZA.w - 12);
     this.cammina(a, x, b.y, 1.5, () => {
@@ -61,8 +65,8 @@ Object.assign(Rifugio.prototype, {
   raccontaNotizia(o) {
     const k = o.chiave; this.fineNotizia(o); this.tweens.killTweensOf(o); o.anims.stop(); o.setFrame(o.idleFrame);
     const frasi = frasiValide(NOTIZIE[k]); if (!frasi.length) return this.menuAnimale(o);
-    const lines = [{ who: k, text: pick(frasi, this.recent) }];
-    if (Math.random() < 0.4) lines.push({ who: 'anastasia', text: pick(RISPOSTE, this.recent) });
+    const t0 = Frasi.scegli(frasi, k, this.recent); if (!t0) return this.menuAnimale(o); const lines = [{ who: k, text: t0 }];
+    { const r = Math.random() < 0.6 ? rispostaA(lines[0].text, this.recent) : null; if (r) lines.push({ who: 'anastasia', text: r }); }
     o.coccola = 3; this.hud.say(lines); this.pensiero(o, 'cuore', true);
   },
 });
@@ -89,4 +93,24 @@ Object.assign(Rifugio.prototype, {
   // toccando chi ha il «!» si sente la notizia invece del menu
   const menu = Rifugio.prototype.menuAnimale;
   Rifugio.prototype.menuAnimale = function (o) { if (o && o.notizia) return this.raccontaNotizia(o); return menu.call(this, o); };
+})();
+
+// ---- niente sovrapposizioni: un dialogo della storia zittisce le nuvolette, e mentre c'è un dialogo
+//      o una finestra aperta nessuno dice frasi a caso ----
+(function () {
+  const say = Hud.prototype.say, bubble = Hud.prototype.bubble;
+  Hud.prototype.say = function (lines, done) {
+    if (lines && lines.length) { this.bubbles.forEach(b => { if (!b.dead) { b.dead = true; b.c.destroy(); } }); this.bubbles = []; }
+    // finito un dialogo, per qualche secondo nessuno attacca a parlare da solo
+    const fine = lines && lines.length ? () => { this.quietoFino = this.time.now + 7000; if (done) done(); } : done;
+    return say.call(this, lines, fine);
+  };
+  // le frasi spontanee (battute durante il giro, chiacchiere tra amici) tacciono durante e subito dopo un dialogo,
+  // e quando la storia sta per ripartire (attendiStoria)
+  Hud.prototype.quieto = function () { return !!(this.dialog || (this.codaDialoghi && this.codaDialoghi.length) || (this.ctrl && this.ctrl.frozen) || this.time.now < (this.quietoFino || 0)); };
+  Hud.prototype.attendiStoria = function (ms) { this.quietoFino = Math.max(this.quietoFino || 0, this.time.now + ms); };
+  Hud.prototype.bubble = function (target, text, ms) {
+    if (this.dialog || (this.codaDialoghi && this.codaDialoghi.length) || (this.ctrl && this.ctrl.frozen)) return null;
+    return bubble.call(this, target, text, ms);
+  };
 })();

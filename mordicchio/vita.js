@@ -56,7 +56,7 @@ Object.assign(Rifugio.prototype, {
     t.fillStyle(0x8cbfc2).fillRect(c.x + 10, c.y + 26, 12, 10).fillRect(c.x + c.w - 22, c.y + 26, 12, 10);
     t.lineStyle(1, 0x504086).strokeRect(c.x + 10, c.y + 26, 12, 10).strokeRect(c.x + c.w - 22, c.y + 26, 12, 10);
     t.fillStyle(0x90625d).fillRect(PORTE.casa.x - 6, c.y + c.h - 18, 12, 18); t.fillStyle(0xf2cf8c).fillRect(PORTE.casa.x + 3, c.y + c.h - 9, 2, 2);
-    if (S.animali.tubino) this.add.image(c.x + 18, c.y + 4, 'tubino', 0).setDepth(c.y + c.h + 1);
+    // Tubino vive in casa: niente secondo Tubino sul tetto
     // stalla (o il posto dove nascerà)
     const st = STALLA_R;
     if (S.stallaAperta) {
@@ -79,19 +79,7 @@ Object.assign(Rifugio.prototype, {
     this.parcelle = [];
     for (let i = 0; i < 9; i++) {
       const p = ORTO_XY(i), cc = this.add.container(p.x, p.y).setDepth(p.y - 10);
-      if (i < S.orto.length) {
-        cc.add(this.add.image(0, 0, 'aiuola'));
-        const o = S.orto[i];
-        if (o) {
-          const C = COLTURE[o.c];
-          if (Eco.pronta(S, i)) { const ic = iconaCibo(this, 0, -3, o.c); cc.add(ic); this.tweens.add({ targets: ic, y: -5, yoyo: true, repeat: -1, duration: 700 }); }
-          else cc.add(this.add.image(0, -3, 'germogli', Math.min(2, Math.floor(o.notti / C.notti * 3))));
-        }
-      } else if (i === S.orto.length && Eco.prezzoParcella(S) != null) {
-        const gg = this.add.graphics(); gg.lineStyle(1, 0x8a6a50, 0.8).strokeRect(-8, -7, 16, 15); cc.add(gg);
-        cc.add(txt(this, 0, 0, '+', 9, '#8a6a50').setOrigin(0.5).setResolution(1));
-      }
-      this.parcelle.push(cc);
+      this.parcelle.push(cc); this.contenutoParcella(i);
     }
     this.vanImg = this.add.image(VAN_XY.x, VAN_XY.y, 'van', S.van >= 0 ? 0 : 1).setDepth(VAN_XY.y + 14);
     this.fuoriTrigger = 'inizio';
@@ -117,13 +105,13 @@ Object.assign(Rifugio.prototype, {
     this.fuoriTrigger = qui;
     if (!qui || this.uscendo || this.hud.dialog || (this.hud.ctrl && this.hud.ctrl.frozen)) return;
     if (qui === 'casa') this.vai('casa');
-    else if (qui === 'stalla') { if (S.stallaAperta) this.vai('stalla'); else this.hud.bubble(this.cat, 'La stalla non c\'è ancora. Si costruisce dai Lavori.', 3200); }
+    else if (qui === 'stalla') { if (S.stallaAperta) this.vai('stalla'); else this.hud.bubble(this.cat, 'La stalla non c\'è ancora. Si costruisce dalla bacheca dei lavori, vicino alla casa.', 3200); }
     else if (qui === 'sentiero') this.chiediCartello({ titolo: 'Il sentiero', testo: 'Porta ai prati, all\'alpeggio e al paese.', vai: 'Vai al sentiero', azione: () => { this.uscendo = true; this.cameras.main.fadeOut(250); this.time.delayedCall(260, () => this.scene.start('Mappa')); } });
     else if (qui === 'van') this.van();
     else if (qui === 'orto') this.hud.toast('L\'orto: tocca una parcella per seminare o raccogliere');
   },
-  vai(stanza) { if (this.uscendo) return; this.uscendo = true; this.cameras.main.fadeOut(220); this.time.delayedCall(230, () => this.scene.start('Rifugio', { stanza })); },
-  esci() { if (this.uscendo) return; this.uscendo = true; this.cameras.main.fadeOut(220); const da = this.stanza; this.time.delayedCall(230, () => this.scene.start('Rifugio', { stanza: 'fuori', pos: da })); },
+  vai(stanza) { if (this.uscendo) return; this.uscendo = true; this.cameras.main.fadeOut(220); const dorme = this.gattoDormiente(); this.time.delayedCall(230, () => this.scene.start('Rifugio', { stanza, gattoDorme: dorme })); },
+  esci() { if (this.uscendo) return; this.uscendo = true; this.cameras.main.fadeOut(220); const da = this.stanza; const dorme = this.gattoDormiente(); this.time.delayedCall(230, () => this.scene.start('Rifugio', { stanza: 'fuori', pos: da, gattoDorme: dorme })); },
 });
 
 Object.assign(Rifugio.prototype, {
@@ -142,7 +130,10 @@ Object.assign(Rifugio.prototype, {
     const S = Save.data, hud = this.hud, o = S.orto[i];
     if (o && Eco.pronta(S, i)) {
       const n = Eco.raccogli(S, i); Save.write(); Sfx.seme();
-      hud.toast('Raccolto: ' + n + ' × ' + COLTURE[o.c].nome); return this.rifai();
+      const p = ORTO_XY(i), vola = iconaCibo(this, p.x, p.y - 3, o.c).setDepth(30000);   // il raccolto vola verso Anastasia
+      this.tweens.add({ targets: vola, x: this.player.x, y: this.player.y - 14, scale: 0.6, alpha: 0.2, duration: 420, ease: 'Quad.in', onComplete: () => vola.destroy() });
+      this.contenutoParcella(i);
+      hud.toast('Raccolto: ' + n + ' × ' + COLTURE[o.c].nome); return;
     }
     if (o) { const C = COLTURE[o.c], r = C.notti - o.notti; hud.toast(C.nome + ': ' + (r === 1 ? 'pronto domattina' : 'ancora ' + r + ' notti')); return; }
     const lista = Eco.coltureDisponibili(S);
@@ -157,12 +148,30 @@ Object.assign(Rifugio.prototype, {
       box.on('pointerup', () => {
         if (hud.scrollDragged) return;
         if (!Eco.pianta(S, i, k)) { Sfx.no(); hud.toast('Ti servono ' + C.costo + ' semi'); return; }
-        Save.write(); Sfx.pop(); m.close(); this.rifai(); hud.toast('Piantato: ' + C.nome);
+        Save.write(); Sfx.pop(); m.close(); this.contenutoParcella(i); hud.toast('Piantato: ' + C.nome);
       });
       sa.inner.add(cell); sa.contentH = y + 62;
     });
   },
-  rifai() { this.scene.restart({ stanza: this.stanza, pos: { x: this.player.x, y: this.player.y } }); },
+  // ridisegna una parcella sul posto: raccogliere o piantare non ricostruisce più tutto il giardino
+  // (prima gli animali «saltavano» in posti nuovi a ogni tocco)
+  contenutoParcella(i) {
+    const S = Save.data, cc = this.parcelle[i]; if (!cc) return;
+    cc.list.slice().forEach(x => { this.tweens.killTweensOf(x); x.destroy(); }); cc.removeAll();
+    if (i < S.orto.length) {
+      cc.add(this.add.image(0, 0, 'aiuola'));
+      const o = S.orto[i];
+      if (o) {
+        const C = COLTURE[o.c];
+        if (Eco.pronta(S, i)) { const ic = iconaCibo(this, 0, -3, o.c); cc.add(ic); this.tweens.add({ targets: ic, y: -5, yoyo: true, repeat: -1, duration: 700 }); }
+        else cc.add(this.add.image(0, -3, 'germogli', Math.min(2, Math.floor(o.notti / C.notti * 3))));
+      }
+    } else if (i === S.orto.length && Eco.prezzoParcella(S) != null) {
+      const gg = this.add.graphics(); gg.lineStyle(1, 0x8a6a50, 0.8).strokeRect(-8, -7, 16, 15); cc.add(gg);
+      cc.add(txt(this, 0, 0, '+', 9, '#8a6a50').setOrigin(0.5).setResolution(1));
+    }
+  },
+  rifai() { const pos = { x: this.player.x, y: this.player.y }; this.cameras.main.fadeOut(220, 251, 244, 220); this.time.delayedCall(230, () => this.scene.restart({ stanza: this.stanza, pos })); },   // solo per i lavori grossi (stalla, van): una breve dissolvenza, non un salto
   // ---------------- orologio e giornata ----------------
   barraOra(hud) {
     const S = Save.data;
@@ -184,7 +193,7 @@ Object.assign(Rifugio.prototype, {
     const S = Save.data, hud = this.hud;
 
     const righe = [
-      S.van < 0 ? 'Il van è ancora da riparare.' : S.vanOggi ? 'Il van per oggi ha chiuso.' : 'Il van si può aprire una volta al giorno, entro le 21.',
+      S.van < 0 ? 'Il van è ancora da riparare.' : S.vanOggi ? 'Il van per oggi ha chiuso.' : 'Il van apre a pranzo (12–14) e a cena (19–21).',
       'Orto: ' + S.orto.filter(Boolean).length + ' parcelle piantate su ' + S.orto.length,
       'Tempo: ' + METEO_NOMI[meteoDelGiorno().tipo] + (meteoDelGiorno().tipo === 'pioggia' ? ' (tra le ' + Math.floor(meteoDelGiorno().da / 60) + ' e le ' + Math.floor(meteoDelGiorno().a / 60) + ')' : ''),
     ];
@@ -227,10 +236,10 @@ Object.assign(Rifugio.prototype, {
       const m = hud.modal('Il vecchio van', 230), t = Eco.tappeFatte(S);
       m.c.add(txt(hud, 28, m.y + 48, t < VAN.daTappa
         ? 'Un furgoncino abbandonato in fondo al cortile. Con un po\' di lavoro diventerebbe un van della pizza perfetto.\n\nSi potrà riparare dopo la tappa ' + VAN.daTappa + '.'
-        : 'Un furgoncino abbandonato. Ripararlo costa ' + VAN.ripara + ' semi: poi potrai vendere pizze e piatti ogni sera.', 12, COL.testo, { wordWrap: { width: UW - 56 }, lineSpacing: 3 }));
+        : 'Un furgoncino abbandonato. Ripararlo costa ' + VAN.ripara + ' semi: poi potrai vendere pizze e piatti a pranzo e a cena.', 12, COL.testo, { wordWrap: { width: UW - 56 }, lineSpacing: 3 }));
       if (t >= VAN.daTappa) hud.button(28, m.y + 176, UW - 56, 36, 'Ripara il van (' + VAN.ripara + ' semi)', () => {
         if (!Eco.riparaVan(S)) { Sfx.no(); hud.toast('Ti servono ' + VAN.ripara + ' semi'); return; }
-        Save.write(); Sfx.fanfara(); m.close(); this.rifai(); hud.toast('Il van è pronto! Apre ogni sera dalle 18.');
+        Save.write(); Sfx.fanfara(); m.close(); this.rifai(); hud.toast('Il van è pronto! Apre a pranzo (12–14) e a cena (19–21).');
       }, { parent: m.c, size: 13 });
       return;
     }
@@ -238,6 +247,8 @@ Object.assign(Rifugio.prototype, {
     if (S.ora > TEMPO.vanA) return hud.toast('È troppo tardi per aprire il van. Domani!');
     if (!Object.keys(S.ricette).some(r => Eco.puoiCucinare(S, r) || RICETTE[r].ing.every(k => DISPENSA[k] || (S.ing[k] || 0) >= Eco.bisogno(r)[k])))
       return hud.toast('Non hai abbastanza ingredienti. Raccogli qualcosa dall\'orto!');
+    // il van si apre una volta al giorno: meglio chiedere prima, così un tocco per sbaglio non lo «consuma»
+    if (!this.vanConfermato && typeof schedaCartello === 'function') return schedaCartello(this, { titolo: 'Il van della pizza', testo: 'Apri il van adesso? Si apre una volta al giorno: stasera arrivano ' + Eco.clientiVan(S) + ' clienti.', vai: 'Apri il van', resta: 'Non ora', azione: () => { this.vanConfermato = true; this.van(); this.vanConfermato = false; } });
     if (!Eco.apriVan(S)) return; Save.write();
     Musica.suona('paese');
     this.turno = { n: 0, tot: Eco.clientiVan(S), incasso: 0, ospiti: Object.keys(S.animali).filter(k => ANIMALI[k] && !ANIMALI[k].soloGiochi) };  // i gatti mangiano solo le loro crocchette
@@ -294,7 +305,7 @@ Object.assign(Rifugio.prototype, {
     let y = 0;
     if (tab === 'dispensa') {
       const ks = Object.keys(S.ing).filter(k => S.ing[k] > 0);
-      if (!ks.length) sa.inner.add(txt(hud, 0, 10, 'La dispensa è vuota.\nRaccogli dall\'orto o compra in Bottega.', 12, COL.testo, { lineSpacing: 4 }));
+      if (!ks.length) sa.inner.add(txt(hud, 0, 10, 'La dispensa è vuota.\nRaccogli dall\'orto o compra alla bancarella.', 12, COL.testo, { lineSpacing: 4 }));
       ks.forEach((k, i) => {
         const x = (i % 2) * ((UW - 48) / 2), yy = Math.floor(i / 2) * 34;
         sa.inner.add([fitIcon(iconaCibo(hud, x + 14, yy + 14, k), 22), txt(hud, x + 30, yy + 14, nomeIng(k) + ' ×' + S.ing[k], 11, COL.testo).setOrigin(0, 0.5)]);
@@ -319,7 +330,7 @@ Object.assign(Rifugio.prototype, {
   // ---------------- Bottega ----------------
   bottega(tab = 'regali', scroll) {
     const hud = this.hud, S = Save.data;
-    const m = hud.modal('Bottega', Math.min(UH - 40, 580), () => this.attachHud());
+    const m = hud.modal('La bancarella', Math.min(UH - 40, 580), () => this.attachHud());
     m.c.add(hud.add.image(34, m.y + 50, 'seme')); m.c.add(txt(hud, 46, m.y + 50, S.semi + ' semi', 13, COL.titolo).setOrigin(0, 0.5));
     const tabs = [['regali', 'Regali'], ['dispensa', 'Dispensa'], ['arredi', 'Mobili'], ['lavori', 'Lavori']];
     tabs.forEach(([k, l], i) => hud.button(24 + i * ((UW - 48) / 4), m.y + 70, (UW - 48) / 4 - 4, 26, l, () => { m.c.destroy(); hud.scroller = null; this.bottega(k); }, { parent: m.c, size: 11, color: tab === k ? COL.titolo : '#9d866f' }));
@@ -349,8 +360,8 @@ Object.assign(Rifugio.prototype, {
     const voci = [];
     const pp = Eco.prezzoParcella(S);
     if (pp != null) voci.push({ nome: 'Nuova parcella dell\'orto', det: 'Ne hai ' + S.orto.length + ' su 9', prezzo: pp, fai: () => Eco.compraParcella(S) });
-    if (S.van < 0) voci.push({ nome: 'Riparare il van', det: Eco.tappeFatte(S) >= VAN.daTappa ? 'Ogni sera vendi pizze e piatti' : 'Dopo la tappa ' + VAN.daTappa, prezzo: VAN.ripara, fai: () => Eco.riparaVan(S) });
-    else if (VAN.migliorie[S.van]) { const g = VAN.migliorie[S.van]; voci.push({ nome: 'Van: ' + g.nome, det: g.clienti + ' clienti ogni sera' + (S.van === 0 ? '. Serve per arrivare in paese' : ''), prezzo: g.prezzo, fai: () => Eco.miglioraVan(S) }); }
+    if (S.van < 0) voci.push({ nome: 'Riparare il van', det: Eco.tappeFatte(S) >= VAN.daTappa ? 'Vendi pizze e piatti a pranzo e a cena' : 'Dopo la tappa ' + VAN.daTappa, prezzo: VAN.ripara, fai: () => Eco.riparaVan(S) });
+    else if (VAN.migliorie[S.van]) { const g = VAN.migliorie[S.van]; voci.push({ nome: 'Van: ' + g.nome, det: Math.min(4, 2 + S.van + 1) + ' clienti per apertura' + (S.van === 0 ? '. Serve per arrivare in paese' : ''), prezzo: g.prezzo, fai: () => Eco.miglioraVan(S) }); }
     if (!S.lavori.stalla) voci.push({ nome: 'Costruire la stalla', det: 'Serve per gli animali dell\'alpeggio (tappa 11)', prezzo: CANCELLI[11].prezzo, fai: () => { const ok = Eco.costruisci(S, 'stalla'); if (ok) { S.stallaAperta = true; ARREDO_INIZIALE_STALLA.forEach(a => S.arredi.push({ ...a, stanza: 'stalla' })); } return ok; } });
     if (!voci.length) sa.inner.add(txt(hud, 0, 10, 'Hai fatto tutti i lavori. Che rifugio!', 12, COL.testo));
     voci.forEach((v, i) => {

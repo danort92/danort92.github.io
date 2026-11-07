@@ -28,7 +28,7 @@ Object.assign(Livello.prototype, {
     const vai = (completa) => { if (completa) return this.completa(); st.finito = true; this.cameras.main.fadeOut(260, 251, 244, 220); this.time.delayedCall(280, () => this.scene.start('Mappa')); };
     if (st.giaFatta) return schedaCartello(this, { titolo: 'Il sentiero', testo: this.L.nome + ': qui è tutto tranquillo.', vai: 'Torna al sentiero', azione: () => vai(false) });
     if (st.salvato && (!this.L.dopo || st.fase2fatta) && this.portale) return schedaCartello(this, { titolo: 'Il sentiero', testo: 'Tutto fatto!' + (nome ? ' ' + nome + ' viene con te al rifugio.' : ''), vai: 'Torna al sentiero', azione: () => vai(true) });
-    const testo = st.salvato ? (nome || 'Qualcuno') + ' ti aspetta per un\'ultima cosa. Se esci ora, la tappa ricomincia da capo.' : 'Non hai ancora finito qui. Puoi tornare quando vuoi: la tappa ricomincerà da capo.';
+    const testo = st.salvato ? (nome || 'Qualcuno') + ' ti aspetta per un\'ultima cosa. Puoi tornare quando vuoi: riprendi da qui.' : 'Non hai ancora finito qui. Puoi tornare quando vuoi: riprendi da dove sei arrivata.';
     schedaCartello(this, { titolo: 'Il sentiero', testo, vai: 'Torna al sentiero', resta: 'Resta', azione: () => vai(false) });
   },
   // ---------------- seconda richiesta ----------------

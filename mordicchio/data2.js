@@ -62,7 +62,7 @@ Object.assign(ANIMALI, {
       2: ['Ne ho viste tante, di persone. Tu sei tra le migliori.', 'Racconto le mie storie a Briciola. Lei si addormenta. Va bene così.'],
       3: ['Vivere a lungo serve solo se lo passi con chi ti vuole bene. Adesso lo so.', '*tira fuori la testa dal guscio solo per guardarti*'] }),
   briciola: nuovo('Briciola', 'cane anziano', 'Dolcissima', 'briciola', 'casa', { adora: 'morbido', gradisce: 'cibo', sgradito: 'rumoroso' },
-    ['Alla mia età, un cuscino morbido vale più di una bistecca. Anzi, di una carota.', 'I campanellini mi fanno abbaiare. Poi mi vergogno.'],
+    ['Alla mia età, un cuscino morbido vale più di un biscotto. Quasi.', 'I campanellini mi fanno abbaiare. Poi mi vergogno.'],
     { 0: ['Sono stata al canile tanto tempo. Qui è molto meglio.', 'Il muso grigio? Sono i miei anni migliori.'],
       1: ['Mordicchio fa finta di non vedermi. Ma ieri mi ha lasciato un pezzo di cuscino.', 'Le mie zampe sono lente, ma il mio cuore corre.'],
       2: ['Quando arrivi, la mia coda si muove da sola.', 'Grazie per avermi scelta, anche se sono vecchietta.'],
@@ -246,6 +246,7 @@ LIVELLI.push(
       "~~~~~~~~~~~~~~~~~~~~~~~~",
     ],
     dialoghi: {
+      sbagliato: ["Solo aghi di pino.", "Qui c'è solo resina. Appiccicosa.", "Niente gufo. Il prossimo pino."],
       arrivo: [
         { who: "narratore", text: "È notte nel bosco. Da qualche parte, tra i pini, qualcuno fa: uh-uh." },
         { who: "mordicchio", text: "Io al buio ci vedo benissimo. Tu un po' meno. Stammi vicina." },
@@ -257,7 +258,7 @@ LIVELLI.push(
         { who: "ciro", text: "Uh. Nessuno me l'aveva mai detto. Posso venire con te? Prometto di fare piano, di giorno." },
       ],
       salvato: [],
-      fine: [{ who: "mordicchio", text: "Il cartello di casa è in basso. Ciro ci fa luce con gli occhi. Più o meno." }],
+      fine: [{ who: "mordicchio", text: "Il cartello di casa è in basso. Ciro viene con noi. Al buio in due ci vediamo benissimo. Tu un po' meno." }],
     },
     indizi: { animale: "Il verso viene da uno dei pini. Avvicinati e scuotili uno a uno." , uscita: "Il cartello di casa è in basso, al centro." },
   },
@@ -334,7 +335,7 @@ LIVELLI.push(
         { who: "rossella", text: "Però nel tuo rifugio... ci sono mele? Mele regalate, intendo." },
         { who: "anastasia", text: "Ci sono mele per tutti. Anche per le volpi furbe." },
       ],
-      fine: [{ who: "mordicchio", text: "Il cartello di casa è in basso. Rossella, tu cammini davanti. Così ti tengo d'occhio." }],
+      fine: [{ who: "mordicchio", text: "Il cartello di casa è in basso. Rossella, cammina dietro di me. E niente scherzi, ti sento." }],
     },
     indizi: { animale: "La volpe è dietro il muro, in alto.", oggetto: "La chiave è in alto a sinistra.", consegna: "Porta la chiave al portone del muro, in alto al centro.", uscita: "Il cartello di casa è in basso." },
   },
@@ -371,7 +372,7 @@ LIVELLI.push(
         { who: "teodora", text: "Sai, alla mia età si sceglie bene con chi passare il tempo. Io scelgo voi." },
         { who: "mordicchio", text: "Bene. Il viaggio di ritorno lo facciamo... domani?" },
       ],
-      fine: [{ who: "mordicchio", text: "Il cartello di casa è in basso. Teodora, ti porto io sulla schiena? No? Va bene, aspettiamo." }],
+      fine: [{ who: "mordicchio", text: "Il cartello di casa è in basso. Teodora, ti porto io sulla schiena? No? Va bene, come preferisci." }],
     },
     indizi: { animale: "La tartaruga è in basso a sinistra.", consegna: "La fontana è in alto a destra.", uscita: "Il cartello di casa è in basso." },
   },
@@ -405,7 +406,7 @@ LIVELLI.push(
       attesa: "Il cuscino è nel box in alto a sinistra. Io ti aspetto, tanto non ho fretta.",
       salvato: [
         { who: "briciola", text: "Che morbido... Grazie, cara. Sei gentile." },
-        { who: "anastasia", text: "Briciola, vuoi venire a casa con noi? Un cuscino vero, una stufa, tanti amici." },
+        { who: "anastasia", text: "Briciola, vuoi venire a casa con noi? Un cuscino vero, un calorifero, tanti amici." },
         { who: "briciola", text: "Io? Così vecchietta? Nessuno sceglie mai i vecchietti." },
         { who: "anastasia", text: "Io sì." },
       ],
@@ -481,7 +482,7 @@ LIVELLI.push(
       ],
       nascondino: [{ who: "narratore", text: "Rocky sparisce nell'erba alta. Si vede solo la punta della coda, da qualche parte." }],
       trovato: [{ who: "rocky", text: "Wof!" }, { who: "narratore", text: "Ti salta addosso tutto contento. Come se l'avessi trovato tu per la prima volta." }],
-      corsa: [{ who: "narratore", text: "Poi parte di corsa verso la collina. Si gira, ti aspetta, riparte. Vieni?" }],
+      corsa: [{ who: "narratore", text: "Poi parte di corsa verso la collina, scodinzolando. Vieni?" }],
       salvato: [
         { who: "narratore", text: "Sulla collina vi sdraiate a guardare le stelle. Rocky ti appoggia la testa sulle gambe." },
         { who: "narratore", text: "Non serve dire niente. Respira piano, la coda batte ancora un po' sull'erba." },
@@ -510,6 +511,7 @@ LIVELLI.push(
       "~~~~~~~~~~~~~~~~~~~~~~~~",
     ],
     dialoghi: {
+      sbagliato: ["Solo petali.", "Qui c'è un ramo fiorito, ma nessuna gru.", "Vuoto. Proviamo il prossimo cespuglio."],
       arrivo: [
         { who: "narratore", text: "Un giardino in stile giapponese, tutto in fiore. I petali rosa cadono piano, come neve." },
         { who: "mordicchio", text: "Sembra il posto dei tuoi sogni. Quello dove vuoi andare. Il Giappone." },
@@ -595,7 +597,7 @@ LIVELLI.push(
       attesa: "Mpf. Ne mancano. Guarda sotto i meli in alto.",
       salvato: [
         { who: "spillo", text: "Cinque. Perfetto. Mpf... grazie. Ecco, l'ho detto." },
-        { who: "spillo", text: "Senti, questo inverno... potrei passarlo da voi? Ho sentito che c'è una stufa." },
+        { who: "spillo", text: "Senti, questo inverno... potrei passarlo da voi? Ho sentito che c'è un calorifero." },
         { who: "mordicchio", text: "C'è un lettuccio sul calorifero. Ma è mio. Ti presto il secondo piano della torretta." },
       ],
       fine: [{ who: "mordicchio", text: "Il cartello di casa è in basso. Spillo, non pungermi la coda mentre camminiamo." }],
@@ -689,16 +691,33 @@ Object.assign(DOPO_LIVELLO, {
   16: [{ who: 'mordicchio', text: 'Ombra si è fermato davanti alla stalla. Dice che ci pensa. Ci pensa da un\'ora.' }],
   17: [{ who: 'mordicchio', text: 'Tempesta ha fatto il giro del giardino al galoppo. Ho dovuto rifugiarmi sulla torretta.' }],
   18: [{ who: 'mordicchio', text: 'Ottavia mi ha già raccontato tutta la sua vita. E quella delle ochette. E delle cugine.' }],
-  19: [{ who: 'mordicchio', text: 'Ciro dorme sulla trave della stalla. Di giorno. Che pigrone. Detto da me...' }],
+  19: [{ who: 'mordicchio', text: 'Ciro si è scelto la trave più alta della stalla. Di giorno dorme, di notte fa la guardia. Detto da me, che dormo sempre...' }],
   20: [{ who: 'mordicchio', text: 'Fragola è ancora un po\' spaventata. Le ho detto che qui c\'è la ragazza che smonta le trappole. Si è calmata subito.' }],
   21: [{ who: 'mordicchio', text: 'Rossella ha promesso di non guardare le ochette. La tengo d\'occhio lo stesso.' }],
   22: [{ who: 'mordicchio', text: 'Teodora è arrivata in salotto. Ci arriverà in cucina per Natale.' }],
-  23: [{ who: 'mordicchio', text: 'Briciola si è addormentata sul cuscino. Russa. Le voglio già bene, ma non dirglielo.' }],
+  23: [{ who: 'mordicchio', text: 'Briciola si è già scelta il cuscino più morbido. Le voglio già bene, ma non dirglielo.' }],
   24: [{ who: 'mordicchio', text: 'Tubino si è sistemato sul davanzale. Ogni tanto lo guardo. Lui mi saluta. Che situazione strana.' }],
-  25: [{ who: 'mordicchio', text: 'Hai dormito sorridendo, sai? E muovevi i piedi. Stavi ballando, vero?' }],
-  26: [{ who: 'mordicchio', text: 'Hana ha piantato un ramo di ciliegio vicino all\'orto. Dice che un giorno fiorirà anche qui.' }],
-  27: [{ who: 'mordicchio', text: 'Viola e Nuvola dormono vicine vicine. Anche io dormo vicino a te. È la stessa cosa.' }],
+  25: [{ who: 'mordicchio', text: 'Hai dormito sorridendo, sai? Ogni tanto muovevi la mano, come per lanciare una pallina.' }],
+  26: [{ who: 'mordicchio', text: 'Hana ha trovato un angolo del giardino che le ricorda casa. Dice che un giorno ci vedrà fiorire un ciliegio.' }],
+  27: [{ who: 'mordicchio', text: 'Viola e Nuvola stanno sempre vicine vicine. Anche io sto sempre vicino a te. È la stessa cosa.' }],
   28: [{ who: 'mordicchio', text: 'Spillo brontola, ma si è già preso il posto migliore vicino al calorifero. Il secondo migliore. Il primo è mio.' }],
   29: [{ who: 'mordicchio', text: 'Zip ha già riparato la porta della dispensa. E mi ha chiesto di non mangiarlo. Ovviamente no!' }],
   30: [{ who: 'mordicchio', text: 'La festa è stata bellissima. Il sentiero è finito, ma la vita al rifugio continua. E io ci sono.' }],
+});
+
+// se Anastasia trova la chiave prima di parlare con l'animale, il dialogo d'incontro ne tiene conto
+Object.entries({
+  3: [{ who: 'pina', text: 'Ciao... io sono Pina. Mi hanno chiusa qui tanto tempo fa, e poi non è più venuto nessuno.' }, { who: 'pina', text: 'Il cancello è chiuso a chiave. La chiave l\'hanno lasciata da qualche parte, lontano.' }, { who: 'anastasia', text: 'Una chiave? Forse è questa: l\'ho trovata poco fa.' }, { who: 'mordicchio', text: 'Previdente. Apriamo quel cancello, allora.' }],
+  11: [{ who: 'wilma', text: 'C\'è qualcuno là fuori?' }, { who: 'wilma', text: 'Io sono Wilma. Sono qui dentro da sempre. Non ho mai visto com\'è fuori.' }, { who: 'wilma', text: 'La porta è chiusa a chiave.' }, { who: 'anastasia', text: 'Ho trovato una chiave qui vicino. Proviamo questa.' }, { who: 'mordicchio', text: 'Wilma, tieniti pronta.' }],
+  21: [{ who: 'rossella', text: 'Ehi, voi due! Sono Rossella. Sono entrata nel cortile per una mela e il portone si è chiuso.' }, { who: 'rossella', text: 'La chiave l\'hanno lasciata da qualche parte, fuori.' }, { who: 'anastasia', text: 'Questa? L\'ho appena trovata.' }, { who: 'mordicchio', text: 'Una volpe chiusa dentro, e noi con la chiave in mano. Di solito è il contrario.' }],
+}).forEach(([id, righe]) => { const L = LIVELLI.find(l => l.id === +id); if (L) L.dialoghi.incontroChiave = righe; });
+
+// a fine tappa Mordicchio non spiega più dov'è il cartello di casa (si vede): restano solo le frasi affettuose
+LIVELLI.forEach(L => {
+  if (!L.dialoghi.fine) return;
+  L.dialoghi.fine = L.dialoghi.fine.map(l => {
+    if (/^Mino ci accompagna fino al cartello/.test(l.text)) return Object.assign({}, l, { text: 'Mino viene con noi. Andiamo.' });
+    const resto = l.text.split(/(?<=[.!?])\s+/).filter(f => !/cartello/i.test(f)).join(' ');
+    return resto.length > 12 ? Object.assign({}, l, { text: resto }) : null;
+  }).filter(Boolean);
 });

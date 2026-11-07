@@ -98,7 +98,7 @@ Object.assign(Rifugio.prototype, {
       this.tweens.add({ targets: c, y: c.y - 14, alpha: 0, duration: 400, onComplete: () => c.destroy() });
       Sfx.cuore(); const n = Object.keys(S.tesori).length;
       this.hud.toast('Nuovo tesoro: ' + TESORI[c.id][0] + '! (' + n + '/' + Object.keys(TESORI).length + ')');
-      if (n === 1) this.time.delayedCall(1800, () => this.hud.bubble(this.cat, 'I tesori li conservi nell\'album: tocca l\'orologio in alto.', 4200));
+      if (n === 1) this.time.delayedCall(1800, () => this.hud.bubble(this.cat, 'I tesori li conservi nell\'album: tocca «Diario» in alto.', 4200));
     });
   },
   // tesori che dipendono dal giorno e dal tempo, decisi in modo fisso per ogni giornata

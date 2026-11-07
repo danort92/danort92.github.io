@@ -319,7 +319,8 @@ class Hud extends Phaser.Scene {
     this.tweens.add({ targets: c, alpha: 1, y: 74, duration: 200 });
     this.tweens.add({ targets: c, alpha: 0, delay: 1900, duration: 300, onComplete: () => c.destroy() });
   }
-  setHint(wx, wy) { this.hint = wx == null ? null : { x: wx, y: wy }; if (!this.hint) this.arrow.setVisible(false); }
+  // niente freccia gialla: bastano gli indizi a parole di Mordicchio (scelta di Danilo)
+  setHint() { this.hint = null; if (this.arrow) this.arrow.setVisible(false); }
   update(time) {
     this.bubbles.forEach(b => { if (!b.dead) this.posBubble(b); if (time > b.until && !b.dead) { b.dead = true; this.tweens.add({ targets: b.c, alpha: 0, duration: 200, onComplete: () => b.c.destroy() }); } });
     this.bubbles = this.bubbles.filter(b => !b.dead || b.c.active);
@@ -347,7 +348,8 @@ class Boot extends Phaser.Scene {
     this.load.on('progress', v => { g.clear(); g.fillStyle(0xf3e5c2); g.fillRect(CW * 0.2, CH / 2, CW * 0.6 * v, 8 * DPR); });
     const a = 'assets/';
     this.load.spritesheet('girl', a + 'girl.png', { frameWidth: 16, frameHeight: 18 });
-    ['mordicchio', 'pisolo', 'ciuffo', 'ghianda', 'paperotto', 'papera', 'gallina', 'thiago', 'mitty', 'mino', 'max', 'wilma', 'maky', 'birba', 'fiocco', 'ombra', 'tempesta', 'ottavia', 'ciro', 'fragola', 'rossella', 'teodora', 'briciola', 'tubino', 'hana', 'nuvola', 'spillo', 'zip', 'erba', 'acqua'].forEach(k =>
+    this.load.spritesheet('paesani', a + 'paesani.png', { frameWidth: 16, frameHeight: 18 });
+    ['mordicchio', 'pisolo', 'ciuffo', 'ghianda', 'paperotto', 'papera', 'gallina', 'thiago', 'mitty', 'mino', 'max', 'wilma', 'maky', 'birba', 'fiocco', 'ombra', 'tempesta', 'ottavia', 'ciro', 'fragola', 'rossella', 'teodora', 'briciola', 'tubino', 'hana', 'nuvola', 'spillo', 'zip', 'erba', 'acqua', 'selciato'].forEach(k =>
       this.load.spritesheet(k, a + k + '.png', { frameWidth: 16, frameHeight: 16 }));
     this.load.spritesheet('mucca', a + 'mucca.png', { frameWidth: 32, frameHeight: 32 });
     this.load.spritesheet('icone', a + 'icone_speciali.png', { frameWidth: 16, frameHeight: 16 });
@@ -360,7 +362,7 @@ class Boot extends Phaser.Scene {
     this.load.spritesheet('peli', a + 'peli.png', { frameWidth: 12, frameHeight: 10 });
     this.load.atlas('tesori', a + 'tesori.png', a + 'tesori.json'); this.load.atlas('ricordi', a + 'ricordi.png', a + 'ricordi.json'); this.load.spritesheet('rocky', a + 'rocky.png', { frameWidth: 16, frameHeight: 16 });
     ['pannello', 'seme', 'cuccia', 'scintilla', 'portale', 'pavimento', 'muro', 'carota', 'insalata', 'gomitolo', 'bastoncino',
-      'campanellino', 'cuscino', 'fiori', 'chiave', 'recinto', 'cancello', 'auto', 'ciotola', 'pallina', 'fieno', 'zucca', 'abbeveratoio', 'mangiatoia', 'campanaccio', 'parete', 'portone', 'paglia', 'travi', 'pino', 'torretta', 'lettuccio', 'trappola', 'cerniera', 'barattolo', 'cartello', 'aspirapolvere'].forEach(k => this.load.image(k, a + k + '.png'));
+      'campanellino', 'cuscino', 'fiori', 'chiave', 'recinto', 'cancello', 'auto', 'ciotola', 'pallina', 'fieno', 'zucca', 'abbeveratoio', 'mangiatoia', 'campanaccio', 'parete', 'portone', 'paglia', 'travi', 'pino', 'torretta', 'lettuccio', 'trappola', 'cerniera', 'barattolo', 'cartello', 'aspirapolvere', 'cuscinone', 'cesta_giochi', 'pianta_grande', 'mensola', 'lucine', 'libreria', 'divanetto', 'lanterna', 'spazzola', 'letto_paglia', 'carriola', 'cuscino_cuore', 'ritratto_mordicchio', 'foto_festa', 'quadro_sogno'].forEach(k => this.load.image(k, a + k + '.png'));
   }
   create() {
     const an = this.anims;
@@ -469,10 +471,12 @@ class Mondo extends Phaser.Scene {
 //  Il rifugio
 // ---------------------------------------------------------------------
 const STANZA = { w: 11 * T, h: 15 * T, muro: 2 * T };
-const ZR = Math.max(2, Math.floor(CW / (STANZA.w + 8)));
+const ZR = Math.max(2, Math.floor(CW / (STANZA.w + 4)));   // la stanza riempie quasi tutta la larghezza (zoom intero = pixel nitidi)
 class Rifugio extends Mondo {
   constructor() { super('Rifugio'); }
-  init(d) { this.stanza = (d && d.stanza) || 'casa'; this.pos0 = d && d.pos; this.uscendo = false; }
+  init(d) { this.stanza = (d && d.stanza) || 'casa'; this.pos0 = d && d.pos; this.uscendo = false; this.gattoDorme = !!(d && d.gattoDorme); }
+  // se Mordicchio sta dormendo quando esci, resta lì: ti raggiunge più tardi
+  gattoDormiente() { const c = this.cat; return !!(c && (c.dorme || (c.evento && this.eventoCorrente && this.eventoCorrente.chi.includes(c) && this.eventoOggi === 'mordicchio_posto'))); }
   create() {
     const S = Save.get();
     if (this.stanza === 'stalla' && !S.stallaAperta) this.stanza = 'casa';
@@ -495,8 +499,19 @@ class Rifugio extends Mondo {
     this.peliSprites = []; if (this.stanza === 'casa') for (let i = 0; i < (S.peli || 0); i++) this.spawnPelo(i);
     const p0 = typeof this.pos0 === 'string' ? (POSTI_FUORI[this.pos0] || null) : this.pos0;
     this.makePlayer(p0 ? p0.x : STANZA.w / 2, p0 ? p0.y : STANZA.h - 26);
-    this.cat = this.stanza === 'fuori' && this.player ? this.makeAnimal('mordicchio', this.player.x + 12, this.player.y) : this.makeAnimal('mordicchio', STANZA.w / 2 + 30, STANZA.h - 70);
+    // Mordicchio entra ed esce appena dopo Anastasia: compare sulla porta e la raggiunge
+    const portaDa = this.stanza === 'fuori' ? (typeof this.pos0 === 'string' && typeof PORTE !== 'undefined' && PORTE[this.pos0]) : (!this.pos0 ? { x: STANZA.w / 2 + 4, y: STANZA.h - 3 } : null);
+    this.cat = portaDa ? this.makeAnimal('mordicchio', portaDa.x, portaDa.y) : this.stanza === 'fuori' && this.player ? this.makeAnimal('mordicchio', this.player.x + 12, this.player.y) : this.makeAnimal('mordicchio', STANZA.w / 2 + 30, STANZA.h - 70);
+    if (portaDa) {
+      const c = this.cat, ritardo = this.gattoDorme ? 15000 + Math.random() * 10000 : 450; c.setAlpha(0).setVisible(false); c.occupato = true;
+      if (this.gattoDorme) this.catSveglioFino = this.time.now + ritardo + 50000;
+      this.time.delayedCall(ritardo, () => { if (!c.active) return; c.setAlpha(1).setVisible(true); if (this.gattoDorme && this.stanza === 'fuori') { c.setPosition(portaDa.x, portaDa.y); } const tx = this.player.x + 12, ty = this.player.y + (this.stanza === 'fuori' ? 0 : -6);
+        c.setFlipX(tx < c.x); c.anims.play(c.walkAnim, true);
+        this.tweens.add({ targets: c, x: tx, y: ty, duration: 650, onUpdate: () => c.setDepth(c.y), onComplete: () => { c.anims.stop(); c.setFrame(c.idleFrame); c.occupato = false; c.pausa = 6 + Math.random() * 4; } }); });
+    }
     this.ospiti = [this.cat];
+    // Mordicchio arriva con te ed è sveglio: per un po' non si mette a dormire né sparisce in un evento (continuità tra le stanze)
+    this.catSveglioFino = this.time.now + 50000;
     Object.keys(S.animali).filter(k => k !== 'mordicchio' && ANIMALI[k] && luogoAttuale(k) === this.stanza && (this.stanza !== 'stalla' || S.stallaAperta)).forEach((k, i) => {
       const p = giardino ? this.puntoLibero() : { x: 30 + (i * 37) % 130, y: STANZA.muro + 40 + ((i * 53) % 150) };
       this.ospiti.push(this.makeAnimal(k, p.x, p.y));
@@ -509,8 +524,14 @@ class Rifugio extends Mondo {
     this.attachHud();
     if (!S.introVista) this.time.delayedCall(400, () => this.hud.say(INTRO, () => { S.introVista = true; Save.write(); }));
     else if (!S.consiglioSonno && this.stanza === 'casa') { S.consiglioSonno = true; Save.write(); this.time.delayedCall(900, () => this.hud.say([{ who: 'mordicchio', text: 'Quando vuoi riposare o andare a dormire, tocca l\'orologio in alto oppure il letto. Io mi sistemo tra le tue gambe, come sempre.' }])); }
-    else if (S.ultimoArrivo) { const id = S.ultimoArrivo; S.ultimoArrivo = null; Save.write(); this.time.delayedCall(400, () => this.hud.say(DOPO_LIVELLO[id] || [], () => this.commentaPeli())); }
+    else if (S.ultimoArrivo && this.stanzaArrivo(S.ultimoArrivo)) { const id = S.ultimoArrivo; S.ultimoArrivo = null; Save.write(); this.hud.attendiStoria(1500); if (this.messaInScena) this.messaInScena(id); this.time.delayedCall(400, () => this.hud.say((DOPO_LIVELLO[id] || []).filter(l => S.bastoncino || !/bastoncino/i.test(l.text)), () => this.commentaPeli())); }
     else this.time.delayedCall(600, () => this.commentaPeli());
+  }
+  // Mordicchio commenta il nuovo arrivato solo nella stanza dove vive (non fuori se l'animale è in casa)
+  stanzaArrivo(id) {
+    const L = LIVELLI.find(l => l.id === id); if (!L || L.animale === 'mordicchio') return true;
+    const k = L.ospite && L.animale !== L.ospite ? L.animale : L.animale;
+    return (typeof stanzaDi === 'function' ? stanzaDi(k) : (ANIMALI[k].stanza || 'casa')) === this.stanza;
   }
   attachHud() {
     const hud = this.hud, S = Save.data;
@@ -521,14 +542,8 @@ class Rifugio extends Mondo {
     this.semiTxt = txt(hud, 40, 23, S.semi + ' semi', 13).setOrigin(0, 0.5); hud.layer.add(this.semiTxt);
     const mb = hud.button(126, 8, 34, 30, Musica.on ? '♪' : '–', () => { mb.label.setText(Musica.toggle() ? '♪' : '–'); }, { size: 15 });
     this.barraOra(hud);
-    hud.layer.add(txt(hud, UW - 14, 23, { casa: 'Casa', fuori: 'Il rifugio', stalla: 'Stalla' }[this.stanza], 14, '#f3e5c2').setOrigin(1, 0.5));
-    if (this.stanza === 'casa' && (S.peli || 0) > 0) this.btnAspira = hud.button(UW - 120, UH - 94, 108, 32, 'Aspirapolvere', () => this.aspira(), { size: 12 });
-    const voci = this.stanza === 'fuori'
-      ? [['Van', () => this.van()], ['Ricette', () => this.ricettario()], ['Bottega', () => this.bottega()], ['Lavori', () => this.lavori()], ['Sentiero', () => this.scene.start('Mappa')]]
-      : [['Arreda', () => this.entraArreda()], ['Amici', () => this.amici()], ['Ricette', () => this.ricettario()], ['Bottega', () => this.bottega()], ['Esci', () => this.esci()]];
-    const by = UH - 54, gap = 5, bw = (UW - 24 - gap * (voci.length - 1)) / voci.length;
-    voci
-      .forEach(([l, cb], i) => hud.button(12 + i * (bw + gap), by, bw, 38, l, cb, { size: 12 }));
+    hud.button(256, 8, UW - 264, 30, 'Diario', () => this.diario(), { size: 13 });   // i posti sostituiscono la barra in basso
+    if (this.stanza === 'casa' && (S.peli || 0) > 0) this.btnAspira = hud.button(UW - 120, 46, 112, 30, 'Aspirapolvere', () => this.aspira(), { size: 12 });
   }
   spawnArredo(a) {
     const o = OGGETTI[a.id]; if (!o) return null;
@@ -580,12 +595,11 @@ class Rifugio extends Mondo {
         o.pausa -= dt; if (!o.gesto) { o.anims.stop(); o.setFrame(o.dorme && o.chiave === 'mordicchio' ? 4 : o.idleFrame); }
         if (o.pausa <= 0) {
           o.dorme = false; o.meta = this.puntoLibero(o);
-          const pref = (ANIMALI[o.chiave].preferiti || []), posto = this.arrediSprites.filter(a => pref.includes(a.dati.id));
-          if (posto.length && Math.random() < 0.5) { const a = Phaser.Utils.Array.GetRandom(posto); o.meta = { x: a.x, y: a.y - (a.dati.id === 'torretta' ? 22 : 6), posto: true }; }
+          const pp = this.postoPreferito ? this.postoPreferito(o) : null; if (pp && Math.random() < 0.5) o.meta = pp;
         }
       } else {
         const dx = o.meta.x - o.x, dy = o.meta.y - o.y, d = Math.hypot(dx, dy), sp = 18 * dt * (o.velocita || 1);
-        if (d < 2) { const posto = o.meta.posto; o.meta = null; o.pausa = 2 + Math.random() * 4; if (o.chiave === 'mordicchio' && (posto || Math.random() < 0.35)) { o.dorme = true; o.pausa = posto ? 12 : 8; } else this.gestoArrivo(o); }
+        if (d < 2) { const posto = o.meta.posto; o.meta = null; o.pausa = 2 + Math.random() * 4; if (o.chiave === 'mordicchio' && this.time.now > (this.catSveglioFino || 0) && (posto || Math.random() < 0.35)) { o.dorme = true; o.pausa = posto ? 12 : 8; } else if (posto && o.chiave !== 'mordicchio' && this.arrivoPosto) this.arrivoPosto(o, posto); else this.gestoArrivo(o); }
         else { o.x += dx / d * sp; o.y += dy / d * sp; o.setFlipX(dx < 0); o.anims.play(o.walkAnim, true); }
       }
       o.setDepth(o.dorme && o.chiave === 'mordicchio' ? o.y + 30 : o.y);
@@ -621,7 +635,7 @@ class Rifugio extends Mondo {
     if (id === 'mordicchio' && S.bastoncino) azioni.push(['Lancia il bastoncino', () => this.lancia()]);
     if (id === 'mordicchio' && cuoriDi('mordicchio') >= 1) azioni.push(['Chiedi un bacino', () => this.bacino(o)]);
     if (FRASI_EXTRA[id]) azioni.splice(1, 0, ['Chiacchiera', () => this.chiacchiera(o)]);
-    if (id !== 'mordicchio') azioni.push(['Dove vive: ' + NOMI_STANZE[stanzaDi(id)], () => this.sceltaStanza(o)]);
+    if (id !== 'mordicchio' && !(typeof LIBERI !== 'undefined' && LIBERI[id])) azioni.push(['Dove vive: ' + NOMI_STANZE[stanzaDi(id)], () => this.sceltaStanza(o)]);
     this.fineEvento && this.fineEvento(o);
     const h = 104 + azioni.length * 40, m = hud.modal(A.nome, h, () => { o.coccola = 1; });
     m.c.add(hud.add.image(44, m.y + 64, A.tex, o.idleFrame).setScale(A.tex === 'mucca' ? 1.5 : 3));
@@ -639,12 +653,17 @@ class Rifugio extends Mondo {
     o.coccola = 2.5; this.hearts(o.x, o.y - 14);
     if (id === 'mordicchio') Sfx.miao(); else Sfx.cuore();
     let frase;
-    if (Math.random() < 0.4 && A.indizi) {
-      frase = pick(A.indizi, this.recent); const sc = scoperto(id); if (!sc.indizi.includes(frase)) sc.indizi.push(frase); Save.write();
+    // gli indizi sui gusti si dicono come consigli per i regali (non frasi a caso), e sempre meno quando li conosci già
+    const scI = scoperto(id), nuovi = (A.indizi || []).filter(f => !scI.indizi.includes(f));
+    if (A.indizi && Math.random() < (nuovi.length ? 0.35 : 0.08)) {
+      const base = pick(nuovi.length ? nuovi : A.indizi, this.recent), i = A.indizi.indexOf(base);
+      const lead = i === 0 ? pick(['Se un giorno mi fai un regalo... ', 'Un consiglio per i regali: ']) : pick(['A proposito di regali: ', 'Un consiglio, se mi fai un regalo: ']);
+      frase = lead + base.charAt(0).toLowerCase() + base.slice(1); if (!scI.indizi.includes(base)) scI.indizi.push(base); Save.write();
     } else {
-      const lvl = Math.floor(cuoriDi(id)), ctx = Math.random() < 0.35 ? frasiContesto(id, this.stanza) : []; frase = pick(ctx.length ? ctx : frasiValide(A.frasi[lvl] || A.frasi[0]), this.recent);
+      const lvl = Math.floor(cuoriDi(id)), ctx = Math.random() < 0.35 ? frasiContesto(id, this.stanza) : []; const finoA = [].concat(...Object.keys(A.frasi).filter(n => +n <= lvl).map(n => A.frasi[n])); frase = Frasi.scegli(frasiValide(ctx.length ? ctx.concat(finoA) : finoA), id, this.recent) || pick(GESTI_RIPIEGO, this.recent);
     }
     this.hud.bubble(o, frase, 4200);
+    if (/^\*.*addorment/.test(frase)) { o.dorme = true; o.meta = null; o.pausa = 10; o.coccola = 4.4; this.time.delayedCall(4400, () => { if (o.active && o.dorme && this.pensiero) this.pensiero(o, 'zzz', true); }); } // se dice che si addormenta, si addormenta davvero
     const r = Eco.coccola(S, id); Save.write();
     if (r.sporco) this.time.delayedCall(4400, () => this.hud.bubble(o, pick(FRASI_SPORCO, this.recent), 3800));
     else if (r.nuovoCuore) this.time.delayedCall(700, () => this.hud.toast('Amicizia con ' + A.nome + ': ' + r.cuori + (r.cuori === 1 ? ' cuore' : ' cuori') + '!'));
@@ -654,7 +673,7 @@ class Rifugio extends Mondo {
     if (Eco.regaloOggi(S, o.chiave)) { o.coccola = 2; return hud.bubble(o, pick(['Oggi mi hai già fatto un regalo! Domani magari.', 'Un regalo al giorno basta e avanza. Grazie!']), 3500); }
     const ids = Object.keys(REGALI).filter(k => Eco.quantiRegali(S, k) > 0);
     const m = hud.modal('Un regalo per ' + A.nome, 300, () => { o.coccola = 1; });
-    if (!ids.length) { m.c.add(txt(hud, UW / 2, m.y + 140, 'Non hai regali.\nLi trovi lungo il sentiero,\nnell\'orto o in Bottega.', 13, COL.testo, { align: 'center' }).setOrigin(0.5)); return; }
+    if (!ids.length) { m.c.add(txt(hud, UW / 2, m.y + 140, 'Non hai regali.\nLi trovi lungo il sentiero,\nnell\'orto o alla bancarella.', 13, COL.testo, { align: 'center' }).setOrigin(0.5)); return; }
     const sa = hud.scrollArea(m.c, 24, m.y + 48, UW - 48, 236), cw = (UW - 48 - 16) / 3;
     ids.forEach((k, i) => {
       const r = REGALI[k], x = (i % 3) * (cw + 8), y = Math.floor(i / 3) * 82, cell = hud.add.container(x, y);
@@ -697,6 +716,7 @@ class Rifugio extends Mondo {
     cat.occupato = true; cat.meta = null; cat.dorme = false;
     const tx = Phaser.Math.Between(20, STANZA.w - 20), ty = Phaser.Math.Between(STANZA.muro + 30, STANZA.h - 40);
     const stick = this.add.image(p.x, p.y - 12, 'bastoncino').setScale(0.6).setDepth(9000);
+    this.time.delayedCall(7000, () => { if (stick.active) { stick.destroy(); cat.anims.timeScale = 1; cat.occupato = false; } }); // se qualcosa lo interrompe, il bastoncino non resta per terra
     Sfx.pop();
     this.tweens.add({ targets: stick, x: tx, duration: 600 });
     this.tweens.add({ targets: stick, y: { from: p.y - 12, to: ty - 2 }, angle: 540, duration: 600, ease: 'Quad.in', onComplete: () => stick.setDepth(ty - 1) });
@@ -724,7 +744,7 @@ class Rifugio extends Mondo {
       const righe = [['Adora', sc.adora], ['Gradisce', sc.gradisce], ['Non sopporta', sc.sgradito]];
       const ind = sc.indizi.map(s => '«' + s + '»');
       const L0 = LIVELLI.find(l => l.animale === k || l.ospite === k), amici = (typeof amiciDi === 'function' ? amiciDi(k) : []).filter(x => S.animali[x] && ANIMALI[x]).map(x => ANIMALI[x].nome);
-      const info = [(k === 'mordicchio' ? 'Sempre con te, ovunque.' : 'Vive ' + ({ casa: 'in casa', stalla: 'in stalla', fuori: 'in giardino' })[typeof stanzaDi === 'function' ? stanzaDi(k) : 'casa'] + (L0 ? ' · incontro: «' + L0.nome + '»' : '')), amici.length ? 'Amici: ' + amici.join(', ') : null].filter(Boolean).join('\n');
+      const info = [(k === 'mordicchio' ? 'Sempre con te, ovunque.' : typeof LIBERI !== 'undefined' && LIBERI[k] ? LIBERI[k].dove + (L0 ? ' · incontro: «' + L0.nome + '»' : '') : 'Vive ' + ({ casa: 'in casa', stalla: 'in stalla', fuori: 'in giardino' })[typeof stanzaDi === 'function' ? stanzaDi(k) : 'casa'] + (L0 ? ' · incontro: «' + L0.nome + '»' : '')), amici.length ? 'Amici: ' + amici.join(', ') : null, (A.preferiti || []).length ? 'Posti preferiti: ' + [...new Set(A.preferiti.map(p => (OGGETTI[p] || {}).nome).filter(Boolean).map(n => n.replace(/ (verde|rosa|azzurr[oa])$/i, '')))].slice(0, 4).join(', ').toLowerCase() : null].filter(Boolean).join('\n');
       const carTxt = txt(hud, 60, 32, A.carattere + ' · ' + A.specie, 11, COL.testo, { wordWrap: { width: UW - 48 - 70 }, lineSpacing: 1 }), dy = Math.max(0, carTxt.height - 14);
       const infoTxt = txt(hud, 14, 128 + dy, info, 11, '#7d6a5c', { wordWrap: { width: UW - 80 }, lineSpacing: 2 });
       const indTxt = txt(hud, 14, 136 + dy + infoTxt.height, ind.length ? 'Cosa ti ha raccontato:\n' + ind.join('\n') : 'Accarezzalo per sentire cosa racconta.', 11, COL.testo, { wordWrap: { width: UW - 80 }, lineSpacing: 2 });
@@ -743,7 +763,7 @@ class Rifugio extends Mondo {
   // ---------------- Bottega ----------------
   bottega(tab = 'regali', scroll) {
     const hud = this.hud, S = Save.data;
-    const m = hud.modal('Bottega', Math.min(UH - 40, 560), () => this.attachHud());
+    const m = hud.modal('La bancarella', Math.min(UH - 40, 560), () => this.attachHud());
     m.c.add(hud.add.image(34, m.y + 50, 'seme'));
     m.c.add(txt(hud, 46, m.y + 50, S.semi + ' semi', 13, COL.titolo).setOrigin(0, 0.5));
     hud.button(UW / 2 - 4, m.y + 38, 74, 26, 'Regali', () => { m.c.destroy(); this.bottega('regali'); }, { parent: m.c, size: 12, color: tab === 'regali' ? COL.titolo : '#9d866f' });
@@ -785,7 +805,7 @@ class Rifugio extends Mondo {
     hud.button(UW - 74, 10, 62, 30, 'Fine', () => this.esciArreda());
     const th = 88, ty = UH - th - 8;
     hud.layer.add(pannello(hud, 8, ty, UW - 16, th));
-    if (!S.inventario.length) hud.layer.add(txt(hud, UW / 2, ty + th / 2, 'Nessun mobile da sistemare.\nNe trovi lungo il sentiero e in Bottega.', 11, COL.testo, { align: 'center' }).setOrigin(0.5));
+    if (!S.inventario.length) hud.layer.add(txt(hud, UW / 2, ty + th / 2, 'Nessun mobile da sistemare.\nNe trovi lungo il sentiero e alla bancarella in giardino.', 11, COL.testo, { align: 'center' }).setOrigin(0.5));
     const per = Math.floor((UW - 32) / 58), pagina = this.pagina || 0, pagine = Math.max(1, Math.ceil(S.inventario.length / per));
     if (pagina >= pagine) this.pagina = 0;
     S.inventario.slice((this.pagina || 0) * per, (this.pagina || 0) * per + per).forEach((id, j) => {
@@ -967,7 +987,7 @@ class Livello extends Mondo {
   create() {
     this.buio = null; this.luce = null; this.portale = null; this.cancello = null; this.dest = null; this.mamma = null; this.frozenAll = false; this.inManoSprite = null; this.npcBob = null; this.mammaBob = null;
     this.palchi = null; this.festaSprites = null; this.tasti = null; this.inDanza = false; this.uscita = null; this.animale = null;
-    this.cancelloAperto = false; this.vicinoUscita = false; this.attesaDetta = 0; // la scena viene riusata: ogni nuova visita riparte pulita
+    this.cancelloAperto = false; this.vicinoUscita = false; this.attesaDetta = 0; this.dettoPrimaParliamo = false; // la scena viene riusata: ogni nuova visita riparte pulita
     const L = livello(this.lvId), M = L.missione; this.L = L; Musica.suona(temaLivello(L));
     const rows = L.mappa, H = rows.length, W = rows[0].length;
     this.setupWorld('#9bd4c3');
@@ -1042,7 +1062,7 @@ class Livello extends Mondo {
     this.attachHud();
     this.creaCartello();
     if (fatta) return this.giaFatta();
-    this.time.delayedCall(500, () => { if (!this.st.parlato) this.hud.say(L.dialoghi.arrivo); });
+    this.time.delayedCall(500, () => { if (!this.st.parlato && !this.ripreso) this.hud.say(L.dialoghi.arrivo); });
   }
   // tappa già completata: si può passeggiare, ma la storia non si ripete e l'animale vive al rifugio
   giaFatta() {
@@ -1138,32 +1158,53 @@ class Livello extends Mondo {
     if (hud.dialog || st.finito || (hud.ctrl && hud.ctrl.frozen)) return;
     this.items.slice().forEach(it => {
       if (Math.hypot(it.x - p.x, it.ombra.y - p.y) > 11) return;
+      if (it.tipo === 'oggetto' && !st.parlato && !this.dettoPrimaParliamo) { this.dettoPrimaParliamo = true; hud.bubble(this.cat, 'Chissà a chi serve... Prima andiamo a sentire chi c\'è.', 3500); }
       if (it.tipo === 'oggetto' && (!st.parlato || st.inMano)) return;
       this.raccogli(it);
     });
     const dA = Math.hypot(this.npc.x - p.x, this.npc.y - p.y);
     if (M.tipo === 'ritrova' && !st.parlato) {
       if (time > this.prossimoMiao) { this.prossimoMiao = time + 7000; hud.bubble(this.npc, 'Miao...', 1800); Sfx.miao(); }
-      if (dA < 16) { st.parlato = true; hud.say(L.dialoghi.incontro, () => this.salva(true)); }
+      if (dA < 16) { st.parlato = true; hud.say(this.incontroPallina(L.dialoghi.incontro), () => this.salva(true)); }
     }
     else if (M.tipo === 'nascondino' && !st.parlato) this.nascondino();
     else if (!st.parlato && dA < (M.tipo === 'chiave_cancello' ? 56 : 16)) {
-      st.parlato = true; hud.say(L.dialoghi.incontro, () => {
+      st.parlato = true; hud.say(st.chiave && L.dialoghi.incontroChiave ? L.dialoghi.incontroChiave : L.dialoghi.incontro, () => {   // se la chiave l'hai già trovata, il dialogo ne tiene conto
         this.progresso();
         if (M.tipo === 'seguimi') { this.seguaci.push(this.npc); if (this.npcBob) { this.npcBob.remove(); this.npcBob = null; } this.npc.setScale(1); }
       });
     } else if (st.parlato && !st.salvato) {
       if (M.tipo === 'seguimi') { if (Math.hypot(this.dest.x - p.x, this.dest.y - p.y) < 22) this.salva(); }
-      else if (M.tipo === 'chiave_cancello') { if (st.chiave && Math.hypot(this.cancelloXY.x - p.x, this.cancelloXY.y - p.y) < 20) this.apriCancello(); else this.attesa(dA, 56); }
+      else if (M.tipo === 'chiave_cancello') { if (st.chiave && Math.hypot(this.cancelloXY.x - p.x, this.cancelloXY.y - p.y) < 20) this.apriCancello(); else if (!st.chiave) this.attesa(dA, 56); }
       else if (dA < 16 && st.inMano) this.salva();
       else this.attesa(dA, 16);
     }
     this.controllaUscita();
     const fermo = time - this.ultimoProgresso;
     if (fermo > 30000 && this.indizioDato < 1) { this.indizioDato = 1; const o = this.obiettivoAttuale(); hud.bubble(this.cat, L.indizi[o.k] || L.indizi.animale, 5000); Sfx.miao(); }
-    if (fermo > 60000 && this.indizioDato < 2) { this.indizioDato = 2; hud.toast('Segui la freccia'); }
+    if (fermo > 75000 && this.indizioDato < 2) { this.indizioDato = 2; const o = this.obiettivoAttuale(); hud.bubble(this.cat, L.indizi[o.k] || L.indizi.animale, 5000); }   // un secondo indizio a parole, niente freccia
     if (this.indizioDato >= 1) { const o = this.obiettivoAttuale(); hud.setHint(o.x, o.y); }
-    if (time > this.prossimaBattuta && this.indizioDato === 0 && !hud.bubbles.some(b => !b.dead)) { this.prossimaBattuta = time + 25000 + Math.random() * 15000; hud.bubble(this.cat, pick(FRASI_MORDICCHIO_GIRO, this.recent), 3800); }
+    if (time > this.prossimaBattuta && this.indizioDato === 0 && !hud.bubbles.some(b => !b.dead) && this.battutaOpportuna(dA)) { this.prossimaBattuta = time + 25000 + Math.random() * 15000; const fg = Frasi.scegli(FRASI_MORDICCHIO_GIRO, 'mordicchio', this.recent); if (fg) hud.bubble(this.cat, fg, 3800); }
+  }
+  // Mordicchio fa una battuta durante il giro solo se non sta per partire un dialogo della storia:
+  // non vicino all'animale da incontrare, a un cespuglio del nascondino o a un oggetto da raccogliere
+  battutaOpportuna(dA) {
+    if (this.cat === this.player || this.hud.quieto()) return false;
+    const p = this.player, st = this.st, M = this.L.missione || {};
+    if (!st.parlato && M.tipo !== 'nascondino' && dA < 110) return false;
+    if (!st.parlato && (this.nascondigli || []).some(b => Math.hypot(b.x - p.x, b.y - p.y) < 50)) return false;
+    if ((this.items || []).some(it => it.tipo === 'oggetto' && Math.hypot(it.x - p.x, it.y - p.y) < 50)) return false;
+    if (st.parlato && !st.salvato && dA < 60) return false;
+    return true;
+  }
+  // tappa 10: la pallina può essere trovata prima o dopo Mordicchio, e il dialogo ne tiene conto
+  incontroPallina(righe) {
+    const L = this.L; if (!(L.animale === 'mordicchio' && L.regalo === 'pallina' && !this.st.giaFatta)) return righe;
+    const extra = this.st.regalo
+      ? [{ who: 'anastasia', text: 'Questa l\'ho trovata per strada.' }, { who: 'mordicchio', text: 'La mia pallina! Allora hai seguito i rimbalzi.' }]
+      : [{ who: 'mordicchio', text: 'La mia pallina è rimbalzata via, qui intorno. Se la vedi, prendiamola.' }];
+    const i = righe.findIndex(r => r.who === 'anastasia'); const out = righe.slice();
+    out.splice(i < 0 ? out.length : i, 0, ...extra); return out;
   }
   attesa(d, r) {
     if (d < r && this.L.dialoghi.attesa && (!this.attesaDetta || this.time.now > this.attesaDetta)) {
@@ -1180,7 +1221,7 @@ class Livello extends Mondo {
       this.npc.setVisible(true).setPosition(b.x + 10, b.y + 2).setScale(0);
       this.tweens.add({ targets: this.npc, scale: 1, duration: 300, ease: 'Back.out' });
       this.hud.say(this.L.dialoghi.incontro, () => this.salva(true));
-    } else { Sfx.blip(); this.hud.bubble(this.cat, pick(this.L.dialoghi.sbagliato, this.recent), 1800); }
+    } else { Sfx.blip(); const sb = this.L.dialoghi.sbagliato || ['Qui non c\'è.', 'Niente. Proviamo il prossimo.', 'Vuoto.']; this.hud.bubble(this.cat, pick(sb, this.recent), 1800); }
   }
   apriCancello() {
     if (this.cancelloAperto) return; this.cancelloAperto = true;
@@ -1208,7 +1249,7 @@ class Livello extends Mondo {
     if (it.tipo === 'regalo') {
       st.regalo = true; Sfx.pop(); this.aggiornaObiettivi();
       if (L.regalo === 'bastoncino') { Sfx.miao(); hud.bubble(this.cat, 'Un bastoncino! Tienilo: a casa me lo lanci e io te lo riporto.', 4000); }
-      else if (L.regalo === 'pallina' && L.animale === 'mordicchio') hud.bubble(this.player, 'La sua pallina! Allora è qui vicino...', 3500);
+      else if (L.regalo === 'pallina' && L.animale === 'mordicchio') { if (st.parlato) { Sfx.miao(); hud.bubble(this.npc, 'La mia pallina! L\'hai trovata!', 3500); } else hud.bubble(this.player, 'La sua pallina! Allora è qui vicino...', 3500); }
       else hud.toast('Regalo trovato: ' + REGALI[L.regalo].nome);
     }
   }
@@ -1223,7 +1264,7 @@ class Livello extends Mondo {
       if (this.mamma) { if (this.mammaBob) this.mammaBob.remove(); this.seguaci.push(this.mamma); }
       this.trail = this.trail.slice(-5); this.progresso(); this.apriPortale();
     };
-    if (silenzioso) dopo(); else hud.say(L.dialoghi.salvato, dopo);
+    if (silenzioso) dopo(); else hud.say(typeof righeFestaCuori === 'function' ? righeFestaCuori(L, this) : L.dialoghi.salvato, dopo);
   }
   // L'uscita è un cartello di legno: spento finché la missione non è finita, poi indica la strada di casa
   // L'uscita è un cartello di legno, sempre uguale: si può tornare al sentiero quando si vuole
@@ -1257,7 +1298,7 @@ class Livello extends Mondo {
     if (primaVolta) {
       S.inventario.push(L.premio);
       [L.animale, L.ospite].filter(Boolean).forEach(a => S.animali[a] = S.animali[a] || { cuori: 0 });
-      if (st.cuore) S.cuoricini.push(L.id);
+      if (st.cuore && !S.cuoricini.includes(L.id)) { S.cuoricini.push(L.id); this.sorpresaCuori = typeof sorpresaCuori === 'function' ? sorpresaCuori(S) : null; }
       S.ultimoArrivo = L.id;
       if (L.apreStalla && !S.stallaAperta) { S.stallaAperta = true; ARREDO_INIZIALE_STALLA.forEach(a => S.arredi.push({ ...a, stanza: 'stalla' })); }
     }
@@ -1275,7 +1316,8 @@ class Livello extends Mondo {
     [L.animale, L.ospite].filter(Boolean).forEach(a => righe.push([ANIMALI[a].tex, ANIMALI[a].idle, a === L.animale && L.testoArrivo ? L.testoArrivo : ANIMALI[a].nome + ' viene a vivere al rifugio']));
     if (st.regalo) righe.push(L.regalo === 'bastoncino' ? ['bastoncino', null, 'Il bastoncino di Mordicchio'] : [REGALI[L.regalo].atlas || REGALI[L.regalo].tex, REGALI[L.regalo].frame, 'Regalo: ' + REGALI[L.regalo].nome]);
     if (primaVolta) { const o = OGGETTI[L.premio]; righe.push([o.atlas || o.tex, o.frame, 'Nuovo mobile: ' + o.nome]); righe.push(['seme', null, '+' + guadagno + ' semi']); }
-    if (st.cuore) righe.push(['icone', 3, 'Cuoricino segreto']);
+    if (st.cuore) righe.push(['icone', 3, 'Cuoricino segreto · ' + new Set(Save.data.cuoricini).size + ' / ' + CUORI_TOTALI]);
+    if (this.sorpresaCuori) { const sp = this.sorpresaCuori, o = OGGETTI[sp.premio]; righe.push([o ? (o.atlas || o.tex) : 'icone', o ? o.frame : 3, sp.testo]); this.sorpresaCuori = null; }
     if (this.nuoveRicette > 0) righe.push(['cibo', 'pizza_rucola', this.nuoveRicette === 1 ? 'Una nuova ricetta nel libro' : this.nuoveRicette + ' nuove ricette nel libro']);
     righe.forEach((r, i) => {
       const y = UH * 0.26 + i * 44, im = hud.add.image(70, y, r[0], r[1] == null ? undefined : r[1]); fitIcon(im, 30);
@@ -1294,6 +1336,14 @@ const game = new Phaser.Game({
   scene: [Boot, Titolo, Rifugio, Mappa, Livello, Hud],
 });
 window.game = game;
+// Android e iPhone, quando il gioco resta a lungo in sottofondo, possono «svuotare» la grafica (contesto WebGL perso):
+// in quel caso il gioco si ricarica da solo. La partita è già salvata, quindi si riparte da dove si era.
+(function () {
+  let perso = false;
+  window.addEventListener('webglcontextlost', () => { perso = true; }, true);
+  window.addEventListener('webglcontextrestored', () => { location.reload(); }, true);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && perso) location.reload(); });
+})();
 let _rs = null;
 window.addEventListener('resize', () => {
   clearTimeout(_rs);

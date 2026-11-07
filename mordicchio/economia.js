@@ -149,8 +149,8 @@ const VAN = { ripara: 60, daTappa: 5, migliorie: [{ prezzo: 150, clienti: 4, nom
 
 // ---------------- OBIETTIVI CHE APRONO I CAPITOLI ----------------
 const CANCELLI = {
-  11: { cosa: 'stalla', prezzo: 120, testo: 'Per accogliere gli animali dell\'alpeggio serve una stalla. Costruiscila dalla Bottega.' },
-  21: { cosa: 'van1', testo: 'Per arrivare in paese serve il van con il bancone nuovo. Lo trovi nei miglioramenti in Bottega.' },
+  11: { cosa: 'stalla', prezzo: 120, testo: 'Per accogliere gli animali dell\'alpeggio serve una stalla. Costruiscila dalla bacheca dei lavori, in giardino.' },
+  21: { cosa: 'van1', testo: 'Per arrivare in paese serve il van con il bancone nuovo. Lo trovi alla bacheca dei lavori, in giardino.' },
 };
 
 // ---------------- TAPPE ----------------
@@ -171,6 +171,13 @@ const PREZZI_ARREDI = {
   quadro_notte: 40, quadro_rosa: 40, tappeto_azzurro: 50, tappeto_rosa: 50, abbeveratoio: 50, mangiatoia: 50,
   cuccia: 55, cassettiera: 60, lettuccio: 65, letto_verde: 85, letto_azzurro: 85, letto_rosa: 85, pendola: 95, torretta: 110,
 };
+// arredi nuovi (7/11: Danilo trovava casa e bancarella spoglie). Prezzi nella stessa scala degli altri:
+// piccoli 20-30, medi 35-50, grandi 60-90.
+Object.assign(PREZZI_ARREDI, {
+  sgabello: 20, panchetta: 30, sedia2: 25, tappetino_azzurro: 25, tappeto_verde: 50, orologio_grande: 45,
+  cuscinone: 30, cesta_giochi: 35, pianta_grande: 35, mensola: 30, lucine: 40, libreria: 70, divanetto: 80,
+  lanterna: 25, spazzola: 30, letto_paglia: 35, carriola: 40,
+});
 
 // =====================================================================
 //  Funzioni (agiscono sul salvataggio S)

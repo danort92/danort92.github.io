@@ -5,7 +5,7 @@
 // =====================================================================
 const NOMI_STANZE = { casa: 'casa', stalla: 'stalla', fuori: 'giardino' };
 // dove vanno a vivere di default (chi ama stare all'aperto va in giardino)
-const STANZA_PREDEFINITA = { ciuffo: 'fuori', pina: 'fuori', ghianda: 'fuori', paperotto: 'fuori', gaia: 'fuori', ottavia: 'fuori', hana: 'fuori' };
+const STANZA_PREDEFINITA = { mino: 'fuori', ciuffo: 'fuori', pina: 'fuori', ghianda: 'fuori', paperotto: 'fuori', gaia: 'fuori', ottavia: 'fuori', hana: 'fuori' };
 const GRANDI = ['margherita', 'viola', 'tempesta', 'ombra', 'nuvola'];   // in casa non ci stanno
 function stanzaDi(k) {
   const S = Save.data, scelta = S.animali[k] && S.animali[k].stanza;
@@ -40,23 +40,23 @@ function luogoAttuale(k) {
 // ---------------- comportamenti per specie ----------------
 // gesto: cosa fa ogni tanto quando si ferma; icone: i desideri che mostra nelle nuvolette
 const CARATTERI = {
-  mordicchio: { icone: ['pallina', 'bastoncino', 'cuore', 'zzz'] },
-  wilma: { gesto: 'razzola', icone: ['seme', 'zzz', 'fiori'] },
+  mordicchio: { icone: ['pallina', 'bastoncino', 'cuore'] },
+  wilma: { gesto: 'razzola', icone: ['seme', 'fiori'] },
   pina: { gesto: 'razzola', icone: ['seme', 'carota'] },
   gaia: { gesto: 'razzola', icone: ['insalata', 'cuore'] }, paperotto: { gesto: 'saltella', icone: ['insalata', 'cuore'], vel: 1.2 },
   ottavia: { gesto: 'razzola', icone: ['insalata', 'cuore', 'nota'] },
   ciuffo: { gesto: 'saltella', icone: ['carota', 'cuore'], vel: 1.5 }, ghianda: { gesto: 'saltella', icone: ['mela', 'pallina'], vel: 1.6 },
-  pisolo: { gesto: 'dorme', icone: ['zzz', 'more'] }, spillo: { gesto: 'arrotola', icone: ['mela', 'zzz'], vel: 0.8 },
+  pisolo: { gesto: 'dorme', icone: ['more'] }, spillo: { gesto: 'arrotola', icone: ['mela'], vel: 0.8 },
   thiago: { gesto: 'siede', icone: ['cuscino', 'cuore'] }, mitty: { gesto: 'agguato', icone: ['gomitolo', 'pallina'], vel: 1.3 },
   mino: { gesto: 'siede', icone: ['ciotola', 'cuore'] }, max: { gesto: 'agguato', icone: ['gomitolo', 'pallina'] },
-  teodora: { gesto: 'dorme', icone: ['insalata', 'zzz'], vel: 0.35 }, briciola: { gesto: 'dorme', icone: ['cuscino', 'zzz', 'cuore'], vel: 0.6 },
+  teodora: { gesto: 'dorme', icone: ['insalata'], vel: 0.35 }, briciola: { gesto: 'dorme', icone: ['cuscino', 'cuore'], vel: 0.6 },
   tubino: { gesto: 'saltella', icone: ['seme', 'cuore'] }, zip: { gesto: 'saltella', icone: ['gomitolo', 'nota'], vel: 1.6 },
-  margherita: { gesto: 'bruca', icone: ['fieno', 'zzz'], vel: 0.7 }, viola: { gesto: 'bruca', icone: ['fieno', 'cuore'], vel: 0.7 },
+  margherita: { gesto: 'bruca', icone: ['fieno'], vel: 0.7 }, viola: { gesto: 'bruca', icone: ['fieno', 'cuore'], vel: 0.7 },
   nuvola: { gesto: 'saltella', icone: ['insalata', 'pallina'], vel: 1.2 }, maky: { gesto: 'rotola', icone: ['zucca', 'cuore'] },
   birba: { gesto: 'saltella', icone: ['carota', 'nota'], vel: 1.4 }, fiocco: { gesto: 'bruca', icone: ['insalata', 'cuore'], vel: 0.8 },
-  ombra: { gesto: 'bruca', icone: ['carota', 'zzz'], vel: 0.6 }, tempesta: { gesto: 'bruca', icone: ['mela', 'nota'], vel: 1.1 },
-  ciro: { gesto: 'dorme', icone: ['zzz', 'cuscino'] }, fragola: { gesto: 'bruca', icone: ['more', 'fiori'], vel: 1.2 },
-  rossella: { gesto: 'agguato', icone: ['mela', 'zzz'] }, hana: { gesto: 'danza', icone: ['fiori', 'nota'] },
+  ombra: { gesto: 'bruca', icone: ['carota'], vel: 0.6 }, tempesta: { gesto: 'bruca', icone: ['mela', 'nota'], vel: 1.1 },
+  ciro: { gesto: 'dorme', icone: ['cuscino'] }, fragola: { gesto: 'bruca', icone: ['more', 'fiori'], vel: 1.2 },
+  rossella: { gesto: 'agguato', icone: ['mela'] }, hana: { gesto: 'danza', icone: ['fiori', 'nota'] },
 };
 const ICONE = {
   cuore: ['icone', 3], seme: ['seme'], fieno: ['fieno'], ciotola: ['ciotola'], bastoncino: ['bastoncino'],
@@ -73,8 +73,7 @@ Object.assign(Rifugio.prototype, {
   puntoLibero(o) {
     const S = Save.data;
     if (this.stanza !== 'fuori') {
-      const pref = o ? (ANIMALI[o.chiave].preferiti || []) : [], posto = this.arrediSprites ? this.arrediSprites.filter(a => pref.includes(a.dati.id)) : [];
-      if (posto.length && Math.random() < 0.5) { const a = Phaser.Utils.Array.GetRandom(posto); return { x: a.x, y: a.y - (a.dati.id === 'torretta' ? 22 : 6), posto: true }; }
+      const pp = o && this.postoPreferito ? this.postoPreferito(o) : null; if (pp && Math.random() < 0.5) return pp;
       return { x: Phaser.Math.Between(16, STANZA.w - 16), y: Phaser.Math.Between(STANZA.muro + 24, STANZA.h - 30) };
     }
     // in giardino: nella parte aperta, lontano da van e orto
@@ -108,7 +107,7 @@ Object.assign(Rifugio.prototype, {
     else if (g === 'siede' || g === 'agguato') { o.setFrame(o.idleFrame); this.tweens.add({ targets: o, scaleX: g === 'agguato' ? 1.1 : 1, scaleY: g === 'agguato' ? 0.85 : 0.96, yoyo: true, hold: 1200, duration: 250, onComplete: fine }); o.pausa = 4; }
     else if (g === 'dorme') {
       if (o.chiave === 'ciro' && !giorno) { o.gesto = null; return; }          // il gufo di notte è sveglio
-      o.pausa = 9 + Math.random() * 6; this.time.delayedCall(o.pausa * 1000, fine); this.pensiero(o, 'zzz', true);
+      o.dorme = true; o.pausa = 9 + Math.random() * 6; this.time.delayedCall(o.pausa * 1000, () => { o.dorme = false; fine(); }); this.pensiero(o, 'zzz', true);
     }
   },
   // ---------------- nuvolette: desideri e stati d'animo ----------------
@@ -121,18 +120,19 @@ Object.assign(Rifugio.prototype, {
     const g = this.add.graphics(); g.fillStyle(0xfbf4dc, 1).fillRoundedRect(-8, -7, 16, 13, 4); g.lineStyle(1, 0x504086, 0.9).strokeRoundedRect(-8, -7, 16, 13, 4);
     g.fillStyle(0xfbf4dc, 1).fillCircle(-3, 8, 1.6).fillCircle(-5, 11, 1); g.lineStyle(1, 0x504086, 0.7).strokeCircle(-3, 8, 1.6);
     const ic = iconaPensiero(this, 0, -1, k); if (ic.width) ic.setScale(Math.min(1, 10 / Math.max(ic.width, ic.height)) * (ic.type === 'Text' ? 1 : 1));
-    c.add([g, ic]); this.nuvola = { c, o, fine: this.time.now + 2600 };
+    c.add([g, ic]); this.nuvola = { c, o, k, fine: this.time.now + (k === 'zzz' ? 4000 : 5500) };
     this.tweens.add({ targets: c, alpha: 1, y: c.y - 2, duration: 220 });
   },
   aggiornaNuvola(time) {
     const n = this.nuvola, hud = this.hud;
     if (n) {
       const via = !n.o.active || time > n.fine || hud.dialog || (hud.ctrl && hud.ctrl.frozen) || this.modo !== 'gioca';
-      if (via) { const c = n.c; this.nuvola = null; this.tweens.add({ targets: c, alpha: 0, duration: 200, onComplete: () => c.destroy() }); }
+      const sveglio = n.k === 'zzz' && (!n.o.dorme && !(n.o.evento && n.o === this.cat) || n.o.meta);
+      if (via || sveglio) { const c = n.c; this.nuvola = null; this.tweens.add({ targets: c, alpha: 0, duration: 200, onComplete: () => c.destroy() }); }
       else n.c.setPosition(n.o.x, n.o.y - 26 + Math.sin(time / 300));
     }
     if (!this.nuvola && time > (this.prossimaNuvola || 0)) {
-      this.prossimaNuvola = time + 9000 + Math.random() * 8000;
+      this.prossimaNuvola = time + 20000 + Math.random() * 15000;
       const liberi = this.ospiti.filter(o => !o.occupato && o.visible && !(o.coccola > 0));
       if (liberi.length) { const o = Phaser.Utils.Array.GetRandom(liberi); this.pensiero(o, o.dorme ? 'zzz' : null); }
     }
@@ -178,8 +178,9 @@ Object.assign(Rifugio.prototype, {
   controllaEventi(time) {
     const S = Save.data, ev = this.eventoOggi, hud = this.hud;
     if (!ev || time < this.momentoEvento || this.inEvento) return;
-    if (hud.dialog || (hud.ctrl && hud.ctrl.frozen) || this.modo !== 'gioca' || this.aspirapolvere || this.dormendo || this.inChiacchiera || (this.cat && this.cat.notizia)) { this.momentoEvento = time + 3000; return; }
+    if (hud.dialog || (hud.ctrl && hud.ctrl.frozen) || this.modo !== 'gioca' || this.aspirapolvere || this.dormendo || this.inChiacchiera || (this.cat && (this.cat.notizia || this.cat.occupato))) { this.momentoEvento = time + 3000; return; }
     if (ev === 'lucciole') { if (S.ora >= 19 * 60 && !this.lucciole) this.accendiLucciole(); return; }
+    if ((ev === 'mordicchio_posto' || ev === 'foglia') && time < (this.catSveglioFino || 0)) { this.momentoEvento = this.catSveglioFino + 2000; return; }   // appena entrato con te, Mordicchio non va subito a dormire altrove
     const k = 'evf-' + this.stanza; if (S.oggi[k]) return;
     S.oggi[k] = true; Save.write(); this.inEvento = true;
     if (ev === 'mordicchio_posto') this.evPosto(); else if (ev === 'coccole') this.evCoccole(); else if (ev === 'gioco') this.evGioco(); else if (ev === 'foglia') this.evFoglia();
@@ -210,7 +211,7 @@ Object.assign(Rifugio.prototype, {
   },
   // un animale viene a chiedere coccole, senza obblighi
   evCoccole() {
-    const S = Save.data, cand = this.ospiti.filter(o => o !== this.cat && !o.occupato && !o.uscendo && !o.evento);
+    const S = Save.data, cand = this.ospiti.filter(o => o !== this.cat && !o.occupato && !o.uscendo && !o.evento && !o.dorme && !o.notizia);
     const o = cand.sort((a, b) => Eco.punti(S, b.chiave) - Eco.punti(S, a.chiave))[0] || this.cat; if (!o) return this.libera([]);
     const p = this.player, x = Phaser.Math.Clamp(p.x + (o.x < p.x ? -14 : 14), 12, STANZA.w - 12), y = Phaser.Math.Clamp(p.y + 2, 30, STANZA.h - 10);
     o.evento = true; o.meta = null; const ev = this.eventoCorrente = { chi: [o] };
@@ -276,7 +277,7 @@ Object.assign(Rifugio.prototype, {
     if (!this.ospiti || this.modo !== 'gioca') return;
     const S = Save.data, st = this.stanza, porta = st === 'fuori' ? null : { x: STANZA.w / 2, y: STANZA.h - 6 };
     this.ospiti.slice().forEach(o => {
-      if (o === this.cat || o.evento || o.occupato || o.uscendo || luogoAttuale(o.chiave) === st) return;
+      if (o === this.cat || o.evento || o.occupato || o.uscendo || o.dorme || luogoAttuale(o.chiave) === st) return;
       o.uscendo = true; o.meta = null; const dest = porta || { x: o.x < STANZA.w / 2 ? 4 : STANZA.w - 4, y: Phaser.Math.Clamp(o.y, 90, STANZA.h - 20) };
       if (Math.random() < 0.5) this.pensiero(o, 'nota', true);
       this.cammina(o, dest.x, dest.y, 1, () => { this.ospiti = this.ospiti.filter(x => x !== o); o.destroy(); });
@@ -342,7 +343,26 @@ function frasiContesto(k, stanza) {
 Rifugio.prototype.chiacchiera = function (o) {
   const pool = frasiContesto(o.chiave, this.stanza); if (!pool.length) return;
   o.coccola = 3; o.setFlipX(this.player.x < o.x);
-  const f = pick(pool, this.recent), lines = [{ who: o.chiave, text: f }];
-  if (Math.random() < 0.4) lines.push({ who: 'anastasia', text: pick(RISPOSTE, this.recent) });
+  const f = Frasi.scegli(pool, o.chiave, this.recent) || pick(GESTI_RIPIEGO, this.recent), lines = [{ who: o.chiave, text: f }];
+  { const r = Math.random() < 0.6 ? rispostaA(lines[0].text, this.recent) : null; if (r) lines.push({ who: 'anastasia', text: r }); }
   this.hud.say(lines);
 };
+
+// toccando la nuvoletta si apre l'animale che la sta pensando (così c'è tempo di farlo con calma)
+(function () {
+  const tap = Rifugio.prototype.tap;
+  Rifugio.prototype.tap = function (x, y) {
+    const n = this.nuvola;
+    if (this.modo === 'gioca' && n && n.o && n.o.active && !n.o.occupato && Math.abs(x - n.c.x) < 11 && Math.abs(y - (n.c.y - 1)) < 10) return this.menuAnimale(n.o);
+    return tap.call(this, x, y);
+  };
+})();
+
+// Tubino «vive sul davanzale»: in casa, quando si ferma, spesso torna sotto la finestra
+(function () {
+  const punto = Rifugio.prototype.puntoLibero;
+  Rifugio.prototype.puntoLibero = function (o) {
+    if (false && o && o.chiave === 'tubino' && this.stanza === 'casa' && Math.random() < 0.6) return { x: STANZA.w - 46 + 19 + Phaser.Math.Between(-8, 8), y: STANZA.muro + 12, posto: true };
+    return punto.call(this, o);
+  };
+})();

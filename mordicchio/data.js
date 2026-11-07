@@ -78,7 +78,7 @@ const ANIMALI = {
     indizi: ["Tutto quello che è arancione mi mette allegria. Se poi scrocchia, ancora meglio!",
              "I fili del cotone mi fanno starnutire. Etciù! Visto?"],
     frasi: {
-      0: ["Ho già fatto il giro della casa tre volte!", "Che cosa c'è dietro quella porta? E dietro quella?"],
+      0: ["Ho già fatto il giro del giardino tre volte!", "Che cosa c'è dietro quella porta? E dietro quella?"],
       1: ["Ho trovato un angolo perfetto per scavare. Tranquilla, non scavo davvero.", "Mi insegni la strada per il frutteto?"],
       2: ["Quando salto così vuol dire che sono felice. Si chiama binky!", "Con te esplorare è più bello."],
       3: ["Il posto più bello che ho scoperto? Questo rifugio.", "*fa un salto altissimo e ti atterra vicino*"],
@@ -90,7 +90,7 @@ const ANIMALI = {
     indizi: ["Una volta ho assaggiato un pezzetto di frutta rossa e croccante. Non l'ho più dimenticato.",
              "Il metallo mi ricorda la gabbia. Preferisco non vederlo."],
     frasi: {
-      0: ["Per tanto tempo ho visto solo sbarre. Qui vedo il cielo dalla finestra.", "Cammino piano, ma arrivo dappertutto."],
+      0: ["Per tanto tempo ho visto solo sbarre. Qui vedo il cielo tutto il giorno.", "Cammino piano, ma arrivo dappertutto."],
       1: ["Ho fatto un bagno di sabbia vicino alla porta. Che meraviglia.", "Sai che le galline si ricordano chi è gentile con loro?"],
       2: ["Stamattina ho chiocciato per la gioia. Mordicchio si è spaventato.", "Grazie per avermi aperto quel cancello."],
       3: ["Una gallina libera è una gallina felice. E io lo sono.", "*si accoccola vicino ai tuoi piedi*"],
@@ -103,9 +103,9 @@ const ANIMALI = {
              "I fiori profumati mi fanno girare la testa. Troppo profumo!"],
     frasi: {
       0: ["Ho spostato un cuscino. Forse due. Non ricordo dove.", "Gioca a nascondino con me! Conto io... uno... ho già finito!"],
-      1: ["Ho nascosto una cosa in casa. Non ti dico cosa.", "Mordicchio mi guarda male quando salto sul suo cuscino."],
+      1: ["Ho nascosto una cosa in giardino. Non ti dico cosa.", "Mordicchio mi guarda male quando gli salto vicino alla coda."],
       2: ["Sei la mia umana preferita per giocare.", "Oggi mi sono comportato benissimo. Quasi."],
-      3: ["Ti ho tenuto da parte il posto migliore sul davanzale.", "*ti sale sulla spalla e ti fa il solletico con la coda*"],
+      3: ["Ti ho tenuto da parte il ramo migliore del melo.", "*ti sale sulla spalla e ti fa il solletico con la coda*"],
     },
   },
   paperotto: {
@@ -127,7 +127,7 @@ const ANIMALI = {
              "Il chiasso disturba il mio piccolo. E quindi disturba anche me."],
     frasi: {
       0: ["Grazie per avermi riportato Paperotto. Non lo dimenticherò.", "Qui si sta tranquilli. È quello che cercavo."],
-      1: ["Tengo d'occhio tutti, non solo mio figlio.", "Un giorno vorrei un laghetto. Ma anche così va benissimo."],
+      1: ["Tengo d'occhio tutti, non solo mio figlio.", "Il laghetto è perfetto per Paperotto. Basso basso, come piace a me."],
       2: ["Hai la pazienza di una mamma papera. È un complimento.", "Paperotto parla sempre di te."],
       3: ["Questo è il nido più bello che abbiamo mai avuto.", "*ti sfiora la mano con il becco*"],
     },
@@ -166,7 +166,7 @@ Object.assign(ANIMALI, {
     indizi: ["Dormo sempre in mezzo ai fiori del giardino. Lì c'è il profumo giusto.",
              "I fili del gomitolo mi si impigliano nel pelo lungo. No, grazie."],
     frasi: {
-      0: ["Passo solo un attimo, poi torno in giardino.", "Hai qualcosa da mangiare? No? Allora accarezzami lo stesso."],
+      0: ["Il mio posto al sole è il migliore del giardino. Ma per due carezze mi alzo volentieri.", "Hai qualcosa da mangiare? No? Allora accarezzami lo stesso."],
       1: ["Il tuo papà mi lascia sempre un posto riparato per la notte.", "Quando passa Danilo mi siedo sempre sulle sue gambe. Sono le più comode."],
       2: ["Va bene, lo ammetto: mi piace stare qui.", "Se ci fosse una ciotola in più, non direi di no."],
       3: ["Forse non sono più tanto randagio.", "*ti si siede sulle gambe e non si sposta più*"],
@@ -715,12 +715,12 @@ const DOPO_LIVELLO = {
   1: [
     { who: "mordicchio", text: "Pisolo si è già scelto un angolo. I ricci fanno così." },
     { who: "mordicchio", text: "E hai trovato un bastoncino! Lanciamelo: toccami e scegli «Lancia il bastoncino»." },
-    { who: "mordicchio", text: "Ti hanno anche regalato una cuccia di vimini. Con «Arreda» la metti dove vuoi." },
+    { who: "mordicchio", text: "Ti hanno anche regalato una cuccia di vimini. Dal Diario, con «Arreda», la metti dove vuoi." },
     { who: "mordicchio", text: "Ogni animale ha i suoi gusti. Ascolta cosa dicono, poi prova a fare un regalo. Toccali e vedi." },
   ],
   2: [
-    { who: "mordicchio", text: "Ciuffo ha già fatto il giro della casa tre volte. Tre." },
-    { who: "mordicchio", text: "Con i semi che raccogli puoi comprare regali e mobili in Bottega." },
+    { who: "mordicchio", text: "Ciuffo ha già fatto il giro del giardino tre volte. Tre. Tre." },
+    { who: "mordicchio", text: "Con i semi che raccogli puoi comprare regali e mobili alla bancarella, in giardino." },
   ],
   3: [{ who: "mordicchio", text: "Pina si è messa vicino alla finestra. Dice che vuole vedere il cielo." }],
   4: [{ who: "mordicchio", text: "Ghianda ha già nascosto qualcosa. Non so cosa, ma lo sento." }],
@@ -754,13 +754,22 @@ INTRO.splice(0, INTRO.length,
   { who: "mordicchio", text: "Quando sei pronta, la porta è in basso." },
 );
 FRASI_MORDICCHIO_GIRO.splice(0, FRASI_MORDICCHIO_GIRO.length,
-  "Mi piace quando usciamo insieme. Oggi senza guinzaglio, ma ti sto vicino.",
+  "Mi piace quando usciamo insieme. Anche solo per guardarci intorno.",
+  "Mi piace il rumore delle foglie sotto le zampe.",
+  "Che silenzio. Si sentono solo i tuoi passi e i miei.",
+  "Non sono stanco. Cammino piano per farti compagnia.",
+  "Quante cose da annusare. Non so da dove cominciare.",
+  "Se ci perdiamo, la colpa è del sentiero. Non mia.",
+  "Lo sai che riconosco i tuoi passi anche da lontano?",
+  "Ogni volta che troviamo qualcuno, la casa diventa un po' più piena. E più bella.",
+  "Al ritorno una grattatina sotto il mento me la sono meritata. Lo dico e basta.",
+  "Andiamo piano. Le cose belle si vedono meglio, piano.",
+  "Fuori è bello. Ma il mio cuscino mi manca già un pochino.",
   "Senti che profumo d'erba?",
   "Se vedi un bastoncino, prendilo. Poi a casa me lo tiri.",
   "Ti ricordi quando sono arrivato a casa nella gabbietta? Ero piccolissimo.",
   "Vai pure avanti, io ti tengo d'occhio.",
   "Stanotte dormo tra le tue gambe. Come sempre.",
-  "Hai sentito anche tu quel fruscio?",
   "Stasera fai la pizza? Io non posso mangiarla, ma il profumo mi piace un sacco.",
   "Tu controlli sempre tutto due volte. Per fortuna.",
   "Sono nato il primo aprile. E no, non sono uno scherzo.",
@@ -781,7 +790,7 @@ ANIMALI.mordicchio.frasi = {
       "Quando sono arrivato ti preoccupavi tanto per la mia salute. Sto benissimo, sai? Anche grazie a te.",
       "*ti mordicchia piano la mano* Vuol dire grazie."],
 };
-ANIMALI.ghianda.frasi[0] = ["Ho spostato un cuscino. Non ricordo dove l'ho messo.", "Giochiamo a nascondino? Conto io!"];
+ANIMALI.ghianda.frasi[0] = ["Ho spostato una pigna. Non ricordo dove l'ho messa.", "Giochiamo a nascondino? Conto io!"];
 ANIMALI.mino.indizi = ["Dormo sempre in mezzo ai fiori del giardino. Mi piace il loro profumo.",
                        "I fili del gomitolo mi si impigliano nel pelo lungo. No, grazie."];
 
@@ -809,8 +818,8 @@ const RISCRITTURE = {
     arrivo: [{ who: "mordicchio", text: "Il frutteto. E là in mezzo c'è un paio di orecchie lunghe che non stanno ferme un attimo." }],
     incontro: [
       { who: "ciuffo", text: "Ciao! Io sono Ciuffo. Avevo nascosto cinque carote qua in giro e adesso non le trovo più!" },
-      { who: "ciuffo", text: "Mi aiuti? Io intanto controllo qui... e qui... anche qui!" },
-      { who: "mordicchio", text: "Tu cercale, io tengo d'occhio lui." },
+      { who: "ciuffo", text: "Mi aiuti? Io resto qui, così almeno non perdo anche me." },
+      { who: "mordicchio", text: "Andiamo, io ti vengo dietro. Cinque carote. Facile." },
     ],
     attesa: "Ne mancano ancora! Sono sparse per tutto il frutteto.",
     salvato: [
@@ -942,19 +951,19 @@ Object.assign(DOPO_LIVELLO, {
   1: [
     { who: "mordicchio", text: "Pisolo si è già scelto un angolo. Tipico dei ricci." },
     { who: "mordicchio", text: "E hai trovato un bastoncino! Toccami e scegli «Lancia il bastoncino»: te lo riporto." },
-    { who: "mordicchio", text: "Ti hanno regalato anche una cuccia di vimini. Con «Arreda» puoi metterla dove vuoi." },
+    { who: "mordicchio", text: "Ti hanno regalato anche una cuccia di vimini. Dal Diario, con «Arreda», puoi metterla dove vuoi." },
     { who: "mordicchio", text: "Ogni animale ha i suoi gusti. Ascolta cosa racconta mentre lo accarezzi, poi prova a fargli un regalo." },
   ],
   2: [
-    { who: "mordicchio", text: "Ciuffo ha già fatto il giro della casa tre volte." },
-    { who: "mordicchio", text: "Con i semi che trovi puoi comprare regali e mobili in Bottega." },
+    { who: "mordicchio", text: "Ciuffo ha già fatto il giro del giardino tre volte. Tre." },
+    { who: "mordicchio", text: "Con i semi che trovi puoi comprare regali e mobili alla bancarella, in giardino." },
   ],
-  3: [{ who: "mordicchio", text: "Pina si è messa vicino alla finestra. Dice che vuole guardare il cielo." }],
+  3: [{ who: "mordicchio", text: "Pina si è messa vicino all'orto. Dice che da lì si vede tutto il cielo." }],
   4: [{ who: "mordicchio", text: "Ghianda ha già nascosto qualcosa. Non so cosa, ma lo scopriremo." }],
-  5: [{ who: "mordicchio", text: "Gaia e Paperotto si sono sistemati. La casa comincia a riempirsi." }],
+  5: [{ who: "mordicchio", text: "Gaia e Paperotto si sono sistemati in giardino. Il rifugio comincia a riempirsi." }],
   6: [{ who: "mordicchio", text: "Thiago si è messo al sole sotto la finestra. Sembra che abiti qui da sempre." }],
-  7: [{ who: "mordicchio", text: "Mitty si è nascosto sotto la cuccia. Diamogli tempo." }],
-  8: [{ who: "mordicchio", text: "Mino ha fatto il giro della casa e poi si è fermato davanti alla Bottega. Chissà come mai." }],
+  7: [{ who: "mordicchio", text: "Mitty si è nascosto sotto il letto. Diamogli tempo." }],
+  8: [{ who: "mordicchio", text: "Mino ha fatto il giro del giardino e poi si è fermato davanti al van. Chissà come mai." }],
   9: [{ who: "mordicchio", text: "Max è arrivato. Io gli ho soffiato, lui mi ha fatto le fusa. Non ci capiamo." }],
   10: [
     { who: "mordicchio", text: "Grazie per essere venuta a cercarmi. Anche quella volta vera, alle due di notte." },
@@ -984,6 +993,9 @@ const ARREDO_INIZIALE_STALLA = [
   { id: "mangiatoia",   x: 40,  y: 80 },
   { id: "fieno",        x: 144, y: 88 },
   { id: "abbeveratoio", x: 88,  y: 184 },
+  { id: "letto_paglia", x: 136, y: 160 },
+  { id: "spazzola",     x: 24,  y: 152 },
+  { id: "lanterna",     x: 88,  y: 20 },
 ];
 Object.assign(ANIMALI, {
   wilma: {
@@ -1028,7 +1040,7 @@ Object.assign(ANIMALI, {
     indizi: ["Mi piace tutto quello che fa crunch! Crunch crunch!",
              "I cuscini? Noiosi. Su un cuscino non si salta bene."],
     frasi: {
-      0: ["Sono salita sulla mangiatoia. Poi sono scesa. Poi sono risalita.", "Giochiamo? Io salto, tu guardi."],
+      0: ["Sono salita su tutto quello che c'è in stalla. Poi sono scesa. Poi sono risalita.", "Giochiamo? Io salto, tu guardi."],
       1: ["Ho insegnato a Ghianda a saltare. Più o meno.", "Margherita dice che sono una peste. Ha ragione."],
       2: ["Oggi mi sono comportata benissimo. Quasi tutto il giorno.", "Quando ci sei tu salto ancora più in alto."],
       3: ["Sei la mia persona preferita del mondo. E ne ho viste tante, da sopra le rocce.", "*ti dà una testatina affettuosa*"],
@@ -1270,13 +1282,13 @@ LIVELLI.push(
 );
 Object.assign(DOPO_LIVELLO, {
   11: [
-    { who: "mordicchio", text: "Per Wilma ci voleva più spazio, così abbiamo aperto la stalla. Ci arrivi dal pulsante in alto." },
+    { who: "mordicchio", text: "Per Wilma ci voleva più spazio, così abbiamo aperto la stalla. Ci arrivi dal giardino: è la casetta di legno a destra." },
     { who: "mordicchio", text: "Lei sta ancora guardando il cielo dalla porta. Lasciamola fare." },
   ],
   12: [{ who: "mordicchio", text: "Margherita e Wilma si sono già messe vicine. Lo sapevo." }],
   13: [{ who: "mordicchio", text: "Maky ha già trovato l'unico angolo umido della stalla. Non chiedermi come." }],
-  14: [{ who: "mordicchio", text: "Birba è salita sulla mangiatoia due volte. Ed è qui da cinque minuti." }],
-  15: [{ who: "mordicchio", text: "Fiocco si è addormentato tra Margherita e il fieno. Non lo svegliamo." }],
+  14: [{ who: "mordicchio", text: "Birba è già salita sul tetto della stalla due volte. Ed è qui da cinque minuti." }],
+  15: [{ who: "mordicchio", text: "Fiocco si è già sistemato tra Margherita e il fieno. Dice che lì si sente al sicuro." }],
 });
 
 // Mordicchio: altri dettagli veri
@@ -1285,6 +1297,37 @@ Object.assign(OGGETTI, {
   lettuccio: { nome: "Lettuccio da calorifero", tex: "lettuccio", tipo: "pavimento", prezzo: 10 },
 });
 BOTTEGA.arredi.unshift("torretta", "lettuccio");
+// ---- arredi nuovi (7/11) ----
+Object.assign(OGGETTI, {
+  sgabello:          { nome: "Sgabello",            atlas: "mobili", frame: "sgabello",          tipo: "pavimento" },
+  panchetta:         { nome: "Panchetta",           atlas: "mobili", frame: "panchetta",         tipo: "pavimento" },
+  sedia2:            { nome: "Sedia imbottita",     atlas: "mobili", frame: "sedia2",            tipo: "pavimento" },
+  tappetino_azzurro: { nome: "Tappetino azzurro",   atlas: "mobili", frame: "tappetino_azzurro", tipo: "tappeto" },
+  tappeto_verde:     { nome: "Tappeto verde",       atlas: "mobili", frame: "tappeto_verde",     tipo: "tappeto" },
+  orologio_grande:   { nome: "Orologio da parete",  atlas: "mobili", frame: "orologio",          tipo: "muro" },
+  cuscinone:         { nome: "Cuscinone",           tex: "cuscinone",     tipo: "pavimento" },
+  cesta_giochi:      { nome: "Cesta dei giochi",    tex: "cesta_giochi",  tipo: "pavimento" },
+  pianta_grande:     { nome: "Pianta grande",       tex: "pianta_grande", tipo: "pavimento" },
+  mensola:           { nome: "Mensola coi barattoli", tex: "mensola",     tipo: "muro" },
+  lucine:            { nome: "Filo di lucine",      tex: "lucine",        tipo: "muro" },
+  libreria:          { nome: "Libreria",            tex: "libreria",      tipo: "pavimento" },
+  divanetto:         { nome: "Divanetto",           tex: "divanetto",     tipo: "pavimento" },
+  lanterna:          { nome: "Lanterna",            tex: "lanterna",      tipo: "muro",      stanza: "stalla" },
+  spazzola:          { nome: "Spazzola grattaschiena", tex: "spazzola",   tipo: "pavimento", stanza: "stalla" },
+  letto_paglia:      { nome: "Letto di paglia",     tex: "letto_paglia",  tipo: "pavimento", stanza: "stalla" },
+  carriola:          { nome: "Carriola",            tex: "carriola",      tipo: "pavimento", stanza: "stalla" },
+});
+// all'inizio la casa e la stalla non sono più quasi vuote
+ARREDO_INIZIALE.push(
+  { id: "poltroncina",   x: 120, y: 72 },
+  { id: "pianta_grande", x: 160, y: 64 },
+  { id: "cesta_giochi",  x: 136, y: 168 },
+  { id: "libreria",      x: 64,  y: 56 },
+  { id: "mensola",       x: 104, y: 22 },
+  { id: "divanetto",     x: 40,  y: 200 },
+  { id: "fiore_vaso",    x: 160, y: 200 },
+);
+
 LIVELLI.find(l => l.id === 9).premio = "torretta";
 LIVELLI.find(l => l.id === 10).premio = "lettuccio";
 ANIMALI.mordicchio.preferiti = ["torretta", "lettuccio"];
@@ -1311,7 +1354,7 @@ const FRASI_PELI_TANTI = [
 const FRASI_ASPIRAPOLVERE = [
   "NO! Il mostro! Io vado. Chiamami quando ha finito.",
   "Perché? Perché proprio quello? Ci vediamo dopo.",
-  "Me ne vado sull'armadio. Per sempre. O almeno cinque minuti.",
+  "Me ne vado in quell'angolo. Per sempre. O almeno cinque minuti.",
   "Quel coso mi odia. E io odio lui. È reciproco.",
 ];
 const FRASI_BACINO = [
