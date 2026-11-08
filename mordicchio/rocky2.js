@@ -116,7 +116,73 @@ OGGETTI.pallina_rossa = { nome: 'La pallina rossa', atlas: 'ricordi', frame: 'ro
     const l = (this.arrediSprites || []).find(a => /^letto/.test(a.dati.id)), p = this.player;
     if (l) { p.setPosition(l.x + 18, l.y + 6); this.cat.setPosition(l.x + 32, l.y + 10); this.cat.meta = null; this.cat.evento = true; this.time.delayedCall(9000, () => { if (this.cat) this.cat.evento = false; }); }
     const b = (this.arrediSprites || []).find(a => a.dati.id === 'pallina_rossa'); if (b) this.tweens.add({ targets: b, y: b.y - 2, yoyo: true, repeat: 3, duration: 300 });
-    const mostra = () => { if (!this.sys.isActive()) return; if (this.hud.dialog) return this.time.delayedCall(400, mostra); if (typeof mostraRicordo === 'function' && !(Save.data.ricordi && Save.data.ricordi.rocky)) mostraRicordo(this.hud, 'rocky', () => this.hud.toast('La pallina di Rocky è nell\'album')); };
+    const mostra = () => { if (!this.sys.isActive()) return; if (this.hud.dialog) return this.time.delayedCall(400, mostra); if (typeof mostraRicordo === 'function' && !(Save.data.ricordi && Save.data.ricordi.rocky)) mostraRicordo(this.hud, 'rocky', () => this.time.delayedCall(300, () => mostraRitrattoRocky(this.hud, false, 'Il ritratto è nell\'inventario di «Arreda»: appendilo dove vuoi.'))); };
     this.time.delayedCall(1500, mostra);
+  };
+})();
+
+// ---------------- dal sogno, la città giù in fondo (come nel ritratto) ----------------
+// ---------------- e rifacendo il sogno: niente Rocky fermo, ma un collare sulla collina ----------------
+OGGETTI.collare_rocky = { nome: 'Il collare di Rocky', tex: 'collare_rocky', tipo: 'pavimento' };
+(function () {
+  const prep = Livello.prototype.preparaRocky;
+  Livello.prototype.preparaRocky = function () {
+    prep.call(this);
+    // la città vista dalla collina: tetti lontani, nella foschia
+    const g = this.add.graphics().setDepth(-19), W = this.L.mappa[0].length * T;
+    let s = 7; const r = () => ((s = (s * 9301 + 49297) % 233280) / 233280);
+    g.fillStyle(0xcfd6e6, 0.55).fillRect(-200, -120, W + 400, 116);
+    for (let i = 0; i < 90; i++) { const x = -150 + r() * (W + 300), y = -100 + r() * 90, w = 5 + r() * 7; g.fillStyle([0xe8c39e, 0xf0dcb4, 0xd9a07f, 0xc9b28f][i % 4], 0.55).fillRect(x, y, w, 4 + r() * 3); g.fillStyle(0xa35b4f, 0.5).fillRect(x - 1, y - 2, w + 2, 2); }
+    g.fillStyle(0xeef1f6, 0.35).fillRect(-200, -60, W + 400, 56);
+    const st = this.st; if (!st.giaFatta) return;
+    // rifacendo il sogno: Rocky non c'è più; sulla collina, nell'erba, c'è il suo collare
+    this.rocky.setVisible(false); st.rocky = 'ricordo'; this.palchi = [];
+    this.collare = this.add.image(this.collina.x + 6, this.collina.y - 2, 'collare_rocky').setDepth(this.collina.y);
+    this.tweens.add({ targets: this.collare, y: this.collare.y - 1.5, yoyo: true, repeat: -1, duration: 900 });
+    this.time.delayedCall(1100, () => this.hud.bubble(this.player, 'Questo posto... mi ricorda qualcosa.', 4200));
+  };
+  const mr = Livello.prototype.missioneRocky;
+  Livello.prototype.missioneRocky = function (time) {
+    const st = this.st, p = this.player;
+    if (st.rocky === 'ricordo') {
+      if (this.collare && Math.hypot(this.collare.x - p.x, this.collare.y - p.y) < 18) {
+        st.rocky = 'fine'; const c = this.collare; this.collare = null; this.tweens.killTweensOf(c);
+        this.tweens.add({ targets: c, y: p.y - 18, alpha: 0, duration: 400, onComplete: () => c.destroy() }); Sfx.cuore();
+        const S = Save.data, nuovo = !S.collareRocky; S.collareRocky = true; if (nuovo) S.inventario.push('collare_rocky'); Save.write();
+        this.hud.say([
+          { who: 'narratore', text: 'Tra l\'erba della collina c\'è un collare marrone, consumato. Sulla medaglietta, quasi cancellato, un nome: Rocky.' },
+          { who: 'anastasia', text: 'Allora non era solo un sogno.' },
+        ], () => mostraRitrattoRocky(this.hud, nuovo));
+      }
+      return;
+    }
+    return mr.call(this, time);
+  };
+})();
+function mostraRitrattoRocky(hud, nuovo, nota) {
+  const w = UW - 60, h = w * 361 / 320, m = hud.modal('Anastasia e Rocky', h + 120);
+  m.c.add(hud.add.image(UW / 2, m.y + 46 + h / 2, 'ritratto_rocky').setDisplaySize(w, h));
+  m.c.add(txt(hud, UW / 2, m.y + 56 + h, 'Seduti in cima alla collina, a guardare il mondo.' + (nota ? '\n' + nota : nuovo ? '\nIl collare è nell\'inventario di «Arreda».' : ''), 12, COL.testo, { align: 'center', wordWrap: { width: UW - 60 } }).setOrigin(0.5, 0));
+}
+
+// ---------------- il ritratto dipinto di Anastasia e Rocky, da appendere in casa ----------------
+// È il premio del sogno (prima un quadretto generico). Appeso al muro, toccandolo si vede il dipinto.
+OGGETTI.quadro_rocky = { nome: 'Il ritratto di Anastasia e Rocky', tex: 'quadro_rocky', tipo: 'muro' };
+(function () {
+  const L = LIVELLI.find(l => l.id === 25); if (L) L.premio = 'quadro_rocky';
+  const ld = Save.load;   // chi ha già fatto il sogno riceve il ritratto (una volta sola)
+  Save.load = function () {
+    const S = ld.apply(this, arguments); if (!S) return S;
+    if ((S.completati || []).includes(25) && !S.ritrattoRocky && !(S.inventario || []).includes('quadro_rocky') && !(S.arredi || []).some(a => a.id === 'quadro_rocky')) { S.inventario = S.inventario || []; S.inventario.push('quadro_rocky'); }
+    if ((S.completati || []).includes(25)) S.ritrattoRocky = true;
+    return S;
+  };
+  const tap = Rifugio.prototype.tap;
+  Rifugio.prototype.tap = function (x, y) {
+    if (this.modo === 'gioca') {
+      const q = (this.arrediSprites || []).find(a => a.dati.id === 'quadro_rocky' && Phaser.Geom.Rectangle.Contains(a.getBounds(), x, y));
+      if (q) return mostraRitrattoRocky(this.hud, false);
+    }
+    return tap.call(this, x, y);
   };
 })();

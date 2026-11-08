@@ -302,3 +302,66 @@ const AL_PASCOLO = { margherita: 0.7, viola: 0.7, nuvola: 0.7, tempesta: 0.75, o
     return { dove: 'fuori', da, a };
   };
 })();
+
+// ---------------- prima di parlare con un animale, Anastasia gli si avvicina ----------------
+// (prima si poteva chiacchierare, accarezzare o fare un regalo da un capo all'altro del giardino)
+(function () {
+  const mv = Rifugio.prototype.movePlayer;
+  Rifugio.prototype.movePlayer = function (dt, blocked) {
+    const t = this.verso; if (!t) return mv.call(this, dt, blocked);
+    const v0 = this.hud.vector(), pp = this.player;
+    // il giocatore prende il comando col joystick, o qualcos'altro sposta Anastasia: si annulla l'avvicinamento
+    if (Math.hypot(v0.x, v0.y) > 0.15 || this.aspirapolvere || this.modo !== 'gioca' || (t.lx != null && Math.hypot(pp.x - t.lx, pp.y - t.ly) > 8)) { this.verso = null; if (t.o && t.o.active) { t.o.evento = false; t.o.coccola = 1; } return mv.call(this, dt, blocked); }
+    const p = this.player, dx = t.x - p.x, dy = t.y - p.y, d = Math.hypot(dx, dy);
+    if (d >= 3 && this.time.now <= t.scade && t.o.active && t.giro && this.time.now < t.giro.fino) {   // aggira l'ostacolo
+      const sp = 62 * dt, x0 = p.x, y0 = p.y;
+      if (!blocked(p.x + t.giro.vx * sp, p.y)) p.x += t.giro.vx * sp; if (!blocked(p.x, p.y + t.giro.vy * sp)) p.y += t.giro.vy * sp;
+      if (Math.abs(p.x - x0) + Math.abs(p.y - y0) < 0.01) t.giro = null;
+      p.anims.play('g-' + (Math.abs(t.giro ? t.giro.vx : 0) > 0.5 ? 'side' : (t.giro && t.giro.vy < 0 ? 'up' : 'down')), true); p.setDepth(p.y); t.lx = p.x; t.ly = p.y; return true;
+    }
+    if (d < 3 || this.time.now > t.scade || !t.o.active) { this.verso = null; p.anims.stop(); p.setFrame(p.dir === 'down' ? 0 : p.dir === 'up' ? 4 : 8); p.setFlipX(t.o.x < p.x); if (p.dir === 'side' || Math.abs(t.o.x - p.x) > 6) { p.dir = 'side'; p.setFrame(8); } t.poi(); return false; }
+    const sp = 62 * dt, vx = dx / d, vy = dy / d, x0 = p.x, y0 = p.y;
+    if (!blocked(p.x + vx * sp, p.y)) p.x += vx * sp;
+    if (!blocked(p.x, p.y + vy * sp)) p.y += vy * sp;
+    if (Math.abs(p.x - x0) + Math.abs(p.y - y0) < 0.01) { const s = (t.lato = -(t.lato || -1)); t.giro = { vx: -vy * s, vy: vx * s, fino: this.time.now + 450 }; }   // bloccata: prova di lato
+    if (Math.abs(vx) > Math.abs(vy)) { p.dir = 'side'; p.setFlipX(vx < 0); } else p.dir = vy < 0 ? 'up' : 'down';
+    p.anims.play('g-' + p.dir, true); p.setDepth(p.y); t.lx = p.x; t.ly = p.y; return true;
+  };
+  Rifugio.prototype.avvicinati = function (o, poi) {
+    const p = this.player; if (!o || o === this.cat && Math.hypot(o.x - p.x, o.y - p.y) < 30 || Math.hypot(o.x - p.x, o.y - p.y) < 24) return poi();
+    o.meta = null; o.coccola = 99; o.evento = true;
+    const lato = p.x < o.x ? -1 : 1, x = Phaser.Math.Clamp(o.x + lato * 16, 10, STANZA.w - 10), y = o.y + 2;
+    this.verso = { x, y, o, scade: this.time.now + 6000, poi: () => {
+      const d = Math.hypot(o.x - p.x, o.y - p.y);
+      if (d > 30 && o.active) { o.evento = true; return this.cammina(o, p.x + (o.x < p.x ? -14 : 14), p.y + 1, 1.6, () => { o.evento = false; o.coccola = 99; o.setFlipX(p.x < o.x); poi(); }); }
+      o.evento = false; o.coccola = 99; poi();
+    } };
+  };
+  ['accarezza', 'regala', 'chiacchiera', 'bacino'].forEach(k => {
+    const f = Rifugio.prototype[k]; if (!f) return;
+    Rifugio.prototype[k] = function (o, ...r) { if (!o || !o.chiave || this.verso) return f.call(this, o, ...r); return this.avvicinati(o, () => f.call(this, o, ...r)); };
+  });
+})();
+
+// ---------------- in giardino non si cammina sull'acqua né sull'orto ----------------
+// Anastasia: il laghetto, le aiuole coltivate e i tronchi degli alberi da frutto bloccano il passo.
+// Gli animali: non scelgono mete dentro il laghetto o l'orto e non tagliano attraverso l'acqua
+// (tranne chi fa il bagno: anatre e oche, quando vanno a nuotare).
+(function () {
+  const sopraOrto = (x, y, m = 0) => { const S = Save.data; for (let i = 0; i < (S.orto || []).length; i++) { const p = ORTO_XY(i); if (Math.abs(x - p.x) < 8 + m && y > p.y - 7 - m && y < p.y + 8 + m) return true; } return false; };
+  const tronco = (x, y) => Object.values(ALBERI).some(a => Math.abs(x - a.x) < 5 && y > a.y - 6 && y < a.y + 2);
+  const blo = Rifugio.prototype.bloccatoFuori;
+  Rifugio.prototype.bloccatoFuori = function (x, y) { return blo.call(this, x, y) || NEL_LAGO(x, y, -1) || sopraOrto(x, y) || tronco(x, y); };
+  const attraversaLago = (x0, y0, x1, y1) => { for (let t = 0; t <= 1; t += 0.08) if (NEL_LAGO(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, 3)) return true; return false; };
+  const pl = Rifugio.prototype.puntoLibero;
+  Rifugio.prototype.puntoLibero = function (o) {
+    if (this.stanza !== 'fuori' || !o) return pl.call(this, o);
+    for (let i = 0; i < 10; i++) {
+      const p = pl.call(this, o);
+      if (p.nuota || p.lago) return p;
+      if (NEL_LAGO(p.x, p.y, 6) || sopraOrto(p.x, p.y, 3) || attraversaLago(o.x, o.y, p.x, p.y)) continue;
+      return p;
+    }
+    return { x: o.x, y: o.y };   // niente meta buona: resta dov'è
+  };
+})();

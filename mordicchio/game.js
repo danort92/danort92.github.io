@@ -349,6 +349,7 @@ class Boot extends Phaser.Scene {
     const a = 'assets/';
     this.load.spritesheet('girl', a + 'girl.png', { frameWidth: 16, frameHeight: 18 });
     this.load.spritesheet('paesani', a + 'paesani.png', { frameWidth: 16, frameHeight: 18 });
+    this.load.image('ritratto_rocky', a + 'ritratto_rocky.jpg');
     ['mordicchio', 'pisolo', 'ciuffo', 'ghianda', 'paperotto', 'papera', 'gallina', 'thiago', 'mitty', 'mino', 'max', 'wilma', 'maky', 'birba', 'fiocco', 'ombra', 'tempesta', 'ottavia', 'ciro', 'fragola', 'rossella', 'teodora', 'briciola', 'tubino', 'hana', 'nuvola', 'spillo', 'zip', 'erba', 'acqua', 'selciato'].forEach(k =>
       this.load.spritesheet(k, a + k + '.png', { frameWidth: 16, frameHeight: 16 }));
     this.load.spritesheet('mucca', a + 'mucca.png', { frameWidth: 32, frameHeight: 32 });
@@ -362,7 +363,7 @@ class Boot extends Phaser.Scene {
     this.load.spritesheet('peli', a + 'peli.png', { frameWidth: 12, frameHeight: 10 });
     this.load.atlas('tesori', a + 'tesori.png', a + 'tesori.json'); this.load.atlas('ricordi', a + 'ricordi.png', a + 'ricordi.json'); this.load.spritesheet('rocky', a + 'rocky.png', { frameWidth: 16, frameHeight: 16 });
     ['pannello', 'seme', 'cuccia', 'scintilla', 'portale', 'pavimento', 'muro', 'carota', 'insalata', 'gomitolo', 'bastoncino',
-      'campanellino', 'cuscino', 'fiori', 'chiave', 'recinto', 'cancello', 'auto', 'ciotola', 'pallina', 'fieno', 'zucca', 'abbeveratoio', 'mangiatoia', 'campanaccio', 'parete', 'portone', 'paglia', 'travi', 'pino', 'torretta', 'lettuccio', 'trappola', 'cerniera', 'barattolo', 'cartello', 'aspirapolvere', 'cuscinone', 'cesta_giochi', 'pianta_grande', 'mensola', 'lucine', 'libreria', 'divanetto', 'lanterna', 'spazzola', 'letto_paglia', 'carriola', 'cuscino_cuore', 'ritratto_mordicchio', 'foto_festa', 'quadro_sogno'].forEach(k => this.load.image(k, a + k + '.png'));
+      'campanellino', 'cuscino', 'fiori', 'chiave', 'recinto', 'cancello', 'auto', 'ciotola', 'pallina', 'fieno', 'zucca', 'abbeveratoio', 'mangiatoia', 'campanaccio', 'parete', 'portone', 'paglia', 'travi', 'pino', 'torretta', 'lettuccio', 'trappola', 'cerniera', 'barattolo', 'cartello', 'aspirapolvere', 'cuscinone', 'cesta_giochi', 'pianta_grande', 'mensola', 'lucine', 'libreria', 'divanetto', 'lanterna', 'spazzola', 'letto_paglia', 'carriola', 'cuscino_cuore', 'ritratto_mordicchio', 'foto_festa', 'quadro_sogno', 'collare_rocky', 'quadro_rocky'].forEach(k => this.load.image(k, a + k + '.png'));
   }
   create() {
     const an = this.anims;

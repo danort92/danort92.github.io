@@ -12,11 +12,11 @@ const TURNI_VAN = [{ id: 'pranzo', da: 12 * 60, a: 14 * 60, nome: 'a pranzo' }, 
 const PAESANI = [
   { nome: 'Nonna Rina', frame: 0, saluti: ['Che profumino, cara!', 'Ai miei tempi il van della pizza non c\'era. Peccato.'] },
   { nome: 'Giulia, la fornaia', frame: 1, saluti: ['Io il pane lo faccio, ma la pizza la compro da te.', 'Ho finito il turno al forno. Ho una fame!'] },
-  { nome: 'Marco, il postino', frame: 2, saluti: ['Ho una lettera per te. No, scherzo. Ho fame e basta.', 'Faccio il giro del paese, ma passo sempre di qui.'] },
+  { nome: 'Marco, il postino', frame: 8, saluti: ['Ho una lettera per te. No, scherzo. Ho fame e basta.', 'Faccio il giro del paese, ma passo sempre di qui.'] },
   { nome: 'La maestra Elena', frame: 3, saluti: ['I bambini oggi erano scatenati. Mi serve una coccola da mangiare.', 'Ho detto ai bambini che qui c\'è un gatto col pizzetto. Ci credono poco.'] },
-  { nome: 'Nonno Bepi', frame: 4, saluti: ['Io lo prendo sempre uguale. Cioè, dipende.', 'Il gatto col pizzetto è tuo? Ha uno sguardo da capo.'] },
+  { nome: 'Nonno Bepi', frame: 9, saluti: ['Io lo prendo sempre uguale. Cioè, dipende.', 'Il gatto col pizzetto è tuo? Ha uno sguardo da capo.'] },
   { nome: 'Sara, la fiorista', frame: 5, saluti: ['Sa di basilico appena colto! Si sente da lontano.', 'Ti ho lasciato un fiore sul bancone. Tanto per.'] },
-  { nome: 'Tommaso, il ciclista', frame: 6, saluti: ['Trenta chilometri in bici. Adesso mi merito tutto.', 'Ho legato la bici al cancello. Il gatto la sta annusando.'] },
+  { nome: 'Tommaso, il ciclista', frame: 10, saluti: ['Trenta chilometri in bici. Adesso mi merito tutto.', 'Ho legato la bici al cancello. Il gatto la sta annusando.'] },
   { nome: 'Lucia, la bibliotecaria', frame: 7, saluti: ['Ho finito un libro bellissimo. Festeggio.', 'Parlo piano anche qui, è l\'abitudine. Una cosa buona, per favore.'] },
 ];
 PAESANI.forEach(p => { p.k = 'paesano' + p.frame; PERSONAGGI[p.k] = { nome: p.nome, tex: 'paesani', frame: p.frame }; });
