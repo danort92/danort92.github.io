@@ -9,7 +9,7 @@
 //  Se Anastasia torna dalla tappa 9 nel tardo pomeriggio o di sera, la scomparsa slitta al giorno dopo.
 //  Mai una fuga di sera. Tutto si salva: chiudendo e riaprendo il gioco si riparte dallo stesso punto.
 // =====================================================================
-const SCOMPARSA = { daOra: 9 * 60, entroOra: 15 * 60, tramonto: 19 * 60, dopoMinuti: 40 };
+const SCOMPARSA = { daOra: 9 * 60, entroOra: 17 * 60, tramonto: 18 * 60 + 30, dopoMinuti: 40 };   // la fuga può partire fino alle 17; il tramonto è alle 18:30
 const Scomparsa = {
   s(S) { return S.scomparsa || null; },
   attiva(S) { const s = S.scomparsa; return !!s && ['via', 'sera', 'cerca'].includes(s.stato); },
@@ -34,7 +34,10 @@ const Scomparsa = {
     return tp.call(this, S, id);
   };
   const ct = Eco.completaTappa;
-  Eco.completaTappa = function (S, id) { const r = ct.apply(this, arguments); if (id === 10 && S.scomparsa) S.scomparsa.stato = 'fatto'; return r; };
+  Eco.completaTappa = function (S, id) { const r = ct.apply(this, arguments); if (id === 10 && S.scomparsa) { S.scomparsa.stato = 'fatto'; if (S.ora < TEMPO.inizio) S.dopoRicerca = true; } return r; };
+  // prima dell'alba non si parte per nessuna tappa (dopo la ricerca notturna si va a dormire)
+  const tp2 = Eco.tappaPossibile;
+  Eco.tappaPossibile = function (S, id) { const r = tp2.apply(this, arguments); if (r.ok && !r.rigioca && S.ora < TEMPO.inizio && !(id === 10 && S.scomparsa && S.scomparsa.stato === 'cerca')) return { ok: false, perche: 'tardi' }; return r; };
   const notte = Eco.notte;
   Eco.notte = function (S) { const r = notte.apply(this, arguments); const s = S.scomparsa; if (s && s.stato === 'prevista' && s.ora != null && s.giornoOra !== S.giorno) s.ora = null; return r; };
 })();
@@ -48,7 +51,8 @@ Object.assign(Rifugio.prototype, {
   fugaFarfalla() {
     const S = Save.data, s = S.scomparsa, c = this.cat, hud = this.hud; if (!c || c.assente) return;
     s.stato = 'via'; s.giornoFuga = S.giorno; Save.write();
-    c.evento = true; c.meta = null; c.dorme = false;
+    this.inFuga = true;   // finché non è uscito dallo schermo resta visibile (prima spariva subito)
+    c.evento = true; c.occupato = true; c.meta = null; c.dorme = false; c.setVisible(true).setAlpha(1);
     // una farfalla gli passa davanti; lui la insegue fuori
     const f = this.add.container(c.x + 18, c.y - 16).setDepth(30000);
     const a1 = this.add.ellipse(-2, 0, 5, 4, 0xf2a7c3), a2 = this.add.ellipse(2, 0, 5, 4, 0xf9d26b), corpo = this.add.rectangle(0, 0, 1, 4, 0x504086);
@@ -57,13 +61,13 @@ Object.assign(Rifugio.prototype, {
     hud.bubble(c, '!', 1200);
     this.time.delayedCall(900, () => {
       this.tweens.add({ targets: f, x: uscita.x, y: uscita.y - 10, duration: 3200, ease: 'Sine.inOut', onUpdate: () => { f.y += Math.sin(this.time.now / 90) * 0.6; }, onComplete: () => f.destroy() });
-      this.cammina(c, uscita.x, uscita.y, 2.2, () => {
-        this.nascondiGatto();
+      this.time.delayedCall(350, () => this.cammina(c, uscita.x, uscita.y, 2.2, () => {
+        this.inFuga = false; this.nascondiGatto();
         this.time.delayedCall(600, () => hud.say([
           { who: 'anastasia', text: 'Mordicchio? ...È corso dietro a una farfalla.' },
           { who: 'anastasia', text: 'Speriamo torni entro sera. Ogni tanto si allontana, ma finora è sempre tornato prima del tramonto.' },
         ]));
-      });
+      }));
     });
   },
   preoccupata() {
@@ -83,7 +87,7 @@ Object.assign(Rifugio.prototype, {
     const righe = ['Anastasia si mette a letto, ma il posto tra le sue gambe è vuoto.', 'Le due di notte. Non riesce a dormire.'];
     const t = txt(hud, UW / 2, UH * 0.38, righe.join('\n\n'), 15, COL.crema, { align: 'center', wordWrap: { width: UW - 60 }, lineSpacing: 4 }).setOrigin(0.5).setAlpha(0); c.add(t);
     hud.tweens.add({ targets: t, alpha: 1, delay: 600, duration: 800 });
-    Eco.notte(S); S.ora = TEMPO.inizio; S.scomparsa.stato = 'cerca'; Save.write();
+    Eco.notte(S); S.ora = 2 * 60; S.scomparsa.stato = 'cerca'; Save.write();
     hud.button(UW / 2 - 100, UH * 0.66, 200, 44, 'Vado a cercarlo', () => { this.dormendo = false; this.scene.start('Livello', { id: 10 }); }, { parent: c, size: 15 });
   },
 });
@@ -91,7 +95,7 @@ Object.assign(Rifugio.prototype, {
 (function () {
   const crea = Rifugio.prototype.create;
   Rifugio.prototype.create = function () {
-    crea.apply(this, arguments);
+    this.inFuga = false; crea.apply(this, arguments);
     const S = Save.data; Scomparsa.prepara(S);
     const s = S.scomparsa;
     if (s && Scomparsa.attiva(S)) this.nascondiGatto();
@@ -102,10 +106,10 @@ Object.assign(Rifugio.prototype, {
   Rifugio.prototype.update = function (time, delta) {
     upd.call(this, time, delta);
     const S = Save.data, s = S && S.scomparsa; if (!s || !this.cat) return;
-    if (Scomparsa.attiva(S) && (this.cat.visible || this.cat.x > -50)) this.nascondiGatto();
+    if (Scomparsa.attiva(S) && !this.inFuga && (this.cat.visible || this.cat.x > -50)) this.nascondiGatto();
     const libero = this.modo === 'gioca' && !this.hud.dialog && !(this.hud.ctrl && this.hud.ctrl.frozen) && !this.dormendo && !this.uscendo && !this.turno;
     if (!libero || (this._prossimoControllo || 0) > time) return; this._prossimoControllo = time + 1000;
-    if (s.stato === 'prevista') { Scomparsa.prepara(S); if (s.ora != null && S.ora >= s.ora && S.ora < SCOMPARSA.tramonto - 60 && !this.cat.assente) this.fugaFarfalla(); }
+    if (s.stato === 'prevista') { Scomparsa.prepara(S); if (s.ora != null && S.ora >= s.ora && S.ora <= SCOMPARSA.entroOra && !this.cat.assente) this.fugaFarfalla(); }
     else if (s.stato === 'via' && S.ora >= SCOMPARSA.tramonto) this.preoccupata();
   };
   // a letto, se Mordicchio non è tornato: niente sonno, si esce a cercarlo
@@ -117,4 +121,28 @@ Object.assign(Rifugio.prototype, {
   // il gatto assente non parla e non si tocca
   const bub = Hud.prototype.bubble;
   Hud.prototype.bubble = function (target, text, ms) { if (target && target.assente) return null; return bub.call(this, target, text, ms); };
+})();
+
+// tornati a casa con Mordicchio, nel cuore della notte: si dorme fino al mattino (stesso giorno, la notte è già passata)
+Object.assign(Rifugio.prototype, {
+  dormiDopoRicerca() {
+    const S = Save.data, hud = this.hud;
+    const aspetta = () => {
+      if (!this.sys.isActive() || !S.dopoRicerca) return;
+      if (hud.dialog || (hud.ctrl && hud.ctrl.frozen)) return this.time.delayedCall(500, aspetta);
+      S.dopoRicerca = false; S.ora = TEMPO.inizio; Save.write();
+      if (hud.ctrl) hud.ctrl.frozen = true;
+      const c = hud.add.container(0, 0).setDepth(80); hud.layer.add(c);
+      const bg = hud.add.rectangle(0, 0, UW, UH, 0x1d1828, 1).setOrigin(0).setAlpha(0); c.add(bg);
+      const t = txt(hud, UW / 2, UH * 0.42, 'Quella notte Mordicchio dorme tra le gambe di Anastasia.\nPiù vicino del solito.', 15, COL.crema, { align: 'center', wordWrap: { width: UW - 60 }, lineSpacing: 6 }).setOrigin(0.5).setAlpha(0); c.add(t);
+      hud.tweens.add({ targets: bg, alpha: 1, duration: 700 });
+      hud.tweens.add({ targets: t, alpha: 1, delay: 600, duration: 800 });
+      hud.time.delayedCall(3800, () => { hud.tweens.add({ targets: c, alpha: 0, duration: 800, onComplete: () => { c.destroy(); if (hud.ctrl) hud.ctrl.frozen = false; if (this.aggiornaOra) this.aggiornaOra(); } }); });
+    };
+    this.time.delayedCall(1500, aspetta);
+  },
+});
+(function () {
+  const crea = Rifugio.prototype.create;
+  Rifugio.prototype.create = function () { crea.apply(this, arguments); if (Save.data.dopoRicerca) this.dormiDopoRicerca(); };
 })();

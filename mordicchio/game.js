@@ -956,7 +956,8 @@ class Mappa extends Phaser.Scene {
           if (pos.perche === 'stanco') hud.say([{ who: 'mordicchio', text: pick(FRASI_STANCO) }]);
           else if (pos.perche === 'cancello') hud.say([{ who: 'mordicchio', text: pos.testo }]);
           else if (pos.perche === 'tardi') hud.say([{ who: 'mordicchio', text: 'È tardi per partire. Si va domattina, col sole.' }]);
-          else if (pos.perche === 'nonora') { const sc = S.scomparsa && S.scomparsa.stato; hud.say([sc === 'via' || sc === 'sera' ? { who: 'anastasia', text: 'Non so dove sia andato. Di solito torna da solo prima del tramonto... aspettiamo.' } : { who: 'mordicchio', text: 'Lì non c\'è niente da vedere, per adesso. Io sto qui con te.' }]); }
+          else if (pos.perche === 'alba' && this.tappaAllAlba) this.tappaAllAlba(id);
+          else if (pos.perche === 'nonora') { const sc = S.scomparsa && S.scomparsa.stato; hud.say([sc === 'via' || sc === 'sera' ? { who: 'anastasia', text: 'Non so dove sia andato. Di solito torna da solo prima del tramonto... aspettiamo.' } : (sc === 'prevista' || (S.completati.includes(9) && !S.completati.includes(10)) ? { who: 'mordicchio', text: pick(['Oggi non ho voglia di proseguire. Ho le zampe pesanti. Restiamo un po\' qui, in giardino?', 'Sono stanco, oggi. Il sentiero non scappa: facciamo una pausa, ti va?', 'Proseguire? Mmh. Oggi preferisco stare qui al sole. Domani, magari.']) } : { who: 'mordicchio', text: 'Lì non c\'è niente da vedere, per adesso. Io sto qui con te.' })]); }
           return;
         }
         cam.fadeOut(250); this.time.delayedCall(260, () => this.scene.start('Livello', { id }));
@@ -1036,7 +1037,7 @@ class Livello extends Mondo {
       else if (ch === 'A') this.animale = { x: cx, y: by };
       else if (ch === 'D') this.dest = { x: cx, y: by };
       else if (ch === 'O') M.frame ? this.addItem('oggetto', cx, by, M.atlas || 'natura', M.frame) : this.addItem('oggetto', cx, by, M.tex);
-      else if (ch === 'K') this.addItem('chiave', cx, by, 'chiave');
+      else if (ch === 'K') this.addItem('chiave', cx, by, M.texChiave || 'chiave');
       else if (ch === 'R') { const r = REGALI[L.regalo]; r && r.atlas ? this.addItem('regalo', cx, by, r.atlas, r.frame) : this.addItem('regalo', cx, by, r ? r.tex : L.regalo); }
       else if (ch === 's') this.addItem('seme', cx, by, 'seme');
       else if (ch === 'H') this.addItem('cuore', cx, by, 'icone', 3);
@@ -1108,7 +1109,7 @@ class Livello extends Mondo {
     let mis = '', fatto = st.salvato;
     if (M.tipo === 'raccogli_n') mis = M.nomeOggetto + ' ' + st.raccolti + '/' + this.totOggetti;
     else if (M.tipo === 'trova_e_porta') { mis = M.nomeOggetto; fatto = st.inMano || st.salvato; }
-    else if (M.tipo === 'chiave_cancello') { mis = 'Chiave'; fatto = st.chiave || st.salvato; }
+    else if (M.tipo === 'chiave_cancello') { mis = M.nomeChiave || 'Chiave'; fatto = st.chiave || st.salvato; }
     else if (M.tipo === 'nascondino') mis = ({ auto: 'Auto ', pino: 'Pini ', 'natura:masso': 'Massi ' }[M.nascondiglio] || 'Cespugli ') + this.nascondigli.filter(b => b.controllato).length + '/' + this.nascondigli.length;
     else if (M.tipo === 'seguimi') mis = ANIMALI[L.ospite] ? ANIMALI[L.ospite].nome : (M.meta || 'Arrivo');
     else if (M.tipo === 'ritrova') mis = 'Torna a casa';
@@ -1248,7 +1249,7 @@ class Livello extends Mondo {
       } else { st.inMano = true; M.frame ? inTesta(M.atlas || 'natura', M.frame) : inTesta(M.tex); hud.toast('Hai raccolto: ' + M.nomeOggetto); }
       this.progresso(); return;
     }
-    if (it.tipo === 'chiave') { st.chiave = true; Sfx.pop(); it.destroy(); inTesta('chiave'); hud.toast('Hai trovato la chiave!'); this.progresso(); return; }
+    if (it.tipo === 'chiave') { st.chiave = true; Sfx.pop(); it.destroy(); inTesta(M.texChiave || 'chiave'); hud.toast(M.trovataChiave || 'Hai trovato la chiave!'); this.progresso(); return; }
     this.tweens.add({ targets: it, y: it.y - 16, alpha: 0, duration: 400, onComplete: () => it.destroy() });
     if (it.tipo === 'seme') { st.semi++; Sfx.seme(); this.aggiornaObiettivi(); return; }
     if (it.tipo === 'cuore') { st.cuore = true; Sfx.cuore(); hud.toast('Cuoricino segreto trovato!'); return; }
