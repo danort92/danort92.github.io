@@ -170,13 +170,18 @@ const ALBA = { tappa: 7, entro: 9 * 60 };
     return r;
   };
   Mappa.prototype.tappaAllAlba = function (id) {
-    const S = Save.data, hud = this.hud || game.scene.getScene('Hud');
-    if (S.ora >= ORA_LETTO) {
-      hud.say([{ who: 'mordicchio', text: 'È tardi per partire. Si va domattina, col sole.' }, { who: 'mordicchio', text: 'E poi Mitty si trova all\'alba, quando il parcheggio è ancora vuoto. Andiamo a dormire.' }], () => {
+    const S = Save.data, hud = this.hud || game.scene.getScene('Hud'), M = t => ({ who: 'mordicchio', text: t });
+    const stessoGiorno = S.giornoTappa && S.giornoTappa[6] === S.giorno, sentito = S.richiamoMitty === S.giorno || !stessoGiorno;
+    if (stessoGiorno && !sentito) {   // il miagolio non si è ancora sentito: niente parcheggio, niente gattino
+      hud.say([M('Oggi abbiamo già camminato abbastanza. Riposiamoci un po\', ti va?'), M('Il sentiero ci aspetta. Domani.')]);
+    } else if (S.ora >= ORA_LETTO) {
+      hud.say([M('È tardi per partire. Si va domattina, col sole.'), M('Il gattino lo andiamo a cercare all\'alba, quando il parcheggio è ancora vuoto. Andiamo a dormire.')], () => {
         this.registry.set('dormiSubito', true); this.cameras.main.fadeOut(250); this.time.delayedCall(260, () => this.scene.start('Rifugio', { stanza: 'casa' }));
       });
-    } else {
-      hud.say([{ who: 'mordicchio', text: 'Oggi sono stanchissimo. Non ho voglia di muovermi fino a domattina.' }, { who: 'mordicchio', text: 'E il parcheggio va visto all\'alba, quando è ancora vuoto. Partiamo presto, domani. Promesso.' }]);
+    } else if (stessoGiorno) {
+      hud.say([M('Il gattino lo cerchiamo domattina, appena svegli. All\'alba il parcheggio è vuoto e lo sentiremo meglio.')]);
+    } else {   // il giorno dopo, ma dopo le 9
+      hud.say([M('Ormai è tardi: il parcheggio è pieno di macchine e di gente. Il gattino si sarà nascosto ancora meglio.'), M('Domattina all\'alba, appena svegli, ci andiamo per primi. Promesso.')]);
     }
   };
   // arrivati a casa per andare a letto: si dorme
