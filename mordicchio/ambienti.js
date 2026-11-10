@@ -107,11 +107,13 @@ Object.assign(Livello.prototype, {
       g.fillStyle(0x000000, 0.10).fillEllipse(cx + 3, cy + 5, w, w * 0.42);
       g.fillStyle(0xffffff, 0.10).fillEllipse(cx - 2, cy - 2, w * 0.8, w * 0.32);
       g.fillStyle(0xffffff, 0.08).fillEllipse(cx - 4, cy - 4, w * 0.45, w * 0.18);
-      g.lineStyle(1, 0x3f6b4a, 0.35).strokeEllipse(cx, cy + 1, w, w * 0.42);
+      // il bordo del poggio fatto di puntini: con «strokeEllipse» alcuni telefoni Android disegnavano righe orizzontali lunghe tutto lo schermo
+      for (let k = 0, n = Math.round(w * 1.6); k < n; k++) { const a = k / n * Math.PI * 2; g.fillStyle(0x3f6b4a, 0.35).fillRect(Math.round(cx + Math.cos(a) * w / 2), Math.round(cy + 1 + Math.sin(a) * w * 0.21), 1, 1); }
     }
     if (ripidi) for (let i = 0; i < 6 && libero.length; i++) {   // terrazzamenti: curve di livello
       const [x, y] = libero[Math.floor(rnd() * libero.length)], cx = x * T, cy = y * T;
-      g.lineStyle(1, 0x5d7a4e, 0.45).beginPath(); g.moveTo(cx - 30, cy + 6); g.lineTo(cx - 10, cy); g.lineTo(cx + 12, cy + 2); g.lineTo(cx + 34, cy - 4); g.strokePath();
+      const pts = [[cx - 30, cy + 6], [cx - 10, cy], [cx + 12, cy + 2], [cx + 34, cy - 4]];   // curve di livello disegnate a puntini (niente strokePath: righe spurie su alcuni telefoni)
+      for (let k = 0; k < pts.length - 1; k++) { const [x0, y0] = pts[k], [x1, y1] = pts[k + 1], n = Math.ceil(Math.hypot(x1 - x0, y1 - y0)); for (let j = 0; j <= n; j++) g.fillStyle(0x5d7a4e, 0.45).fillRect(Math.round(x0 + (x1 - x0) * j / n), Math.round(y0 + (y1 - y0) * j / n), 1, 1); }
     }
   },
 });

@@ -85,7 +85,7 @@ Object.assign(Livello.prototype, {
     // uccellini che attraversano il cielo ogni tanto
     this.time.addEvent({ delay: 7000, loop: true, callback: () => {
       const y = 20 + Math.random() * (H * 0.4), da = Math.random() < 0.5, g = this.add.graphics().setDepth(20000);
-      g.lineStyle(1, 0x504086, 0.8).beginPath().moveTo(-3, 0).lineTo(0, 2).lineTo(3, 0).strokePath();
+      g.fillStyle(0x504086, 0.8).fillRect(-3, 0, 1, 1).fillRect(-2, 1, 1, 1).fillRect(-1, 2, 2, 1).fillRect(1, 1, 1, 1).fillRect(2, 0, 1, 1);   // un uccellino a «v», a pixel
       g.setPosition(da ? -10 : W + 10, y);
       this.tweens.add({ targets: g, x: da ? W + 10 : -10, y: y - 20, duration: 6000, onComplete: () => g.destroy() });
       this.tweens.add({ targets: g, scaleY: 0.4, yoyo: true, repeat: -1, duration: 180 });
