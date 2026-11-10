@@ -171,7 +171,7 @@ const ALBA = { tappa: 7, entro: 9 * 60 };
   };
   Mappa.prototype.tappaAllAlba = function (id) {
     const S = Save.data, hud = this.hud || game.scene.getScene('Hud');
-    if (S.ora >= 18 * 60) {
+    if (S.ora >= ORA_LETTO) {
       hud.say([{ who: 'mordicchio', text: 'È tardi per partire. Si va domattina, col sole.' }, { who: 'mordicchio', text: 'E poi Mitty si trova all\'alba, quando il parcheggio è ancora vuoto. Andiamo a dormire.' }], () => {
         this.registry.set('dormiSubito', true); this.cameras.main.fadeOut(250); this.time.delayedCall(260, () => this.scene.start('Rifugio', { stanza: 'casa' }));
       });

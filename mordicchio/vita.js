@@ -35,6 +35,7 @@ const POSTI_FUORI = {
 };
 const ORTO_XY = i => ({ x: 22 + (i % 3) * 22, y: 96 + Math.floor(i / 3) * 22 });
 const VAN_XY = { x: 136, y: 128 };
+const ORA_LETTO = 19 * 60;   // prima delle 19 non si va a dormire
 const PORTE = { casa: { x: CASA_R.x + 38, y: CASA_R.y + CASA_R.h + 2 }, stalla: { x: STALLA_R.x + 36, y: STALLA_R.y + STALLA_R.h + 2 } };
 const RES_MONDO = () => Math.ceil(ZR * DPR / 1.5);
 
@@ -202,8 +203,13 @@ Object.assign(Rifugio.prototype, {
     let y = m.y + 50 + tRighe.height + 16;
     const nT = Object.keys(S.tesori || {}).length;
     hud.button(28, y, UW - 56, 36, 'Album · tesori ' + nT + '/' + Object.keys(TESORI).length + (typeof RICORDI !== 'undefined' ? ' · ricordi ' + ricordiTrovati().length + '/' + Object.keys(RICORDI).length : ''), () => { m.close(); this.album(); }, { parent: m.c, size: 13 }); y += 44;
-    hud.button(28, y, UW - 56, 36, 'Vai a dormire (inizia un nuovo giorno)', () => { m.close(); this.dormi(false); }, { parent: m.c, size: 13 });
-    m.c.add(txt(hud, UW / 2, y + 52, 'Alle 23 Mordicchio ti porta a letto comunque.', 11, '#9d866f').setOrigin(0.5));
+    // a letto si va solo dalle 19: così i momenti della giornata (la fuga di Mordicchio, il tramonto, il van di sera) non si saltano
+    const presto = S.ora < ORA_LETTO;
+    hud.button(28, y, UW - 56, 36, presto ? 'A letto dalle ' + Math.floor(ORA_LETTO / 60) + ':00' : 'Vai a dormire (inizia un nuovo giorno)', () => {
+      if (presto) { Sfx.no && Sfx.no(); m.close(); this.hud.bubble(this.cat && this.cat.visible && !this.cat.assente ? this.cat : this.player, pick(['È ancora presto per dormire. La giornata non è finita!', 'A letto adesso? Ma c\'è ancora il sole!', 'Dormire? Prima facciamo ancora qualcosa. Il letto ci aspetta stasera.']), 3200); return; }
+      m.close(); this.dormi(false);
+    }, { parent: m.c, size: 13, color: presto ? '#9d866f' : undefined });
+    m.c.add(txt(hud, UW / 2, y + 52, presto ? 'Si va a letto dalle ' + Math.floor(ORA_LETTO / 60) + ', alle 23 comunque.' : 'Alle 23 Mordicchio ti porta a letto comunque.', 11, '#9d866f').setOrigin(0.5));
   },
   riposa() {
     const S = Save.data; this.cameras.main.fadeOut(300, 40, 30, 50);

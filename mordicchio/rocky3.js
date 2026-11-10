@@ -37,7 +37,7 @@ function textureComodino(scena) {
   Eco.tappaPossibile = function (S, id) { const r = tp.apply(this, arguments); if (id === 25 && r.ok && !r.rigioca && sognoInArrivo(S)) return { ok: false, perche: 'sogno' }; return r; };
   Mappa.prototype.tappaSogno = function () {
     const S = Save.data, hud = this.hud || game.scene.getScene('Hud');
-    if (S.ora >= 18 * 60) hud.say([{ who: 'mordicchio', text: 'È sera. È ora di riposarsi: oggi abbiamo camminato abbastanza.' }, { who: 'mordicchio', text: 'Andiamo a letto. Domani si vedrà.' }]);
+    if (S.ora >= ORA_LETTO) hud.say([{ who: 'mordicchio', text: 'È sera. È ora di riposarsi: oggi abbiamo camminato abbastanza.' }, { who: 'mordicchio', text: 'Andiamo a letto. Domani si vedrà.' }]);
     else hud.say([{ who: 'mordicchio', text: 'Oggi non ho voglia di partire. Restiamo a casa, ti va?' }, { who: 'mordicchio', text: 'C\'è l\'orto da sistemare, qualcosa di buono da cucinare, e tanti amici con cui fare due chiacchiere.' }]);
   };
   const dormi = Rifugio.prototype.dormi;
