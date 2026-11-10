@@ -348,3 +348,47 @@ const MURI_29 = [[8, 5], [14, 5], [10, 6], [11, 6], [13, 6], [14, 6], [19, 6]];
     },
   });
 })();
+
+// ---------------- 7 · il richiamo: un miagolio lontano la sera della tappa 6 ----------------
+// Tornati dalla tappa 6, quando tutto è tranquillo, si sente un miagolio in lontananza. Mordicchio si chiede
+// da dove venga e propone di andare a vedere domattina, appena svegli. La mattina dopo lo ricorda.
+(function () {
+  const miaoLontano = () => { if (!Sfx.ok() || !Sfx.ctx) return; const c = Sfx.ctx, t = c.currentTime, o = c.createOscillator(), g = c.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(900, t); o.frequency.linearRampToValueAtTime(1150, t + 0.15); o.frequency.linearRampToValueAtTime(800, t + 0.42);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.012, t + 0.05); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 0.5); };
+  const quando = (scena, f, n = 0) => {
+    if (!scena.sys.isActive()) return;
+    const h = scena.hud; if (h.dialog || (h.ctrl && h.ctrl.frozen) || (h.quieto && h.quieto()) || scena.modo !== 'gioca' || scena.dormendo) { if (n < 80) scena.time.delayedCall(700, () => quando(scena, f, n + 1)); return; }
+    f();
+  };
+  const crea = Rifugio.prototype.create;
+  Rifugio.prototype.create = function () {
+    crea.apply(this, arguments);
+    const S = Save.data, c = S.completati || [];
+    if (!c.includes(6) || c.includes(7) || !S.giornoTappa) return;
+    // la sera della tappa 6: il richiamo
+    if (S.giornoTappa[6] === S.giorno && S.richiamoMitty !== S.giorno) {
+      this.time.delayedCall(4000, () => quando(this, () => {
+        S.richiamoMitty = S.giorno; Save.write();
+        miaoLontano(); this.time.delayedCall(900, miaoLontano);
+        this.hud.toast('Un miagolio, lontano lontano...');
+        if (this.cat && this.cat.visible) this.hud.bubble(this.cat, '!', 1400);
+        this.time.delayedCall(1800, () => this.hud.say([
+          { who: 'mordicchio', text: 'Hai sentito? Un miagolio. Piccolo piccolo.' },
+          { who: 'anastasia', text: 'Sì... ma da dove viene?' },
+          { who: 'mordicchio', text: 'Da lontano. Dalla strada, forse dal parcheggio del paese. Sembra un gattino.' },
+          { who: 'mordicchio', text: 'Domattina, appena svegli, andiamo subito a vedere. All\'alba, quando il parcheggio è ancora vuoto.' },
+        ]));
+      }));
+      return;
+    }
+    // la mattina dopo, appena svegli: andiamo
+    if (S.giornoTappa[6] < S.giorno && S.ora < ALBA.entro && S.ricordoMitty !== S.giorno) {
+      this.time.delayedCall(2500, () => quando(this, () => {
+        S.ricordoMitty = S.giorno; Save.write();
+        this.hud.say([{ who: 'mordicchio', text: 'Il miagolio di ieri sera! Andiamo subito al parcheggio, prima che si svegli tutto il paese.' }]);
+      }));
+    }
+  };
+})();
