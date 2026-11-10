@@ -137,6 +137,8 @@ function txt(scene, x, y, s, size = 14, color = COL.testo, extra = {}) {
   t.setResolution(Math.ceil(U));
   return t;
 }
+// rimpicciolisce un testo finché non sta nel suo riquadro (nomi lunghi di mobili e regali)
+function stringi(t, maxW, maxH, min = 7) { let f = parseFloat(t.style.fontSize); while (f > min && ((maxW && t.width > maxW) || (maxH && t.height > maxH))) { f -= 0.5; t.setFontSize(f + 'px'); } return t; }
 function pannello(scene, x, y, w, h) { return scene.add.nineslice(x, y, 'pannello', null, w, h, 6, 6, 6, 6).setOrigin(0, 0); }
 function pick(arr, recent) {
   const opts = arr.filter(a => !recent || !recent.includes(a));
@@ -363,7 +365,7 @@ class Boot extends Phaser.Scene {
     this.load.spritesheet('peli', a + 'peli.png', { frameWidth: 12, frameHeight: 10 });
     this.load.atlas('tesori', a + 'tesori.png', a + 'tesori.json'); this.load.atlas('ricordi', a + 'ricordi.png', a + 'ricordi.json'); this.load.spritesheet('rocky', a + 'rocky.png', { frameWidth: 16, frameHeight: 16 });
     ['pannello', 'seme', 'cuccia', 'scintilla', 'portale', 'pavimento', 'muro', 'carota', 'insalata', 'gomitolo', 'bastoncino',
-      'campanellino', 'cuscino', 'fiori', 'chiave', 'recinto', 'cancello', 'auto', 'ciotola', 'pallina', 'fieno', 'zucca', 'abbeveratoio', 'mangiatoia', 'campanaccio', 'parete', 'portone', 'paglia', 'travi', 'pino', 'torretta', 'lettuccio', 'trappola', 'cerniera', 'barattolo', 'cartello', 'aspirapolvere', 'cuscinone', 'cesta_giochi', 'pianta_grande', 'mensola', 'lucine', 'libreria', 'divanetto', 'lanterna', 'spazzola', 'letto_paglia', 'carriola', 'cuscino_cuore', 'ritratto_mordicchio', 'foto_festa', 'quadro_sogno', 'collare_rocky', 'quadro_rocky'].forEach(k => this.load.image(k, a + k + '.png'));
+      'campanellino', 'cuscino', 'fiori', 'chiave', 'recinto', 'cancello', 'auto', 'ciotola', 'pallina', 'fieno', 'zucca', 'abbeveratoio', 'mangiatoia', 'campanaccio', 'parete', 'portone', 'paglia', 'travi', 'pino', 'torretta', 'lettuccio', 'trappola', 'cerniera', 'barattolo', 'cartello', 'aspirapolvere', 'cuscinone', 'cesta_giochi', 'pianta_grande', 'mensola', 'lucine', 'libreria', 'divanetto', 'lanterna', 'spazzola', 'letto_paglia', 'carriola', 'cuscino_cuore', 'ritratto_mordicchio', 'foto_festa', 'quadro_sogno', 'collare_rocky', 'quadro_rocky', 'tv', 'pacco', 'scarpe'].forEach(k => this.load.image(k, a + k + '.png'));
   }
   create() {
     const an = this.anims;
@@ -523,7 +525,7 @@ class Rifugio extends Mondo {
     else { cam.setBounds(Math.min(0, (STANZA.w - CW / ZR) / 2), -40, Math.max(STANZA.w, CW / ZR), STANZA.h + 80); cam.startFollow(this.player, true, 0.15, 0.15); }
     this.modo = 'gioca';
     this.attachHud();
-    if (!S.introVista) this.time.delayedCall(400, () => this.hud.say(INTRO, () => { S.introVista = true; Save.write(); }));
+    if (!S.introVista) { if (this.avviaIntro && this.stanza === 'casa') this.avviaIntro(); else this.time.delayedCall(400, () => this.hud.say(INTRO, () => { S.introVista = true; Save.write(); })); }
     else if (!S.consiglioSonno && this.stanza === 'casa') { S.consiglioSonno = true; Save.write(); this.time.delayedCall(900, () => this.hud.say([{ who: 'mordicchio', text: 'Quando vuoi riposare o andare a dormire, tocca l\'orologio in alto oppure il letto. Io mi sistemo tra le tue gambe, come sempre.' }])); }
     else if (S.ultimoArrivo && this.stanzaArrivo(S.ultimoArrivo)) { const id = S.ultimoArrivo; S.ultimoArrivo = null; Save.write(); this.hud.attendiStoria(1500); if (this.messaInScena) this.messaInScena(id); this.time.delayedCall(400, () => this.hud.say((DOPO_LIVELLO[id] || []).filter(l => S.bastoncino || !/bastoncino/i.test(l.text)), () => this.commentaPeli())); }
     else this.time.delayedCall(600, () => this.commentaPeli());
@@ -679,7 +681,7 @@ class Rifugio extends Mondo {
     ids.forEach((k, i) => {
       const r = REGALI[k], x = (i % 3) * (cw + 8), y = Math.floor(i / 3) * 82, cell = hud.add.container(x, y);
       const box = hud.add.rectangle(0, 0, cw, 74, 0xfbf4dc).setOrigin(0).setStrokeStyle(2, 0xd79e61).setInteractive();
-      cell.add([box, fitIcon(iconaRegalo(hud, cw / 2, 28, k), 30), txt(hud, cw / 2, 52, r.nome, 10, COL.testo).setOrigin(0.5), txt(hud, cw - 6, 6, '×' + Eco.quantiRegali(S, k), 10, COL.titolo).setOrigin(1, 0)]);
+      cell.add([box, fitIcon(iconaRegalo(hud, cw / 2, 28, k), 30), stringi(txt(hud, cw / 2, 52, r.nome, 10, COL.testo, { align: 'center', wordWrap: { width: cw - 8 } }).setOrigin(0.5), cw - 6, 26), txt(hud, cw - 6, 6, '×' + Eco.quantiRegali(S, k), 10, COL.titolo).setOrigin(1, 0)]);
       box.on('pointerup', () => { if (hud.scrollDragged) return; m.close(); this.dai(o, k); });
       sa.inner.add(cell); sa.contentH = y + 82;
     });
@@ -774,7 +776,7 @@ class Rifugio extends Mondo {
       const o = tab === 'regali' ? REGALI[k] : OGGETTI[k], x = (i % 3) * (cw + 8), y = Math.floor(i / 3) * 96;
       const cell = hud.add.container(x, y), puoi = S.semi >= o.prezzo;
       const box = hud.add.rectangle(0, 0, cw, 88, 0xfbf4dc).setOrigin(0).setStrokeStyle(2, puoi ? 0xd79e61 : 0xc4bc93).setInteractive();
-      cell.add([box, fitIcon(iconaRegalo(hud, cw / 2, 26, k), 30).setAlpha(puoi ? 1 : 0.5), txt(hud, cw / 2, 46, o.nome, 10, COL.testo, { align: 'center', wordWrap: { width: cw - 6 } }).setOrigin(0.5, 0)]);
+      cell.add([box, fitIcon(iconaRegalo(hud, cw / 2, 26, k), 30).setAlpha(puoi ? 1 : 0.5), stringi(txt(hud, cw / 2, 46, o.nome, 10, COL.testo, { align: 'center', wordWrap: { width: cw - 6 } }).setOrigin(0.5, 0), cw - 4, 24)]);
       cell.add(hud.add.image(cw / 2 - 8, 76, 'seme').setScale(0.7)); cell.add(txt(hud, cw / 2, 76, String(o.prezzo), 11, puoi ? COL.titolo : '#9d866f').setOrigin(0, 0.5));
       box.on('pointerup', () => {
         if (hud.scrollDragged) return;
@@ -806,7 +808,7 @@ class Rifugio extends Mondo {
     hud.button(UW - 74, 10, 62, 30, 'Fine', () => this.esciArreda());
     const th = 88, ty = UH - th - 8;
     hud.layer.add(pannello(hud, 8, ty, UW - 16, th));
-    if (!S.inventario.length) hud.layer.add(txt(hud, UW / 2, ty + th / 2, 'Nessun mobile da sistemare.\nNe trovi lungo il sentiero e alla bancarella in giardino.', 11, COL.testo, { align: 'center' }).setOrigin(0.5));
+    if (!S.inventario.length) hud.layer.add(txt(hud, UW / 2, ty + th / 2, 'Nessun mobile da sistemare.\nNe trovi lungo il sentiero e alla bancarella in giardino.', 11, COL.testo, { align: 'center', wordWrap: { width: UW - 40 } }).setOrigin(0.5));
     const per = Math.floor((UW - 32) / 58), pagina = this.pagina || 0, pagine = Math.max(1, Math.ceil(S.inventario.length / per));
     if (pagina >= pagine) this.pagina = 0;
     S.inventario.slice((this.pagina || 0) * per, (this.pagina || 0) * per + per).forEach((id, j) => {
@@ -815,6 +817,7 @@ class Rifugio extends Mondo {
       const box = hud.add.rectangle(0, 0, 54, 68, 0xfbf4dc).setOrigin(0).setStrokeStyle(2, 0xd79e61).setInteractive();
       const et = txt(hud, 27, 54, o.nome, 10.5, COL.testo, { align: 'center', wordWrap: { width: 52, useAdvancedWrap: true }, lineSpacing: -1 }).setOrigin(0.5);
       if (o.nome.split(' ').some(w => w.length > 9)) et.setFontSize(9);   // parole lunghe come «Cassettiera»
+      stringi(et, 52, 26);
       cell.add([box, fitIcon(iconaRegalo(hud, 27, 22, id), 32), et]);
       box.on('pointerup', () => { Sfx.pop(); this.prendiDaInventario(i); });
       hud.layer.add(cell);
@@ -953,6 +956,7 @@ class Mappa extends Phaser.Scene {
           if (pos.perche === 'stanco') hud.say([{ who: 'mordicchio', text: pick(FRASI_STANCO) }]);
           else if (pos.perche === 'cancello') hud.say([{ who: 'mordicchio', text: pos.testo }]);
           else if (pos.perche === 'tardi') hud.say([{ who: 'mordicchio', text: 'È tardi per partire. Si va domattina, col sole.' }]);
+          else if (pos.perche === 'nonora') { const sc = S.scomparsa && S.scomparsa.stato; hud.say([sc === 'via' || sc === 'sera' ? { who: 'anastasia', text: 'Non so dove sia andato. Di solito torna da solo prima del tramonto... aspettiamo.' } : { who: 'mordicchio', text: 'Lì non c\'è niente da vedere, per adesso. Io sto qui con te.' }]); }
           return;
         }
         cam.fadeOut(250); this.time.delayedCall(260, () => this.scene.start('Livello', { id }));
@@ -1075,7 +1079,8 @@ class Livello extends Mondo {
     this.nascondigli.forEach(b => b.giusto = false);
     this.indizioDato = 0; this.prossimaBattuta = this.time.now + 20000;
     const chi = [L.animale, L.ospite].filter(a => a && a !== 'mordicchio').map(a => ANIMALI[a].nome);
-    const frase = chi.length ? 'Qui adesso è tutto tranquillo. ' + chi.join(' e ') + (chi.length > 1 ? ' vivono' : ' vive') + ' al rifugio, con noi.' : 'Che bello tornare qui. È tutto tranquillo.';
+    const liberi = [L.animale, L.ospite].filter(a => a && a !== 'mordicchio').every(a => typeof LIBERI !== 'undefined' && LIBERI[a]);
+    const frase = chi.length ? 'Qui adesso è tutto tranquillo. ' + chi.join(' e ') + (liberi ? (chi.length > 1 ? ' ogni tanto passano' : ' ogni tanto passa') + ' a trovarci al rifugio.' : (chi.length > 1 ? ' vivono' : ' vive') + ' al rifugio, con noi.') : 'Che bello tornare qui. È tutto tranquillo.';
     this.aggiornaObiettivi();
     this.time.delayedCall(400, () => { this.apriPortale(true); this.hud.toast(L.nome); this.hud.bubble(this.cat, frase, 4200); });
   }

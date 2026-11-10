@@ -45,8 +45,9 @@ Object.assign(Rifugio.prototype, {
     g.fillStyle(0xa4c263); for (let i = 0; i < 80; i++) { const x = (i * 37) % STANZA.w, y = (i * 53) % STANZA.h; g.fillRect(x, y, 2, 1); g.fillRect(x + 1, y - 1, 1, 1); }
     // vialetti di terra
     g.fillStyle(0xe8cfa6);
-    g.fillRect(PORTE.casa.x - 5, PORTE.casa.y, 10, 22); g.fillRect(PORTE.stalla.x - 5, PORTE.stalla.y, 10, 22);
-    g.fillRect(PORTE.casa.x - 5, PORTE.casa.y + 18, PORTE.stalla.x - PORTE.casa.x + 10, 8);
+    g.fillRect(PORTE.casa.x - 5, PORTE.casa.y, 10, 22);
+    if (S.stallaAperta) { g.fillRect(PORTE.stalla.x - 5, PORTE.stalla.y, 10, 22); g.fillRect(PORTE.casa.x - 5, PORTE.casa.y + 18, PORTE.stalla.x - PORTE.casa.x + 10, 8); }
+    else g.fillRect(PORTE.casa.x - 5, PORTE.casa.y + 18, STANZA.w / 2 + 6 - PORTE.casa.x + 5, 8);   // prima della stalla il vialetto va solo dalla casa al sentiero
     g.fillRect(STANZA.w / 2 - 6, PORTE.casa.y + 18, 12, STANZA.h - PORTE.casa.y - 18);
     // casa
     const c = CASA_R; this.add.tileSprite(c.x, c.y + 14, c.w, c.h - 14, 'muro').setOrigin(0).setDepth(c.y + c.h - 1);
@@ -65,10 +66,7 @@ Object.assign(Rifugio.prototype, {
       r.fillStyle(0x9d6a4c).fillTriangle(st.x - 4, st.y + 14, st.x + st.w / 2, st.y - 6, st.x + st.w + 4, st.y + 14);
       r.lineStyle(1, 0x504086).strokeTriangle(st.x - 4, st.y + 14, st.x + st.w / 2, st.y - 6, st.x + st.w + 4, st.y + 14);
       this.add.image(PORTE.stalla.x, st.y + st.h, 'portone').setOrigin(0.5, 1).setDepth(st.y + st.h + 1);
-    } else {
-      for (let x = st.x + 4; x < st.x + st.w; x += 16) this.add.image(x + 4, st.y + st.h, 'recinto').setOrigin(0.5, 1).setDepth(st.y + st.h);
-      this.add.image(st.x + st.w / 2, st.y + st.h - 14, 'cartello').setOrigin(0.5, 1).setDepth(st.y + st.h);
-    }
+    }   // prima della costruzione: terreno libero, nessun cartello né recinto (revisione 10/11)
     this.add.image(STANZA.w - 10, 92, 'natura', 'albero').setOrigin(0.5, 1).setDepth(92);
     this.add.image(10, 84, 'natura', 'cespuglio').setOrigin(0.5, 1).setDepth(84);
     this.add.image(STANZA.w - 16, STANZA.h - 20, 'natura', 'melo').setOrigin(0.5, 1).setDepth(STANZA.h - 20);
@@ -87,7 +85,7 @@ Object.assign(Rifugio.prototype, {
   bloccatoFuori(x, y) {
     if (x < 6 || x > STANZA.w - 6 || y < 12 || y > STANZA.h - 2) return true;
     const dentro = r => x > r.x && x < r.x + r.w && y > r.y && y < r.y + r.h + 2;
-    if (dentro(CASA_R) || dentro(STALLA_R)) return true;
+    if (dentro(CASA_R) || (Save.data.stallaAperta && dentro(STALLA_R))) return true;
     if (Math.abs(x - VAN_XY.x) < 20 && y > VAN_XY.y - 4 && y < VAN_XY.y + 14) return true;
     return false;
   },
@@ -105,7 +103,7 @@ Object.assign(Rifugio.prototype, {
     this.fuoriTrigger = qui;
     if (!qui || this.uscendo || this.hud.dialog || (this.hud.ctrl && this.hud.ctrl.frozen)) return;
     if (qui === 'casa') this.vai('casa');
-    else if (qui === 'stalla') { if (S.stallaAperta) this.vai('stalla'); else this.hud.bubble(this.cat, 'La stalla non c\'è ancora. Si costruisce dalla bacheca dei lavori, vicino alla casa.', 3200); }
+    else if (qui === 'stalla') { if (S.stallaAperta) this.vai('stalla'); }
     else if (qui === 'sentiero') this.chiediCartello({ titolo: 'Il sentiero', testo: 'Porta ai prati, all\'alpeggio e al paese.', vai: 'Vai al sentiero', azione: () => { this.uscendo = true; this.cameras.main.fadeOut(250); this.time.delayedCall(260, () => this.scene.start('Mappa')); } });
     else if (qui === 'van') this.van();
     else if (qui === 'orto') this.hud.toast('L\'orto: tocca una parcella per seminare o raccogliere');
@@ -343,7 +341,7 @@ Object.assign(Rifugio.prototype, {
     voci.forEach((v, i) => {
       const x = (i % 3) * (cw + 8), y = Math.floor(i / 3) * 96, cell = hud.add.container(x, y), puoi = S.semi >= v.prezzo;
       const box = hud.add.rectangle(0, 0, cw, 88, 0xfbf4dc).setOrigin(0).setStrokeStyle(2, puoi ? 0xd79e61 : 0xc4bc93).setInteractive();
-      cell.add([box, fitIcon(v.icona(), 30).setAlpha(puoi ? 1 : 0.5), txt(hud, cw / 2, 46, v.nome, 10, COL.testo, { align: 'center', wordWrap: { width: cw - 6 } }).setOrigin(0.5, 0)]);
+      cell.add([box, fitIcon(v.icona(), 30).setAlpha(puoi ? 1 : 0.5), stringi(txt(hud, cw / 2, 46, v.nome, 10, COL.testo, { align: 'center', wordWrap: { width: cw - 6 } }).setOrigin(0.5, 0), cw - 4, 26)]);
       cell.add(hud.add.image(cw / 2 - 8, 78, 'seme').setScale(0.7)); cell.add(txt(hud, cw / 2, 78, String(v.prezzo), 11, puoi ? COL.titolo : '#9d866f').setOrigin(0, 0.5));
       box.on('pointerup', () => {
         if (hud.scrollDragged) return;

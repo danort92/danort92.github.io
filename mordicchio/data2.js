@@ -671,7 +671,6 @@ LIVELLI.push(
         { who: "mino", text: "Io ho assaggiato la sacher. Solo un pezzetto. Va bene, metà." },
         { who: "thiago", text: "Abbiamo preparato tutto noi: la sacher vegana, la pizza, i popcorn e i biscotti con le gocce di cioccolato. E quelli col burro d'arachidi spalmato sopra." },
         { who: "mitty", text: "Io ho fatto i popcorn. Cioè, li ho guardati scoppiare. È quasi uguale." },
-        { who: "mordicchio", text: "E ho chiesto di mettere Iris. Lo so che è la tua preferita." },
       ],
       salvato: [
         { who: "mordicchio", text: "Adesso ti dico una cosa io. Seria. Più o meno." },

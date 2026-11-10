@@ -729,7 +729,7 @@ const DOPO_LIVELLO = {
   7: [{ who: "mordicchio", text: "Mitty si è infilato sotto la cuccia. Lasciamogli il tempo di fidarsi." }],
   9: [{ who: "mordicchio", text: "Max è qui. Io gli ho soffiato, lui mi ha fatto le fusa. Non ci capiamo." }],
   10: [
-    { who: "mordicchio", text: "Grazie per essere venuta a cercarmi. Anche quella volta vera, alle due di notte." },
+    { who: "mordicchio", text: "Grazie per essere venuta a cercarmi. Alle due di notte, con la torcia." },
     { who: "mordicchio", text: "Hai trovato anche la mia pallina. Adesso la sai la cosa che mi piace più di tutte." },
   ],
   8: [{ who: "mordicchio", text: "Mino è entrato, ha controllato tutto ed è uscito. Poi è rientrato. Gli piace." }],
@@ -966,7 +966,7 @@ Object.assign(DOPO_LIVELLO, {
   8: [{ who: "mordicchio", text: "Mino ha fatto il giro del giardino e poi si è fermato davanti al van. Chissà come mai." }],
   9: [{ who: "mordicchio", text: "Max è arrivato. Io gli ho soffiato, lui mi ha fatto le fusa. Non ci capiamo." }],
   10: [
-    { who: "mordicchio", text: "Grazie per essere venuta a cercarmi. Anche quella volta vera, alle due di notte." },
+    { who: "mordicchio", text: "Grazie per essere venuta a cercarmi. Alle due di notte, con la torcia." },
     { who: "mordicchio", text: "E hai ritrovato la mia pallina. Adesso sai qual è la cosa che mi piace di più." },
   ],
 });
