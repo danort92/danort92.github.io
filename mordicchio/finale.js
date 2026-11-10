@@ -6,7 +6,7 @@
 //  Si salva in S.finaleVisto: non si ripete.
 // =====================================================================
 const FINALE = {
-  anni: '30 tappe, una per ogni anno della sua vita.',
+  anni: '30 tappe, una per ogni anno della tua vita.',
   pensiero: 'Non sono i luoghi che attraversiamo a rendere speciale il nostro viaggio, ma gli incontri, i piccoli gesti e l\'affetto che lasciamo lungo la strada.',
   casa: 'E adesso, Anastasia, è ora di tornare a casa.\nÈ stato un viaggio bellissimo.',
   firma: 'Made with love by Danilo',

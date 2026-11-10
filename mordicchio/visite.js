@@ -69,6 +69,7 @@ const RICORDO_TAPPA = {
 })();
 Object.assign(Livello.prototype, {
   dettagliAmbiente() {
+    if ([25, 29].includes(this.L.id)) return;
     const L = this.L, W = L.mappa[0].length * T, H = L.mappa.length * T, S = Save.data;
     const sera = S.ora >= 19 * 60 || S.ora < 6 * 60 || L.atmosfera === 'sogno' || L.id === 10;
     if (sera) { if (L.atmosfera !== 'sogno' && L.id !== 25) this.lucciole(18, W, H, 20001); return; }
@@ -124,4 +125,58 @@ Object.assign(Livello.prototype, {
   };
   const la = luogoAttuale;
   luogoAttuale = function (k) { const S = Save.data; if (S && S.liberiVia && S.liberiVia[k] === S.giorno && LIBERI[k]) return 'via'; return la(k); };
+})();
+
+// ---------------- chi hai appena visto in una stanza non è già in un'altra ----------------
+// Uscendo da una stanza si annota chi c'era. Per un po' (45 minuti di gioco) quegli animali restano
+// lì: niente animali che dalla stalla o dalla casa «si teletrasportano» in giardino prima di Anastasia.
+(function () {
+  const crea = Rifugio.prototype.create;
+  Rifugio.prototype.create = function () {
+    crea.apply(this, arguments);
+    this.events.once('shutdown', () => {
+      const S = Save.data; if (!S || !this.ospiti) return;
+      const chi = this.ospiti.filter(o => o && o !== this.cat && o.chiave && o.chiave !== 'compratore' && o.visible !== false && !o.uscendo).map(o => o.chiave);
+      S.vistiIn = { stanza: this.stanza, giorno: S.giorno, ora: S.ora, chi };
+    });
+  };
+  const la = luogoAttuale;
+  luogoAttuale = function (k) {
+    const r = la(k), S = Save.data, v = S && S.vistiIn;
+    if (!v || r === 'via' || r === v.stanza || !v.chi.includes(k)) return r;
+    if (v.giorno === S.giorno && S.ora < v.ora + 45 && S.ora >= v.ora) return v.stanza;
+    return r;
+  };
+})();
+
+// ---------------- vita intorno, in tutte le tappe all'aperto ----------------
+// Farfalle e uccellini di giorno, lucciole di sera e di notte, e un po' di vento (foglie o petali)
+// dove c'è aria aperta. Niente nelle tappe al chiuso o già speciali (la fabbrica, il sogno).
+const SENZA_AMBIENTE = [25, 29];
+(function () {
+  const crea = Livello.prototype.create;
+  Livello.prototype.create = function () {
+    const r = crea.apply(this, arguments), L = this.L;
+    if (!SENZA_AMBIENTE.includes(L.id) && !(this.st && this.st.giaFatta)) { this.dettagliAmbiente(); this.vento(); }
+    else if (this.st && this.st.giaFatta && !SENZA_AMBIENTE.includes(L.id)) this.vento();
+    return r;
+  };
+  Livello.prototype.vento = function () {
+    const L = this.L, W = L.mappa[0].length * T, H = L.mappa.length * T, amb = (typeof AMBIENTI !== 'undefined' && AMBIENTI[L.id]) || 'prato';
+    if (['paese', 'cortile'].includes(amb) || L.atmosfera === 'sogno') return;
+    const colori = amb === 'montagna' ? [0xdfe8ef, 0xc9d7de] : L.atmosfera === 'ciliegi' ? [0xffc6dc] : [0x8db15d, 0xb5d27a, 0xd9b48a];
+    this.time.addEvent({ delay: 1400, loop: true, callback: () => {
+      if (Math.random() < 0.35) return;
+      const y = Math.random() * H, f = this.add.rectangle(-8, y, 3, 2, Phaser.Utils.Array.GetRandom(colori), 0.85).setDepth(19400);
+      this.tweens.add({ targets: f, x: W + 10, y: y + 20 - Math.random() * 40, angle: 540, duration: 5000 + Math.random() * 3000, onComplete: () => f.destroy() });
+      this.tweens.add({ targets: f, scaleY: 0.3, yoyo: true, repeat: -1, duration: 220 });
+    } });
+  };
+})();
+// partendo per una tappa o dormendo il tempo passa: gli animali tornano liberi di spostarsi
+(function () {
+  const crea = Livello.prototype.create;
+  Livello.prototype.create = function () { if (Save.data) Save.data.vistiIn = null; return crea.apply(this, arguments); };
+  const notte = Eco.notte;
+  Eco.notte = function (S) { S.vistiIn = null; return notte.apply(this, arguments); };
 })();

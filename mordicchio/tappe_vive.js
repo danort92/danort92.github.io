@@ -256,3 +256,95 @@ const ALBA = { tappa: 7, entro: 9 * 60 };
     return r;
   };
 })();
+
+// ---------------- 21 · Rossella: una trave appoggiata al muro, al posto della chiave ----------------
+// Il portone resta chiuso: Anastasia appoggia una vecchia trave al muro, inclinata verso l'interno,
+// e Rossella ci sale sopra e scavalca.
+(function () {
+  const L = LIVELLI.find(l => l.id === 21); if (!L) return;
+  Object.assign(L.missione, { texChiave: 'trave', nomeChiave: 'Trave', trovataChiave: 'Una vecchia trave! Appoggiata al muro, Rossella potrà arrampicarsi.' });
+  const R = t => ({ who: 'rossella', text: t }), A = t => ({ who: 'anastasia', text: t }), Mo = t => ({ who: 'mordicchio', text: t });
+  L.dialoghi.incontro = [R('Ehi, voi due! Sono Rossella. Sono entrata nel cortile per una mela e il portone si è chiuso.'), R('È sprangato da fuori, e il muro è troppo alto da saltare. Se solo avessi qualcosa su cui arrampicarmi...'), Mo('Una volpe chiusa dentro. Di solito è il contrario.'), A('Cerchiamo qualcosa da appoggiare al muro.')];
+  L.dialoghi.incontroChiave = [R('Ehi, voi due! Sono Rossella. Sono entrata nel cortile per una mela e il portone si è chiuso.'), R('È sprangato da fuori, e il muro è troppo alto da saltare.'), A('Abbiamo una trave. La appoggiamo al muro, verso di te: ci sali sopra e scavalchi.')];
+  L.dialoghi.attesa = 'Qualcosa per arrampicarmi... una trave, un\'asse, qualsiasi cosa!';
+  L.indizi = Object.assign({}, L.indizi, { oggetto: 'In alto a sinistra c\'è una vecchia trave abbandonata.', consegna: 'Appoggia la trave al muro, vicino al portone, in alto al centro.' });
+  const crea = Livello.prototype.create;
+  Livello.prototype.create = function () {
+    if (!this.textures.exists('trave')) {
+      const g = this.make.graphics({ add: false });
+      for (let i = 0; i < 12; i++) { g.fillStyle(0x754c60, 1).fillRect(1 + i, 12 - i, 3, 3); g.fillStyle(0xb98a5c, 1).fillRect(2 + i, 12 - i, 2, 2); }
+      g.generateTexture('trave', 16, 16); g.destroy();
+    }
+    return crea.apply(this, arguments);
+  };
+  const apri = Livello.prototype.apriCancello;
+  Livello.prototype.apriCancello = function () {
+    if (this.L.id !== 21 || this.cancelloAperto || this.st.giaFatta) return apri.apply(this, arguments);
+    this.cancelloAperto = true; if (this.inManoSprite) { this.inManoSprite.destroy(); this.inManoSprite = null; }
+    const c = this.cancelloXY, n = this.npc, hud = this.hud, bx = c.x - 18;   // la trave, sul muro accanto al portone
+    const fuori = { x: bx, y: c.y + 10 }, dentro = { x: bx - 2, y: c.y - 22 };
+    const trave = this.add.graphics().setDepth(c.y + 3);
+    trave.lineStyle(5, 0x754c60, 1).lineBetween(fuori.x, fuori.y, dentro.x, dentro.y); trave.lineStyle(3, 0xb98a5c, 1).lineBetween(fuori.x, fuori.y, dentro.x, dentro.y);
+    this.frozenAll = true; hud.joyEnd && hud.joyEnd(); Sfx.pop(); hud.toast('Trave appoggiata al muro. Forza, Rossella!');
+    if (this.npcBob) { this.npcBob.remove(); this.npcBob = null; } n.setScale(1);
+    if (n.anims && n.walkAnim) n.anims.play(n.walkAnim, true);
+    this.tweens.chain({ targets: n, tweens: [
+      { x: dentro.x, y: dentro.y + 2, duration: 900, onUpdate: () => n.setDepth(n.y) },
+      { x: bx, y: c.y - 6, duration: 500, ease: 'Sine.out', onStart: () => n.setDepth(c.y + 4) },     // su per la trave
+      { y: c.y - 14, duration: 180, ease: 'Quad.out' },                                                 // il salto oltre il muro
+      { x: bx + 4, y: c.y + 14, duration: 320, ease: 'Quad.in', onComplete: () => { if (n.anims) n.anims.stop(); n.setDepth(n.y); this.hearts(n.x, n.y - 12); } },
+    ], onComplete: () => this.time.delayedCall(400, () => { this.frozenAll = false; this.salva(); }) });
+  };
+})();
+
+// ---------------- 29 · La fabbrica, seconda versione: porte col badge ----------------
+// È domenica e le macchine sono spente (lo dice anche la scritta d'arrivo). I reparti in alto sono chiusi
+// da porte col lettore di badge: Anastasia, da plant manager, le apre tutte. Due reparti non hanno niente;
+// la cerniera d'oro è in uno dei tre, diverso a ogni partita.
+const PORTE_29 = [{ x: 5, y: 6, stanza: { x0: 4, x1: 7, y0: 2, y1: 5 }, posto: [6, 2], vuoto: 'Il ripostiglio: scope, secchi e un calendario del 2019. Niente cerniera d\'oro.' },
+  { x: 12, y: 6, stanza: { x0: 9, x1: 13, y0: 2, y1: 5 }, posto: [12, 2], vuoto: 'L\'archivio: scatoloni di cerniere normalissime. Quella d\'oro non c\'è.' },
+  { x: 18, y: 6, stanza: { x0: 15, x1: 19, y0: 2, y1: 5 }, posto: [19, 2], vuoto: 'Il reparto collaudi: cerniere che si aprono e si chiudono da sole. Nessuna è d\'oro.' }];
+const MURI_29 = [[8, 5], [14, 5], [10, 6], [11, 6], [13, 6], [14, 6], [19, 6]];
+(function () {
+  const L29 = LIVELLI.find(l => l.id === 29);
+  if (L29) {
+    const inc = (L29.dialoghi.incontro || []).filter(r => !/nastro grande/.test(r.text));
+    inc.splice(Math.max(0, inc.length - 1), 0, { who: 'zip', text: 'La cerniera d\'oro è chiusa in uno dei reparti, in alto. Le porte si aprono solo col badge, e io il badge non ce l\'ho.' }, { who: 'anastasia', text: 'Io sì. Da plant manager posso andare ovunque. Modestamente.' }, { who: 'mordicchio', text: 'Lo dice da quando gliel\'hanno dato. Ogni giorno.' });
+    L29.dialoghi.incontro = inc;
+    L29.dialoghi.attesa = 'La cerniera d\'oro è in uno dei reparti in alto. Prova le porte col tuo badge!';
+    L29.indizi = Object.assign({}, L29.indizi, { oggetto: 'La cerniera d\'oro è dietro una delle porte dei reparti, in alto. Col badge si aprono tutte.' });
+    delete L29.indizi.leva;
+  }
+  Object.assign(Livello.prototype, {
+    preparaFabbrica() {
+      this.leva = null; this.porte29 = null;
+      if (this.fatta || this.st.giaFatta) return;
+      const zip = this.items.find(i => i.tipo === 'oggetto'), scelta = Phaser.Utils.Array.GetRandom(PORTE_29);
+      if (zip) { const [px, py] = scelta.posto, x = px * T + 8, y = py * T + 14; this.tweens.killTweensOf(zip); zip.setPosition(x, y - 2); zip.ombra.setPosition(x, y); zip.setDepth(y); this.tweens.add({ targets: zip, y: y - 5, yoyo: true, repeat: -1, duration: 750, ease: 'Sine.inOut' }); }
+      MURI_29.forEach(([x, y]) => { this.muri.add(x + ',' + y); this.add.image(x * T + 8, y * T + 16, 'parete').setOrigin(0.5, 1).setDepth(y * T + 8); });
+      this.porte29 = PORTE_29.map(d => {
+        this.muri.add(d.x + ',' + d.y);
+        const X = d.x * T, Y = d.y * T, g = this.add.graphics().setDepth(Y + 9);
+        g.fillStyle(0x6b7886, 1).fillRect(X + 1, Y, 14, 16); g.fillStyle(0x8a96a4, 1).fillRect(X + 2, Y + 1, 5, 15).fillRect(X + 9, Y + 1, 5, 15);
+        g.lineStyle(1, 0x2f3540, 1).strokeRect(X + 1, Y, 14, 16).lineBetween(X + 8, Y, X + 8, Y + 16);
+        const lettore = this.add.rectangle(X + 15, Y + 8, 3, 4, 0x2f3540).setDepth(Y + 9.2), led = this.add.circle(X + 15, Y + 7, 0.9, 0xd96f6f).setDepth(Y + 9.3);
+        return Object.assign({}, d, { g, led, aperta: false, oro: d === scelta, visto: false });
+      });
+    },
+    fabbrica() {
+      const p = this.player, hud = this.hud, st = this.st; if (!this.porte29) return;
+      this.porte29.forEach(d => {
+        const fx = d.x * T + 8, fy = (d.y + 1) * T + 6;
+        if (!d.aperta && Math.hypot(fx - p.x, fy - p.y) < 14) {
+          d.aperta = true; this.muri.delete(d.x + ',' + d.y); d.led.setFillStyle(0x8db15d); Sfx.blip && Sfx.blip();
+          this.tweens.add({ targets: d.g, alpha: 0.15, duration: 350 });
+          if (!this.badgeDetto) { this.badgeDetto = true; hud.toast('Bip! Badge accettato.'); if (!st.parlato) hud.bubble(this.player, 'Badge da plant manager: si apre tutto. Modestamente.', 3200); }
+          else hud.toast('Bip!');
+          this.progresso();
+        }
+        const s = d.stanza;
+        if (d.aperta && !d.visto && !d.oro && p.x > s.x0 * T && p.x < (s.x1 + 1) * T && p.y > s.y0 * T && p.y < (s.y1 + 1) * T) { d.visto = true; hud.bubble(this.cat, d.vuoto, 3600); }
+      });
+    },
+  });
+})();

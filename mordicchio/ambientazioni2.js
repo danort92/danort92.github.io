@@ -1,10 +1,10 @@
 // =====================================================================
 //  Ambientazioni (revisione 10/11)
-//  13 · Maky si rotola davvero in una pozza di fango ben visibile.
+//  13 · La pozza di fango è dove Maky chiede di andare alla fine: lì si rotola davvero.
 //  17 · Il torrente: i guadi diventano sassi; uno dei due sassi di ogni guado ogni tanto va sott'acqua.
 //       Se Anastasia ci è sopra torna indietro di un passo, senza perdere niente. Basta aspettare.
-//  20 · Fragola ha accanto una piccola sorgente e ogni tanto beve (resta ferma, come le ha detto Anastasia).
-//  29 · La fabbrica: nastri trasportatori che scorrono, presse con il pistone, ingranaggi, tubi che sbuffano.
+//  20 · L'acqua è dove Fragola chiede di essere accompagnata alla fine: lì beve davvero.
+//  29 · La fabbrica: nastri trasportatori, presse, ingranaggi e tubi. È domenica: tutto fermo e spento.
 // =====================================================================
 const GUADI_17 = [{ cols: [8, 9], x: 8, fermo: 8, mobile: 9, fase: 0 }, { cols: [16, 17], x: 17, fermo: 8, mobile: 9, fase: 1700 }];
 Object.assign(Livello.prototype, {
@@ -37,7 +37,7 @@ Object.assign(Livello.prototype, {
     g.fillStyle(col, 1).fillCircle(0, 0, r);
     for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; g.fillRect(Math.cos(a) * r - 1.5, Math.sin(a) * r - 1.5, 3, 3); }
     g.fillStyle(0x3b3546, 1).fillCircle(0, 0, r * 0.35);
-    this.tweens.add({ targets: g, angle: 360, repeat: -1, duration: 2600 });
+    if (this.L.id !== 29) this.tweens.add({ targets: g, angle: 360, repeat: -1, duration: 2600 });   // in fabbrica è domenica: tutto fermo
     return g;
   },
 });
@@ -45,32 +45,15 @@ Object.assign(Livello.prototype, {
   const crea = Livello.prototype.create;
   Livello.prototype.create = function () {
     const r = crea.apply(this, arguments), L = this.L, st = this.st;
-    // ---------------- 13: la pozza di fango di Maky ----------------
+    // ---------------- 13: la pozza di fango, dove Maky chiede di andare alla fine (in alto a sinistra) ----------------
     if (L.id === 13) {
-      const a = this.animale, px = a.x, py = a.y + 2;
-      this.pozzaFango(px, py);
-      if (!st.giaFatta) {
-        const n = this.npc;
-        this.rotolata = this.time.addEvent({ delay: 2600, loop: true, callback: () => {
-          if (st.parlato || !n.visible) return;
-          n.setPosition(px + (Math.random() - 0.5) * 10, py - 1);
-          this.tweens.add({ targets: n, angle: n.flipX ? -360 : 360, duration: 700, ease: 'Sine.inOut', onComplete: () => { n.setAngle(0); n.setFlipX(!n.flipX); } });
-          this.time.delayedCall(250, () => this.schizzi(n.x, n.y, 0x7a5536));
-        } });
-      }
+      const [tx, ty] = (L.dopo && L.dopo.dove[0]) || [2, 5];
+      this.pozza13 = { x: tx * T + 8, y: ty * T + 12 }; this.pozzaFango(this.pozza13.x, this.pozza13.y);
     }
-    // ---------------- 20: la sorgente di Fragola ----------------
+    // ---------------- 20: l'acqua, dove Fragola chiede di essere accompagnata (in alto a destra) ----------------
     if (L.id === 20) {
-      const a = this.animale, s = this.sorgente(a.x - 22, a.y);
-      if (!st.giaFatta) {
-        const n = this.npc;
-        this.bevuta = this.time.addEvent({ delay: 3800, loop: true, callback: () => {
-          if (!n.visible || this.hud.dialog || st.salvato) return;
-          n.setFlipX(true);
-          this.tweens.add({ targets: n, scaleY: n.scaleY * 0.88, angle: -12, yoyo: true, hold: 1100, duration: 260 });
-          this.time.delayedCall(500, () => { const rr = this.add.ellipse(s.x + 8, s.y, 3, 1.5).setStrokeStyle(1, 0xffffff, 0.9).setDepth(-12.4); this.tweens.add({ targets: rr, scale: 4, alpha: 0, duration: 900, onComplete: () => rr.destroy() }); });
-        } });
-      }
+      const [tx, ty] = (L.dopo && L.dopo.dove[0]) || [18, 3];
+      this.acqua20 = this.sorgente(tx * T + 8, ty * T + 12);
     }
     // ---------------- 17: i sassi del guado ----------------
     if (L.id === 17) {
@@ -99,11 +82,9 @@ Object.assign(Livello.prototype, {
         g.fillStyle(0x3b3546, 1).fillRect(X, Y - 4, Wn, 9); g.fillStyle(0x5a5466, 1).fillRect(X, Y - 3, Wn, 6);
         g.fillStyle(0x8a8f99, 1).fillCircle(X + 2, Y, 3).fillCircle(X + Wn - 2, Y, 3);
         const strisce = this.add.tileSprite(X + 4, Y, Wn - 8, 5, 'selciato').setOrigin(0, 0.5).setDepth(-12.7).setTint(0x4a4456).setAlpha(0.6);
-        this.time.addEvent({ delay: 60, loop: true, callback: () => { strisce.tilePositionX -= 1; } });
         // scatoline di cerniere che scorrono sul nastro
         for (let k = 0; k < Math.max(1, n - 2); k++) {
           const sc = this.add.rectangle(X + 6 + k * 22, Y - 2, 5, 4, 0xd8b26a).setStrokeStyle(1, 0x754c60).setDepth(-12.6);
-          this.tweens.add({ targets: sc, x: X + Wn - 6, duration: (Wn - 12) * 40, repeat: -1, onRepeat: () => { sc.x = X + 6; } });
         }
       });
       // le macchine: dove prima c'erano i tronchi ci sono presse con il pistone e un ingranaggio
@@ -115,16 +96,14 @@ Object.assign(Livello.prototype, {
         g.fillStyle(0x2f3540, 1).fillRect(cx - 6, by - 6, 12, 4);
         g.fillStyle(0xe8894f, 1).fillRect(cx - 8, by - 2, 16, 2);
         const pist = this.add.rectangle(cx, by - 9, 4, 6, 0xc3c9d2).setDepth(by + 0.5);
-        this.tweens.add({ targets: pist, y: by - 5, yoyo: true, repeat: -1, duration: 420, ease: 'Quad.in', delay: (x * 97) % 400 });
-        const luce = this.add.circle(cx + 5, by - 14, 1.3, 0x8db15d).setDepth(by + 0.6);
-        this.time.addEvent({ delay: 700 + (x * 37) % 300, loop: true, callback: () => luce.setFillStyle(luce.fillColor === 0x8db15d ? 0xf2cf8c : 0x8db15d) });
+        this.add.circle(cx + 5, by - 14, 1.3, 0x6e6a66).setDepth(by + 0.6);   // spia spenta
         const ing = this.ingranaggio(cx - 4, by - 14, 3, 0xc3a46a); ing.setDepth(by + 0.6);
       }));
       // tubi lungo il muro in alto, con sbuffi di vapore
       const yT = 2 * T - 2, g = this.add.graphics().setDepth(2 * T + 9);
       g.fillStyle(0x8a8f99, 1).fillRect(4 * T, yT, 16 * T, 3); g.fillStyle(0x6e7480, 1);
       for (let x = 5; x < 20; x += 3) g.fillRect(x * T, yT - 1, 3, 5);
-      this.time.addEvent({ delay: 1100, loop: true, callback: () => { const x = (5 + Math.floor(Math.random() * 5) * 3) * T + 1, s = this.add.circle(x, yT, 2, 0xf3f4e7, 0.8).setDepth(2 * T + 10); this.tweens.add({ targets: s, y: yT - 12, scale: 2.6, alpha: 0, duration: 1200, onComplete: () => s.destroy() }); } });
+      // niente vapore: le macchine sono spente
       [[6, 2], [16, 2]].forEach(([x, y]) => { if (rows[y + 1] && rows[y + 1][x] !== '~') this.ingranaggio(x * T + 8, y * T + 4, 5, 0x9aa1ad).setDepth(2 * T + 10); });
     }
     return r;
@@ -152,3 +131,31 @@ Object.assign(Livello.prototype, {
     });
   },
 });
+
+// alla fine della tappa: Maky si rotola nella pozza, Fragola beve, e solo dopo dicono la loro frase
+(function () {
+  const chiudi = Livello.prototype.chiudiFase2;
+  Livello.prototype.chiudiFase2 = function () {
+    const L = this.L, n = this.npc, meta = L.id === 13 ? this.pozza13 : L.id === 20 ? this.acqua20 : null;
+    if (!meta || !n) return chiudi.apply(this, arguments);
+    this.seguaci = this.seguaci.filter(x => x !== n); this.frozenAll = true; if (this.hud.ctrl) this.hud.ctrl.frozen = true; this.hud.joyEnd && this.hud.joyEnd();
+    const dx = L.id === 13 ? 0 : 12;
+    if (n.anims && n.walkAnim) n.anims.play(n.walkAnim, true); n.setFlipX(meta.x + dx < n.x);
+    this.tweens.add({ targets: n, x: meta.x + dx, y: meta.y + 1, duration: Math.max(300, Math.hypot(meta.x + dx - n.x, meta.y - n.y) * 25), onUpdate: () => n.setDepth(n.y), onComplete: () => {
+      if (n.anims) n.anims.stop();
+      const fine = () => { this.frozenAll = false; if (this.hud.ctrl) this.hud.ctrl.frozen = false; this.seguaci.push(n); chiudi.call(this); };
+      if (L.id === 13) {   // due belle rotolate nel fango
+        [0, 1].forEach(i => this.time.delayedCall(i * 900, () => { this.tweens.add({ targets: n, angle: (i ? -1 : 1) * 360, duration: 700, ease: 'Sine.inOut', onComplete: () => n.setAngle(0) }); this.time.delayedCall(250, () => this.schizzi(n.x, n.y, 0x7a5536)); }));
+        this.time.delayedCall(2000, fine);
+      } else {             // Fragola abbassa la testa e beve
+        n.setFlipX(true);
+        this.tweens.add({ targets: n, scaleY: 0.88, angle: -12, yoyo: true, hold: 1200, duration: 260, repeat: 1, onComplete: () => { n.setAngle(0); n.scaleY = 1; } });
+        [400, 1900].forEach(t => this.time.delayedCall(t, () => { const rr = this.add.ellipse(meta.x + 4, meta.y, 3, 1.5).setStrokeStyle(1, 0xffffff, 0.9).setDepth(-12.4); this.tweens.add({ targets: rr, scale: 4, alpha: 0, duration: 900, onComplete: () => rr.destroy() }); }));
+        this.time.delayedCall(3400, fine);
+      }
+    } });
+  };
+  // all'arrivo Maky non si sta rotolando: si sente solo grugnire
+  const L13 = LIVELLI.find(l => l.id === 13);
+  if (L13) L13.dialoghi.arrivo = [{ who: 'narratore', text: 'Un pascolo pieno di sassi. Da qualche parte qualcuno grugnisce, tutto contento.' }, { who: 'mordicchio', text: 'Senti? C\'è qualcuno di buon umore. Andiamo a vedere.' }];
+})();

@@ -287,7 +287,7 @@ class Hud extends Phaser.Scene {
     if (d.i >= d.lines.length) { d.c.destroy(); this.dialog = null; if (d.done) d.done(); if (!this.dialog && this.codaDialoghi && this.codaDialoghi.length) { const [l, f] = this.codaDialoghi.shift(); this.say(l, f); } return; }
     const line = d.lines[d.i], who = PERSONAGGI[line.who] || PERSONAGGI.narratore;
     d.nome.setText(who.nome);
-    if (who.tex) { d.portrait.setTexture(who.tex, who.frame || 0).setVisible(true); d.testo.setX(76); d.nome.setX(76); d.testo.setWordWrapWidth(UW - 106); }
+    if (who.tex) { d.portrait.setTexture(who.tex, who.frame || 0).setVisible(true); { const f = d.portrait.frame; d.portrait.setScale(Math.min(3, 56 / Math.max(f.realWidth || f.width, f.realHeight || f.height))); } d.testo.setX(76); d.nome.setX(76); d.testo.setWordWrapWidth(UW - 106); }
     else { d.portrait.setVisible(false); d.testo.setX(26); d.nome.setX(26); d.testo.setWordWrapWidth(UW - 56); }
     if (line.who === 'mordicchio' && d.i === 0) Sfx.miao();
     d.full = line.text; d.testo.setText(''); let n = 0;
@@ -957,6 +957,8 @@ class Mappa extends Phaser.Scene {
           else if (pos.perche === 'cancello') hud.say([{ who: 'mordicchio', text: pos.testo }]);
           else if (pos.perche === 'tardi') hud.say([{ who: 'mordicchio', text: 'È tardi per partire. Si va domattina, col sole.' }]);
           else if (pos.perche === 'alba' && this.tappaAllAlba) this.tappaAllAlba(id);
+          else if (pos.perche === 'sogno' && this.tappaSogno) this.tappaSogno(id);
+          else if (pos.perche === 'domani' && this.tappaDomani) this.tappaDomani(id);
           else if (pos.perche === 'nonora') { const sc = S.scomparsa && S.scomparsa.stato; hud.say([sc === 'via' || sc === 'sera' ? { who: 'anastasia', text: 'Non so dove sia andato. Di solito torna da solo prima del tramonto... aspettiamo.' } : (sc === 'prevista' || (S.completati.includes(9) && !S.completati.includes(10)) ? { who: 'mordicchio', text: pick(['Oggi non ho voglia di proseguire. Ho le zampe pesanti. Restiamo un po\' qui, in giardino?', 'Sono stanco, oggi. Il sentiero non scappa: facciamo una pausa, ti va?', 'Proseguire? Mmh. Oggi preferisco stare qui al sole. Domani, magari.']) } : { who: 'mordicchio', text: 'Lì non c\'è niente da vedere, per adesso. Io sto qui con te.' })]); }
           return;
         }

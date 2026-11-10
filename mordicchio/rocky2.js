@@ -160,7 +160,7 @@ OGGETTI.collare_rocky = { nome: 'Il collare di Rocky', tex: 'collare_rocky', tip
   };
 })();
 function mostraRitrattoRocky(hud, nuovo, nota) {
-  const w = UW - 60, h = w * 361 / 320, m = hud.modal('Anastasia e Rocky', h + 120);
+  const w = UW - 60, h = w * 361 / 320, m = hud.modal('Anastasia e Rocky', h + 146);
   m.c.add(hud.add.image(UW / 2, m.y + 46 + h / 2, 'ritratto_rocky').setDisplaySize(w, h));
   m.c.add(txt(hud, UW / 2, m.y + 56 + h, 'Seduti in cima alla collina, a guardare il mondo.' + (nota ? '\n' + nota : nuovo ? '\nIl collare è nell\'inventario di «Arreda».' : ''), 12, COL.testo, { align: 'center', wordWrap: { width: UW - 60 } }).setOrigin(0.5, 0));
 }

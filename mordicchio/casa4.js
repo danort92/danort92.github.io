@@ -58,7 +58,7 @@ const casa4Attiva = s => s && s.stanza === 'casa';
       if ((a.stanza || 'casa') !== 'casa') return;
       const o = OGGETTI[a.id]; if (!o || o.tipo === 'muro') return;
       if (a.y >= 120) a.y += 160;                                                           // la metà bassa diventa il soggiorno
-      else if (/^letto_(verde|azzurro|rosa)$/.test(a.id) && a.x < 88) a.x = STANZA.w - a.x;   // il letto va in camera
+      else if (/^(letto_(verde|azzurro|rosa)|comodino)$/.test(a.id) && a.x < 88) a.x = STANZA.w - a.x;   // il letto (e il comodino) vanno in camera
     });
     S.casaZone = 1;
   }
@@ -199,3 +199,40 @@ const casa4Attiva = s => s && s.stanza === 'casa';
 })();
 // la lettiera di Mordicchio sta in bagno
 LETTIERA = () => (STANZA.h === CASA4.h ? { x: 156, y: 228, w: 22, h: 12 } : { x: STANZA.w - 20, y: STANZA.h - 22, w: 22, h: 12 });
+
+// ---------------- di notte: la luce solo nella stanza dove sei ----------------
+// Fuori è buio: si accende la luce della zona in cui entra Anastasia, le altre restano al buio.
+// (Via anche la lampada sul pavimento della cucina: accesa lì, di notte, non aveva senso.)
+const ZONE_LUCE = { cucina: [[0, 0, 88, 154]], camera: [[88, 0, 88, 154]], bagno: [[103, 154, 73, 108]], soggiorno: [[0, 154, 103, 246], [103, 262, 73, 138]] };
+{ const i = ARREDO_INIZIALE.findIndex(a => a.id === 'lampada_verde'); if (i >= 0) ARREDO_INIZIALE.splice(i, 1); }
+(function () {
+  const notte = () => { const h = Save.data.ora / 60; return h >= 19 || h < 6; };
+  const crea = Rifugio.prototype.create;
+  Rifugio.prototype.create = function () {
+    const S = Save.data;
+    if (S && !S.lampadaCucinaTolta) {   // partite già iniziate: la lampada iniziale della cucina torna in «Arreda»
+      S.lampadaCucinaTolta = true;
+      const a = (S.arredi || []).find(a => a.id === 'lampada_verde' && (a.stanza || 'casa') === 'casa' && ((S.casaZone && a.y < 154 && a.x < 88) || (!S.casaZone && a.x === 48 && a.y === 64)));
+      if (a) { S.arredi = S.arredi.filter(x => x !== a); S.inventario.push('lampada_verde'); }
+    }
+    this.luciZone = null; crea.apply(this, arguments);
+    if (this.stanza !== 'casa') return;
+    this.luciZone = {};
+    Object.keys(ZONE_LUCE).forEach(z => { this.luciZone[z] = ZONE_LUCE[z].map(([x, y, w, h]) => this.add.rectangle(x, y, w, h, 0x0e0b22, 0).setOrigin(0).setDepth(18000.5)); });
+    this.zonaLuce = null; this.aggiornaLuceZone(true);
+  };
+  Rifugio.prototype.aggiornaLuceZone = function (subito) {
+    if (!this.luciZone || !this.player) return;
+    const z = zonaCasa(this.player.x, this.player.y), buio = notte();
+    if (!subito && z === this.zonaLuce && buio === this.buioZone) return;
+    this.zonaLuce = z; this.buioZone = buio;
+    if (buio && this.velo) this.velo.setFillStyle(0x241a48, 0.08);
+    Object.keys(this.luciZone).forEach(k => this.luciZone[k].forEach(r => { const a = !buio ? 0 : k === z ? 0.05 : 0.6; if (subito) r.setFillStyle(0x0e0b22, a); else this.tweens.addCounter({ from: r.fillAlpha, to: a, duration: 350, onUpdate: t => r.setFillStyle(0x0e0b22, t.getValue()) }); }));
+    // le lampade brillano solo nella stanza accesa
+    (this.lucine || []).forEach(l => { const zl = zonaCasa(l.x, l.y + 10); l.setVisible(!buio || zl === z); });
+  };
+  const al = Rifugio.prototype.aggiornaLuce;
+  Rifugio.prototype.aggiornaLuce = function () { const r = al.apply(this, arguments); if (this.luciZone) { if (notte() && this.velo) this.velo.setFillStyle(0x241a48, 0.08); this.aggiornaLuceZone(); } return r; };
+  const upd = Rifugio.prototype.update;
+  Rifugio.prototype.update = function (t, d) { upd.call(this, t, d); if (this.luciZone) this.aggiornaLuceZone(); };
+})();
