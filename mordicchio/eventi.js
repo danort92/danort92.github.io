@@ -46,7 +46,7 @@ const CARATTERI = {
   gaia: { gesto: 'razzola', icone: ['insalata', 'cuore'] }, paperotto: { gesto: 'saltella', icone: ['insalata', 'cuore'], vel: 1.2 },
   ottavia: { gesto: 'razzola', icone: ['insalata', 'cuore', 'nota'] },
   ciuffo: { gesto: 'saltella', icone: ['carota', 'cuore'], vel: 1.5 }, ghianda: { gesto: 'saltella', icone: ['mela', 'pallina'], vel: 1.6 },
-  pisolo: { gesto: 'dorme', icone: ['more'] }, spillo: { gesto: 'arrotola', icone: ['mela'], vel: 0.8 },
+  pisolo: { gesto: 'dorme', icone: ['more'] }, spillo: { gesto: 'dorme', icone: ['mela'], vel: 0.8 },
   thiago: { gesto: 'siede', icone: ['cuscino', 'cuore'] }, mitty: { gesto: 'agguato', icone: ['gomitolo', 'pallina'], vel: 1.3 },
   mino: { gesto: 'siede', icone: ['ciotola', 'cuore'] }, max: { gesto: 'agguato', icone: ['gomitolo', 'pallina'] },
   teodora: { gesto: 'dorme', icone: ['insalata'], vel: 0.35 }, briciola: { gesto: 'dorme', icone: ['cuscino', 'cuore'], vel: 0.6 },

@@ -107,3 +107,32 @@ Object.assign(Rifugio.prototype, {
     this.time.delayedCall(320, () => { const p = Eco.prossimoTurno(S); if (p) S.ora = Math.max(S.ora, p.da); Save.write(); this.cameras.main.fadeIn(300); this.aggiornaOra(); this.hud.toast(p ? 'È ora di aprire il van ' + p.nome + '!' : 'Per oggi il van ha chiuso.'); });
   },
 });
+
+// ---------------- il forno a legna si vede: comignolo sul tetto del van, che fuma (revisione 10/11, notte) ----------------
+// Con il forno (S.van >= 2) sul tetto compare un comignolo. Quando il van è aperto fuma di più; il resto della giornata un filo sottile.
+// Di notte il forno è spento.
+(function () {
+  const crea = Rifugio.prototype.create;
+  Rifugio.prototype.create = function () {
+    this.comignolo = null; const r = crea.apply(this, arguments);
+    const S = Save.data;
+    if (this.stanza !== 'fuori' || !this.vanImg || !(S.van >= 2)) return r;
+    const x = VAN_XY.x + 12, y = VAN_XY.y - 15 + 5, d = this.vanImg.depth;
+    const g = this.add.graphics().setDepth(d + 0.1);
+    g.fillStyle(0x504086, 1).fillRect(x - 2, y - 7, 5, 8);   // contorno
+    g.fillStyle(0x6e6a72, 1).fillRect(x - 1, y - 6, 3, 7);
+    g.fillStyle(0x504086, 1).fillRect(x - 3, y - 8, 7, 2);   // cappello
+    this.comignolo = { x: x + 0.5, y: y - 9 };
+    const sbuffo = () => {
+      if (!this.sys.isActive()) return;
+      const S = Save.data, ora = S.ora, aperto = !!(Eco.turnoVanOra && Eco.turnoVanOra(S)), giorno = ora >= 7 * 60 && ora < 22 * 60;
+      if (giorno) {
+        const c = this.add.circle(this.comignolo.x + (Math.random() - 0.5), this.comignolo.y, 1.7, 0xc9c3cf, aperto ? 0.9 : 0.55).setDepth(d + 0.2);
+        this.tweens.add({ targets: c, y: c.y - 14 - Math.random() * 6, x: c.x + 3 + Math.random() * 4, scale: 2.4, alpha: 0, duration: 2200 + Math.random() * 600, ease: 'Sine.out', onComplete: () => c.destroy() });
+      }
+      this.time.delayedCall(aperto ? 320 : 1300, sbuffo);
+    };
+    this.time.delayedCall(300, sbuffo);
+    return r;
+  };
+})();

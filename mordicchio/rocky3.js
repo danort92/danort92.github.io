@@ -155,30 +155,84 @@ function textureComodino(scena) {
     this.tweens.add({ targets: palla, y: palla.y - 1.5, yoyo: true, repeat: 5, duration: 300 });
     if (this.cat) { this.cat.setPosition(l.x + 22, l.y + 8); this.cat.meta = null; this.cat.evento = true; }
     let tentativi = 0;
-    const alzati = () => {
+    // (revisione 10/11, notte) il risveglio è più lento: un momento di silenzio, la pallina tenuta in mano,
+    // i passi piano fino al comodino, la stanza che si fa più scura, una piccola melodia; Mordicchio le si avvicina.
+    const aspetta = (ms, f) => this.time.delayedCall(ms, () => { if (this.sys.isActive()) f(); });
+    const tw = (cfg) => new Promise(res => this.tweens.add(Object.assign({ onUpdate: () => p.setDepth(p.y), onComplete: res }, cfg)));
+    const pausa = ms => new Promise(res => aspetta(ms, res));
+    const parla = lines => new Promise(res => hud.say(lines, res));
+    // nuvoletta con «...» o un cuore sopra qualcuno (non passa dalle nuvolette normali, che tacciono quando i comandi sono fermi)
+    const nuvoletta = (o, k, ms) => {
+      const c = this.add.container(o.x, o.y - 24).setDepth(19000).setAlpha(0);
+      const g = this.add.graphics(); g.fillStyle(0xfbf4dc, 1).fillRoundedRect(-9, -7, 18, 13, 4); g.lineStyle(1, 0x504086, 0.9).strokeRoundedRect(-9, -7, 18, 13, 4);
+      g.fillStyle(0xfbf4dc, 1).fillCircle(-3, 8, 1.6).fillCircle(-5, 11, 1);
+      const ic = k === 'cuore' && typeof iconaPensiero === 'function' ? iconaPensiero(this, 0, -1, 'cuore') : txt(this, 0, -1, '...', 9, '#504086').setOrigin(0.5);
+      if (ic.width && k === 'cuore') ic.setScale(Math.min(1, 10 / Math.max(ic.width, ic.height)));
+      c.add([g, ic]);
+      const segui = this.time.addEvent({ delay: 30, loop: true, callback: () => c.setPosition(o.x, o.y - 24 - (o.displayHeight > 20 ? 4 : 0)) });
+      this.tweens.add({ targets: c, alpha: 1, duration: 300 });
+      aspetta(ms, () => this.tweens.add({ targets: c, alpha: 0, duration: 400, onComplete: () => { segui.remove(); c.destroy(); } }));
+    };
+    // la musica di sottofondo si abbassa e suona un carillon lento
+    const carillon = () => {
+      if (typeof Sfx === 'undefined' || !Sfx.tone) return;
+      const out = typeof Musica !== 'undefined' && Musica.out && Sfx.ctx ? Musica.out.gain : null;
+      if (out) out.setTargetAtTime(0.0001, Sfx.ctx.currentTime, 0.4);
+      const note = [[659, 1], [587, 1], [523, 1], [392, 2], [440, 1], [523, 1], [494, 1], [392, 3]];
+      let t = 0.1; note.forEach(([f, d]) => { Sfx.tone(f, d * 0.55, 'sine', 0.05, t); Sfx.tone(f / 2, d * 0.5, 'triangle', 0.02, t); t += d * 0.5; });
+      return t;
+    };
+    const rialzaMusica = () => { const out = typeof Musica !== 'undefined' && Musica.out && Sfx.ctx ? Musica.out.gain : null; if (out && Sfx.ctx) out.setTargetAtTime(Musica.on ? 0.07 : 0, Sfx.ctx.currentTime, 1.2); };
+    const alzati = async () => {
       if (!this.sys.isActive()) return;
       if ((hud.dialog || (hud.ctrl && hud.ctrl.frozen)) && tentativi++ < 60) return this.time.delayedCall(400, alzati);
-      coperta.destroy(); this.sdraiata = false;
       const k = (this.arrediSprites || []).find(a => a.dati.id === 'comodino');
       if (hud.ctrl) hud.ctrl.frozen = true;
-      // prende la pallina
-      this.tweens.add({ targets: p, x: l.x + 14, y: l.y + 8, duration: 500, onUpdate: () => p.setDepth(p.y), onComplete: () => {
-        this.tweens.add({ targets: palla, x: p.x, y: p.y - 20, duration: 300, onComplete: () => {
-          const dove = k ? { x: k.x, y: k.y + 12 } : { x: p.x, y: p.y };
-          this.tweens.add({ targets: [p, palla], x: dove.x, y: (t, key, v, i) => i === 0 ? dove.y : dove.y - 20, duration: 700, onUpdate: () => p.setDepth(p.y), onComplete: () => {
-            // la posa sul comodino, accanto al ritratto, e lo guarda
-            p.setFrame(4);   // di spalle: guarda il comodino
-            this.tweens.add({ targets: palla, x: k ? k.x + 4 : p.x, y: k ? k.y - 12 : p.y - 6, duration: 350, onComplete: () => {
-              S.pallinaRossa = 'comodino'; S.ritrattoVisto = true; Save.write(); this.pallinaComodino = palla;
-              this.time.delayedCall(700, () => hud.say([{ who: 'anastasia', text: 'Mi manchi...' }], () => {
-                if (hud.ctrl) hud.ctrl.frozen = false; if (this.cat) this.cat.evento = false;
-                mostraRitrattoRocky(hud, false, 'Il ritratto è sul comodino: toccalo quando vuoi rivederlo.');
-                if (S.ricordi && !S.ricordi.rocky) { S.ricordi.rocky = 1; Save.write(); }
-              }));
-            } });
-          } });
-        } });
-      } });
+      // ancora sotto le coperte, un momento di silenzio
+      nuvoletta(p, '...', 2200); await pausa(2800);
+      // si alza piano
+      this.tweens.add({ targets: coperta, alpha: 0, duration: 700, onComplete: () => coperta.destroy() }); this.sdraiata = false;
+      await tw({ targets: p, x: l.x + 14, y: l.y + 8, duration: 1100, ease: 'Sine.inOut' });
+      await pausa(500);
+      // si gira verso il cuscino: la pallina è ancora lì
+      p.dir = 'side'; p.setFrame(8).setFlipX(palla.x < p.x); await pausa(900);
+      await tw({ targets: palla, x: p.x, y: p.y - 20, duration: 800, ease: 'Sine.out' });
+      // la tiene un po' in mano, in silenzio
+      this.tweens.add({ targets: palla, scale: 0.34, yoyo: true, duration: 600, repeat: 1 });
+      const buio = this.add.rectangle(STANZA.w / 2, STANZA.h / 2, STANZA.w + 40, STANZA.h + 40, 0x1c1638, 1).setAlpha(0).setDepth(18000);
+      this.tweens.add({ targets: buio, alpha: 0.32, duration: 2500 });
+      const durata = carillon() || 6;
+      await pausa(1800);
+      // a piccoli passi fino al comodino
+      const dove = k ? { x: k.x, y: k.y + 12 } : { x: p.x, y: p.y };
+      { const dx = dove.x - p.x, dy = dove.y - p.y, dir = Math.abs(dx) > Math.abs(dy) ? 'side' : dy < 0 ? 'up' : 'down'; p.setFlipX(dx < 0); if (p.anims && Math.hypot(dx, dy) > 3) p.anims.play('g-' + dir, true); }
+      this.tweens.add({ targets: palla, x: dove.x, y: dove.y - 20, duration: 1800, ease: 'Sine.inOut' });
+      await tw({ targets: p, x: dove.x, y: dove.y, duration: 1800, ease: 'Sine.inOut' });
+      if (p.anims) p.anims.stop();
+      p.dir = 'up'; p.setFrame(4);   // di spalle: guarda il comodino (p.dir, se no l'aggiornamento la rigira)
+      await pausa(700);
+      // la posa piano, accanto al ritratto
+      await tw({ targets: palla, x: k ? k.x + 4 : p.x, y: k ? k.y - 12 : p.y - 6, duration: 1000, ease: 'Sine.out' });
+      S.pallinaRossa = 'comodino'; S.ritrattoVisto = true; Save.write(); this.pallinaComodino = palla;
+      await pausa(1600);
+      await parla([{ who: 'anastasia', text: 'Era solo un sogno...' }]);
+      if (hud.ctrl) hud.ctrl.frozen = true;
+      await pausa(1500);
+      await parla([{ who: 'anastasia', text: 'Mi manchi...' }]);
+      if (hud.ctrl) hud.ctrl.frozen = true;
+      // Mordicchio le si avvicina e le sta accanto
+      if (this.cat && this.cat.visible) {
+        const c = this.cat; if (c.anims && c.walkAnim) c.anims.play(c.walkAnim, true); c.setFlipX(p.x < c.x);
+        await new Promise(res => this.tweens.add({ targets: c, x: p.x + 12, y: p.y + 2, duration: 1400, ease: 'Sine.inOut', onUpdate: () => c.setDepth(c.y), onComplete: res }));
+        if (c.anims) c.anims.stop(); if (c.idleFrame != null) c.setFrame(c.idleFrame);
+        this.tweens.add({ targets: c, x: c.x - 3, yoyo: true, repeat: 1, duration: 450, ease: 'Sine.inOut' });
+        nuvoletta(c, 'cuore', 2200); await pausa(2600);
+      } else await pausa(1000);
+      if (hud.ctrl) hud.ctrl.frozen = false; if (this.cat) this.cat.evento = false;
+      this.tweens.add({ targets: buio, alpha: 0, duration: 1500, onComplete: () => buio.destroy() });
+      rialzaMusica();
+      mostraRitrattoRocky(hud, false, 'Il ritratto è sul comodino: toccalo quando vuoi rivederlo.');
+      if (S.ricordi && !S.ricordi.rocky) { S.ricordi.rocky = 1; Save.write(); }
     };
     this.time.delayedCall(2500, alzati);
   };

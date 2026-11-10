@@ -47,7 +47,7 @@ const FRASI_EXTRA = {
   hana: { mattina: ['In Giappone si dice che il mattino ha l\'oro in bocca. O forse lo dite voi. È vero ovunque.'], sera: ['La sera faccio qualche passo di danza. Tu balli bene, sai? Ti ho vista.'], pioggia: ['La pioggia sui fiori di ciliegio è bellissima. Anche qui, sull\'erba.'], giardino: ['Questo giardino mi ricorda casa. Mancano solo le lanterne.'], amici: ['Ho provato a insegnare a Fiocco a stare su una zampa. Siamo caduti tutti e due.'], altro: ['Un giorno vedrai Kyoto in fiore. Io lo so. Le gru sanno queste cose.'] },
   nuvola: { mattina: ['Muu! La mamma dice che devo fare colazione. Io voglio giocare!'], sera: ['La sera dormo attaccato alla mamma. È caldissima.'], pioggia: ['La pioggia! Posso saltare nelle pozzanghere? La mamma dice di no. Ma tu?'], giardino: ['In giardino ho trovato un fiore. L\'ho annusato. Poi l\'ho mangiato. Ops.'], amici: ['Zia Margherita mi racconta le storie del pascolo.', 'Birba salta altissimo! Da grande salterò così anch\'io.'], altro: ['Grazie per avermi riportato dalla mamma. Lo dico tutti i giorni, lo so.'] },
   viola: { mattina: ['Buongiorno. Nuvola è già sveglio da un\'ora e mi ha già chiesto di te tre volte.'], sera: ['La sera lo guardo dormire e penso a quanto sono fortunata.'], pioggia: ['Con la pioggia teniamo Nuvola all\'asciutto. Ci prova sempre a uscire.'], giardino: ['Il giardino è bello per far correre Nuvola. Io guardo da vicino.'], amici: ['Margherita è diventata una zia per Nuvola. Qui siamo tutti un po\' famiglia.'], altro: ['Nessuno ci separerà più. Lo so perché ci sei tu.'] },
-  spillo: { mattina: ['Mpf. Mattina. Già.'], sera: ['La sera brontolo meno. Non dirlo in giro.'], pioggia: ['Con la pioggia mi arrotolo e aspetto. Gli aculei bagnati sono una tragedia.'], giardino: ['Il melo del giardino. Le mele cadute sono mie. Per contratto.'], amici: ['Ho prestato il mio angolo vicino al calorifero a Zip. Un\'ora. Poi l\'ho rivoluto.'], altro: ['Brontolo, ma è un modo di dire grazie. Ormai lo sai.'] },
+  spillo: { mattina: ['Mpf. Mattina. Già.'], sera: ['La sera brontolo meno. Non dirlo in giro.'], pioggia: ['Con la pioggia mi acciambello e dormo. Che è quello che faccio anche col sole.'], giardino: ['Il melo del giardino. Le mele cadute sono mie. Per contratto.'], amici: ['Ho prestato il mio angolo vicino al calorifero a Zip. Un\'ora. Poi l\'ho rivoluto.'], altro: ['Brontolo, ma è un modo di dire grazie. Ormai lo sai.'] },
   zip: { mattina: ['Squit! Ho già riparato la maniglia del cassetto. E oliato la porta.'], sera: ['La sera progetto nuove invenzioni. Una macchina per lanciare i bastoncini a Mordicchio, per esempio.'], pioggia: ['Con la pioggia controllo che non entri acqua dalla finestra. Tutto asciutto, capo.'], giardino: ['In giardino ho trovato un bullone. Un giorno servirà.'], amici: ['Mordicchio mi guarda strano. Gli ho detto che anche io sono vegano.'], altro: ['Qui tutti hanno un posto. Anche un topolino con le chiavi inglesi.'] },
 };
 // Frasi di Anastasia quando chiacchiera (risposte brevi e naturali)
@@ -205,7 +205,7 @@ const FRASI_NUOVE = {
  ],
  "spillo": [
   "Mpf. Bella giornata. Non abituarti, non lo dico spesso.",
-  "Gli aculei servono a difendersi. Qui non serve. Li tengo per bellezza.",
+  "Dicono «dormire come un ghiro». Come se fosse una cosa brutta.",
   "Ho trovato una mela perfetta. L'ho guardata per un'ora. Poi l'ho mangiata. Mpf, buona."
  ],
  "zip": [

@@ -34,7 +34,7 @@ Object.assign(Rifugio.prototype, {
       g.fillStyle(0xe8806f).fillCircle(x + 6, y + 1, 2).fillStyle(0x9fd38a).fillCircle(x + 11, y + 1, 2);   // pomodoro e insalata sul bancone
       g.lineStyle(1, 0x504086, 0.9).strokeRect(x, y, 42, 16); g.lineStyle(1, 0x754c60, 0.6).lineBetween(x + 14, y + 4, x + 14, y + 15);
       this.vaporeCucina = [0, 1].map(i => { const v = this.add.circle(x + 26 + i * 3, y - 7, 1.4, 0xffffff, 0.6).setDepth(d); this.tweens.add({ targets: v, y: v.y - 6, alpha: 0, duration: 1400, repeat: -1, delay: i * 700 }); return v; });
-      // il calorifero sotto la finestra (quello di cui parlano Mordicchio, Spillo e Briciola)
+      // il calorifero sotto la finestra (quello di cui parlano Mordicchio, Nocciolo e Briciola)
       const cx = STANZA.w - 44, cy = STANZA.muro - 6, k = this.add.graphics().setDepth(cy + 12);
       k.fillStyle(0xe9e4dc).fillRect(cx, cy, 26, 12); k.lineStyle(1, 0x504086, 0.9).strokeRect(cx, cy, 26, 12);
       for (let i = 1; i < 6; i++) k.lineStyle(1, 0xb9b2a8, 1).lineBetween(cx + i * 4.4, cy + 2, cx + i * 4.4, cy + 11);

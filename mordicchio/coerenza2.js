@@ -180,7 +180,7 @@ const MESSE_IN_SCENA = {
   24: { chi: 'tubino', dove: s => ({ x: 66, y: 47 }), azione: 'saluta' },
   26: { chi: 'hana', dove: s => ({ x: 70, y: 196 }), azione: 'danza' },
   27: { chi: ['viola', 'nuvola'], dove: s => ({ x: 100, y: 150 }), azione: 'vicini' },
-  28: { chi: 'spillo', dove: s => ({ x: STANZA.w - 50, y: STANZA.muro + 14 }), azione: 'arrotola' },
+  28: { chi: 'spillo', dove: s => ({ x: STANZA.w - 50, y: STANZA.muro + 14 }), azione: 'dorme' },
   29: { chi: 'zip', dove: s => ({ x: 40, y: STANZA.muro + 16 }), azione: 'lavora' },
 };
 Object.assign(DOPO_LIVELLO, {
@@ -207,7 +207,7 @@ Object.assign(DOPO_LIVELLO, {
   24: [{ who: 'mordicchio', text: 'Tubino si è sistemato sul davanzale, fuori dalla finestra. Guarda: mi saluta. Che situazione strana.' }],
   26: [{ who: 'mordicchio', text: 'Hana ha trovato l\'angolo del laghetto. Dice che le ricorda casa, e ci fa un passo di danza.' }],
   27: [{ who: 'mordicchio', text: 'Viola e Nuvola stanno sempre vicine vicine. Anche io sto sempre vicino a te. È la stessa cosa.' }],
-  28: [{ who: 'mordicchio', text: 'Spillo si è preso il posto vicino al calorifero e si è appallottolato. Il secondo posto migliore. Il primo è mio.' }],
+  28: [{ who: 'mordicchio', text: 'Nocciolo si è preso il posto vicino al calorifero e si è già addormentato. Il secondo posto migliore. Il primo è mio.' }],
   29: [{ who: 'mordicchio', text: 'Zip sta già controllando le viti della cucina. Dice che una cigolava. E mi ha chiesto di non mangiarlo. Ovviamente no!' }],
 });
 Rifugio.prototype.messaInScena = function (id) {
@@ -250,13 +250,13 @@ Rifugio.prototype.messaInScena = function (id) {
 // ---------------- l'aspirapolvere: ognuno reagisce a modo suo ----------------
 // scappa: si allontana il più possibile · osserva: si tiene a distanza e guarda · curioso: segue il tubo a qualche passo
 // palla: si appallottola dov'è · guscio: si ritira e aspetta · dorme: non sente niente (Briciola, con l'età)
-const REAZIONE_ASPIRA = { thiago: 'osserva', mitty: 'curioso', max: 'curioso', zip: 'curioso', pisolo: 'palla', spillo: 'palla', teodora: 'guscio', briciola: 'dorme', mino: 'scappa', ghianda: 'scappa', ciuffo: 'scappa', rossella: 'scappa' };
+const REAZIONE_ASPIRA = { thiago: 'osserva', mitty: 'curioso', max: 'curioso', zip: 'curioso', pisolo: 'palla', spillo: 'dorme', teodora: 'guscio', briciola: 'dorme', mino: 'scappa', ghianda: 'scappa', ciuffo: 'scappa', rossella: 'scappa' };
 const FRASI_REAZIONE = {
   curioso: { mitty: ['Che cos\'è quel serpente? Lo attacco!', 'Fa rumore ma non morde. Credo.'], max: ['Si gioca? Che gioco è?', 'Mi mangia il pelo! Ne ho tanto, va bene.'], zip: ['Motore da duecento watt. Spazzola rotante. Bello.', 'Squit! Posso smontarlo dopo?'] },
   osserva: { thiago: ['Un gatto elegante osserva da lontano. Molto da lontano.'] },
-  palla: { pisolo: ['*si appallottola e trema un pochino*'], spillo: ['Mpf. Avvisatemi quando ha finito.'] },
+  palla: { pisolo: ['*si appallottola e trema un pochino*'] },
   guscio: { teodora: ['*ritira la testa nel guscio e aspetta*'] },
-  dorme: { briciola: ['*dorme beata. Con l\'età, certi rumori non si sentono più*'] },
+  dorme: { briciola: ['*dorme beata. Con l\'età, certi rumori non si sentono più*'], spillo: ['*dorme come un ghiro. Letteralmente.*'] },
 };
 (function () {
   const agg = Rifugio.prototype.aggiornaAspira;

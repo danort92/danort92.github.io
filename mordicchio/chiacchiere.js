@@ -18,10 +18,9 @@ Object.assign(Rifugio.prototype, {
     const adatte = bb => typeof frasiAdatte === 'function' ? bb.filter(([d, r]) => frasiAdatte([d, r]).length === 2) : bb;
     const coppie = AMICIZIE.map(([a, b, battute, tipo]) => [qui(a), qui(b), adatte(battute), tipo]).filter(([a, b, bb]) => this.liberoPerChiacchiere(a) && this.liberoPerChiacchiere(b) && bb.length);
     if (!coppie.length) return false;
-    const [a, b, battute, tipo] = Phaser.Utils.Array.GetRandom(coppie);
-    const usate = this.battuteUsate = this.battuteUsate || [];
-    const dS = Frasi.scegli(battute.map(x => x[0]), 'coppia:' + a.chiave + '+' + b.chiave); if (!dS) return false; const [d, r] = battute.find(x => x[0] === dS);
-    usate.push([d, r].join()); if (usate.length > 12) usate.shift();
+    const [a0, b0, battute, tipo] = Phaser.Utils.Array.GetRandom(coppie);
+    const scelta = this.scegliBattuta(a0.chiave + '+' + b0.chiave, battute); if (!scelta) return false;
+    const [d, r] = scelta, [a, b] = scelta[2] ? [b0, a0] : [a0, b0];   // con «true» parla per primo il secondo
     this.inChiacchiera = true; a.evento = b.evento = true; a.meta = b.meta = null;
     const tok = this.chiacchieraTok = {};
     const fine = () => { if (this.chiacchieraTok !== tok) return; this.chiacchieraTok = null; [a, b].forEach(o => { if (o.active) { o.evento = false; o.pausa = 2; } }); this.inChiacchiera = false; };
@@ -39,6 +38,28 @@ Object.assign(Rifugio.prototype, {
       });
     });
     return true;
+  },
+  // ---- quale scambio dice la coppia (revisione 10/11, notte) ----
+  // Prima si dicono, in ordine casuale, tutte le battute mai dette. Poi si sceglie a caso solo tra le
+  // meno recenti (il terzo più vecchio): quella appena detta è sempre l'ultima a tornare.
+  // I racconti «una volta sola» non si ripetono.
+  scegliBattuta(chiave, battute) {
+    const S = Save.data, F = Frasi.m(S); F.coppie = F.coppie || {};
+    const C = F.coppie[chiave] = F.coppie[chiave] || {}; C.t = C.t || {}; C.seq = C.seq || 0;
+    const h = x => Frasi.h(x[0] + '|' + x[1]);
+    // partite vecchie: le battute già dette prima di questa versione contano come le più vecchie
+    const quando = x => { const k = h(x); if (C.t[k] == null && F.d[Frasi.h(x[0])] !== undefined) C.t[k] = 0; return C.t[k]; };
+    const pool = battute.filter(x => !(Frasi.unaVolta(x[0] + ' ' + x[1]) && F.d[Frasi.h(x[0])] !== undefined));
+    if (!pool.length) return null;
+    let cand = pool.filter(x => quando(x) == null);   // mai dette
+    if (!cand.length) {
+      const ord = pool.slice().sort((p, q) => quando(p) - quando(q));
+      cand = ord.slice(0, Math.max(1, Math.min(ord.length - 1, Math.ceil(ord.length / 3))));
+    }
+    const x = cand[Math.floor(Math.random() * cand.length)];
+    C.t[h(x)] = ++C.seq;
+    Frasi.detta(x[0]);   // salva anche la partita
+    return x;
   },
   // ---- qualcuno viene a dire una cosa ----
   avviaNotizia() {
