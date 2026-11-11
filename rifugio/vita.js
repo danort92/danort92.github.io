@@ -34,7 +34,7 @@ const POSTI_FUORI = {
   sentiero: { x: STANZA.w / 2, y: STANZA.h - 30 },
 };
 const ORTO_XY = i => ({ x: 22 + (i % 3) * 22, y: 96 + Math.floor(i / 3) * 22 });
-const VAN_XY = { x: 136, y: 128 };
+const VAN_XY = { x: 126, y: 128 };   // (11/11) un po' più al centro, sempre a destra del sentiero
 const ORA_LETTO = 19 * 60;   // prima delle 19 non si va a dormire
 const PORTE = { casa: { x: CASA_R.x + 38, y: CASA_R.y + CASA_R.h + 2 }, stalla: { x: STALLA_R.x + 36, y: STALLA_R.y + STALLA_R.h + 2 } };
 const RES_MONDO = () => Math.ceil(ZR * DPR / 1.5);
@@ -66,12 +66,12 @@ Object.assign(Rifugio.prototype, {
       const r = this.add.graphics().setDepth(st.y + st.h);
       r.fillStyle(0x9d6a4c).fillTriangle(st.x - 4, st.y + 14, st.x + st.w / 2, st.y - 6, st.x + st.w + 4, st.y + 14);
       r.lineStyle(1, 0x504086).strokeTriangle(st.x - 4, st.y + 14, st.x + st.w / 2, st.y - 6, st.x + st.w + 4, st.y + 14);
-      this.add.image(PORTE.stalla.x, st.y + st.h, 'portone').setOrigin(0.5, 1).setDepth(st.y + st.h + 1);
+      this.add.image(PORTE.stalla.x, st.y + st.h, 'portone_aperto').setOrigin(0.5, 1).setDepth(st.y + st.h + 1);   // la porta della stalla è sempre aperta (11/11)
     }   // prima della costruzione: terreno libero, nessun cartello né recinto (revisione 10/11)
     this.add.image(STANZA.w - 10, 92, 'natura', 'albero').setOrigin(0.5, 1).setDepth(92);
     this.add.image(10, 84, 'natura', 'cespuglio').setOrigin(0.5, 1).setDepth(84);
     this.add.image(STANZA.w - 16, STANZA.h - 20, 'natura', 'albero').setOrigin(0.5, 1).setDepth(STANZA.h - 20);
-    this.add.image(12, STANZA.h - 66, 'natura', 'fiore_rosa2').setDepth(-9); this.add.image(30, STANZA.h - 24, 'natura', 'fiore_giallo2').setDepth(-9);
+    this.add.image(70, STANZA.h - 64, 'natura', 'fiore_rosa2').setDepth(-9); this.add.image(30, STANZA.h - 24, 'natura', 'fiore_giallo2').setDepth(-9);
     // cartello del sentiero
     this.add.image(STANZA.w / 2 + 16, STANZA.h - 4, 'cartello').setOrigin(0.5, 1).setDepth(STANZA.h);
     // orto

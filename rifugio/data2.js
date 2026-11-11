@@ -487,7 +487,7 @@ LIVELLI.push(
         { who: "narratore", text: "Sulla collina vi sdraiate a guardare le stelle. Rocky ti appoggia la testa sulle gambe." },
         { who: "narratore", text: "Non serve dire niente. Respira piano, la coda batte ancora un po' sull'erba." },
         { who: "mordicchio", text: "Io vi lascio un po' da soli. Ma solo un po'. Questo è il tuo sogno, e lui ti stava aspettando." },
-        { who: "narratore", text: "Quando ti svegli, accanto al cuscino c'è una pallina rossa. Ancora tiepida, come se qualcuno l'avesse appena riportata." },
+        { who: "narratore", text: "Quando ti svegli, accanto al cuscino c'è una pallina rossa. Come se qualcuno l'avesse lasciata lì per te." },
       ],
       fine: [{ who: "mordicchio", text: "Il sogno sta finendo. Il cartello di casa è da dove sei partita." }],
     },

@@ -133,3 +133,85 @@ const FRASI_ROSA = {
     }
   };
 })();
+
+// =====================================================================
+//  In giardino gli animali girano intorno al van e alla bancarella (11/11)
+//  Prima andavano in linea retta verso la meta e ci passavano attraverso. Ora, se la strada dritta
+//  attraversa il van, la bancarella o Rosa, passano da uno o due angoli lì intorno.
+//  Le mete scelte evitano anche la bancarella (il van era già evitato).
+// =====================================================================
+(function () {
+  const ostacoli = () => {
+    const out = [{ x: VAN_XY.x - 24, y: VAN_XY.y - 17, w: 48, h: 34 }];
+    if (typeof LUOGHI !== 'undefined' && LUOGHI.fuori && LUOGHI.fuori[0]) { const b = LUOGHI.fuori[0].box; out.push({ x: b.x - 14, y: b.y - 6, w: b.w + 16, h: b.h + 8 }); }   // banco, tendone e Rosa
+    return out;
+  };
+  const dentro = (r, x, y, m) => x > r.x - m && x < r.x + r.w + m && y > r.y - m && y < r.y + r.h + m;
+  const attraversa = (r, x1, y1, x2, y2) => { const n = Math.ceil(Math.hypot(x2 - x1, y2 - y1) / 2); for (let i = 1; i < n; i++) { const t = i / n; if (dentro(r, x1 + (x2 - x1) * t, y1 + (y2 - y1) * t, 1)) return true; } return false; };
+  const libero = (x1, y1, x2, y2, rs) => !rs.some(r => attraversa(r, x1, y1, x2, y2));
+  // una strada intorno agli ostacoli: prova un angolo, poi due
+  function giro(o, meta, rs) {
+    if (libero(o.x, o.y, meta.x, meta.y, rs)) return null;
+    const ang = [].concat(...rs.map(r => [[r.x - 5, r.y - 5], [r.x + r.w + 5, r.y - 5], [r.x - 5, r.y + r.h + 5], [r.x + r.w + 5, r.y + r.h + 5]]))
+      .map(([x, y]) => ({ x: Phaser.Math.Clamp(x, 10, STANZA.w - 10), y: Phaser.Math.Clamp(y, 14, STANZA.h - 6) }))
+      .filter(p => !rs.some(r => dentro(r, p.x, p.y, 0)));
+    let best = null, lung = Infinity;
+    ang.forEach(a => { if (libero(o.x, o.y, a.x, a.y, rs) && libero(a.x, a.y, meta.x, meta.y, rs)) { const l = Math.hypot(a.x - o.x, a.y - o.y) + Math.hypot(meta.x - a.x, meta.y - a.y); if (l < lung) { lung = l; best = [a]; } } });
+    if (best) return best;
+    ang.forEach(a => ang.forEach(b => { if (a !== b && libero(o.x, o.y, a.x, a.y, rs) && libero(a.x, a.y, b.x, b.y, rs) && libero(b.x, b.y, meta.x, meta.y, rs)) { const l = Math.hypot(a.x - o.x, a.y - o.y) + Math.hypot(b.x - a.x, b.y - a.y) + Math.hypot(meta.x - b.x, meta.y - b.y); if (l < lung) { lung = l; best = [a, b]; } } }));
+    return best;
+  }
+  // una meta che cade dentro un ostacolo (es. accanto a un amico vicino al van) viene spostata appena fuori
+  const fuoriDa = (p, rs) => { rs.forEach(r => { if (!dentro(r, p.x, p.y, 3)) return; const c = [[r.x - 5, p.y], [r.x + r.w + 5, p.y], [p.x, r.y - 5], [p.x, r.y + r.h + 6]].map(([x, y]) => ({ x: Phaser.Math.Clamp(x, 10, STANZA.w - 10), y: Phaser.Math.Clamp(y, 14, STANZA.h - 6) })).sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y))[0]; p.x = c.x; p.y = c.y; }); return p; };
+  Rifugio.prototype.fuoriOstacoli = function (p) { return this.stanza === 'fuori' ? fuoriDa(p, ostacoli()) : p; };
+  // la stessa deviazione per i movimenti «a evento» (andare a bere, raggiungere un amico): cammina() va dritto
+  Rifugio.prototype.giroFuori = function (o, x, y) { if (this.stanza !== 'fuori' || !o) return null; const rs = ostacoli(); if (rs.some(r => dentro(r, o.x, o.y, 0))) return null; return giro(o, { x, y }, rs); };
+  const cammina = Rifugio.prototype.cammina;
+  Rifugio.prototype.cammina = function (o, x, y, vel, poi) {
+    if (this.stanza === 'fuori' && o && !o.uscendo) { const q = fuoriDa({ x, y }, ostacoli()); x = q.x; y = q.y; }
+    const g = this.giroFuori(o, x, y); if (!g || !g.length) return cammina.call(this, o, x, y, vel, poi);
+    const tappe = g.concat([{ x, y }]); let i = 0;
+    const vai = () => { if (!o.active) return; const t = tappe[i++]; cammina.call(this, o, t.x, t.y, vel, i < tappe.length ? vai : poi); };
+    vai();
+  };
+  const pl = Rifugio.prototype.puntoLibero;
+  Rifugio.prototype.puntoLibero = function (o) {
+    if (this.stanza !== 'fuori') return pl.apply(this, arguments);
+    const rs = ostacoli();
+    for (let i = 0; i < 12; i++) { const p = pl.apply(this, arguments); if (!rs.some(r => dentro(r, p.x, p.y, 4))) return p; }
+    return pl.apply(this, arguments);
+  };
+  const separa = Rifugio.prototype.separa;
+  Rifugio.prototype.separa = function (dt) {
+    const prima = this.stanza === 'fuori' && this.ospiti ? this.ospiti.map(o => [o, o.x, o.y]) : null;
+    const r = separa.apply(this, arguments);
+    if (prima) { const rs = ostacoli(); prima.forEach(([o, x, y]) => { if ((o.x !== x || o.y !== y) && rs.some(q => dentro(q, o.x, o.y, 0)) && !rs.some(q => dentro(q, x, y, 0))) o.setPosition(x, y); }); }
+    return r;
+  };
+  const wander = Rifugio.prototype.wander;
+  Rifugio.prototype.wander = function (dt) {
+    if (this.stanza === 'fuori' && this.ospiti) {
+      const rs = ostacoli();
+      this.ospiti.forEach(o => {
+        if (!o.meta || o.meta.__giro) return;
+        const sopra = rs.some(r => dentro(r, o.x, o.y, 0));   // finito sopra un ostacolo per strada (un saltello, una spinta): si ricalcola
+        if (o.meta.__vista === o.meta && !sopra) return;
+        o.meta.__vista = o.meta; fuoriDa(o.meta, rs);
+        if (o.uscendo || o.evento || o.occupato) return;
+        let g;
+        if (rs.some(r => dentro(r, o.x, o.y, 0))) {   // già sovrapposto (spinto da un vicino): prima esce dal lato più vicino
+          const e = fuoriDa({ x: o.x, y: o.y }, rs); g = [e].concat(giro(e, o.meta, rs) || []);
+        } else g = giro(o, o.meta, rs);
+        if (!g) return;
+        o.__dopo = g.slice(1).map(p => Object.assign({ __giro: true }, p)).concat([o.meta]);
+        o.meta = Object.assign({ __giro: true }, g[0]);
+      });
+    }
+    const r = wander.apply(this, arguments);
+    if (this.ospiti) this.ospiti.forEach(o => {
+      if (!o.meta && o.__dopo && o.__dopo.length) { o.meta = o.__dopo.shift(); o.pausa = 0; o.dorme = false; if (!o.__dopo.length) o.__dopo = null; }
+      if (o.meta && !o.meta.__giro && o.__dopo) o.__dopo = null;
+    });
+    return r;
+  };
+})();

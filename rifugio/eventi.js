@@ -278,17 +278,24 @@ Object.assign(Rifugio.prototype, {
     const S = Save.data, st = this.stanza, porta = st === 'fuori' ? null : { x: STANZA.w / 2, y: STANZA.h - 6 };
     this.ospiti.slice().forEach(o => {
       if (o === this.cat || o.evento || o.occupato || o.uscendo || o.dorme || luogoAttuale(o.chiave) === st) return;
-      o.uscendo = true; o.meta = null; const dest = porta || { x: o.x < STANZA.w / 2 ? 4 : STANZA.w - 4, y: Phaser.Math.Clamp(o.y, 90, STANZA.h - 20) };
+      o.uscendo = true; o.meta = null; const dest = porta || this.portaGiardino(luogoAttuale(o.chiave), o);   // (11/11) dal giardino si entra in stalla e in casa dalla porta
       if (Math.random() < 0.5) this.pensiero(o, 'nota', true);
       this.cammina(o, dest.x, dest.y, 1, () => { this.ospiti = this.ospiti.filter(x => x !== o); o.destroy(); });
     });
     Object.keys(S.animali).forEach(k => {
       if (k === 'mordicchio' || !ANIMALI[k] || luogoAttuale(k) !== st || this.ospiti.some(o => o.chiave === k)) return;
-      const da = porta || { x: Math.random() < 0.5 ? 4 : STANZA.w - 4, y: Phaser.Math.Between(110, STANZA.h - 24) };
+      const da = porta || this.portaGiardino(typeof LIBERI !== 'undefined' && LIBERI[k] ? null : stanzaDi(k), null);   // gli ospiti arrivano da fuori
       const o = this.makeAnimal(k, da.x, da.y); const C = CARATTERI[k]; if (C && C.vel) o.velocita = C.vel;
       this.ospiti.push(o); o.evento = true;
       const p = this.puntoLibero(o); this.cammina(o, p.x, p.y, 1, () => { o.evento = false; o.pausa = 2; });
     });
+  },
+  // da dove si esce dal giardino (o da dove si arriva): la porta della stalla, quella di casa, o i lati (chi va via)
+  portaGiardino(dove, o) {
+    const S = Save.data;
+    if (dove === 'stalla' && S.stallaAperta) return { x: PORTE.stalla.x, y: PORTE.stalla.y - 2 };
+    if (dove === 'casa') return { x: PORTE.casa.x, y: PORTE.casa.y - 2 };
+    return o ? { x: o.x < STANZA.w / 2 ? 4 : STANZA.w - 4, y: Phaser.Math.Clamp(o.y, 90, STANZA.h - 20) } : { x: Math.random() < 0.5 ? 4 : STANZA.w - 4, y: Phaser.Math.Between(110, STANZA.h - 24) };
   },
   // ---------------- luce della giornata ----------------
   creaLuce() {

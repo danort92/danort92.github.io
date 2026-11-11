@@ -10,7 +10,7 @@
 const LUOGHI = {
   casa: [{ id: 'cucina', nome: 'La cucina', x: 28, y: STANZA.muro + 10, r: 22, apri: 'Apri la cucina', azione: s => s.cucinaCasa ? s.cucinaCasa() : s.ricettario() }],
   fuori: [
-    { id: 'bancarella', nome: 'La bancarella', x: 128, y: 198, r: 24, apri: 'Apri la bancarella', azione: s => s.bottega(), box: { x: 110, y: 184, w: 36, h: 16 } },
+    { id: 'bancarella', nome: 'La bancarella', x: 124, y: 198, r: 24, apri: 'Apri la bancarella', azione: s => s.bottega(), box: { x: 106, y: 184, w: 36, h: 16 } },   // (11/11) un po' più al centro
     { id: 'bacheca', nome: 'I lavori', x: 66, y: 70, r: 20, apri: 'Guarda la bacheca dei lavori', azione: s => s.lavori(), box: { x: 56, y: 62, w: 20, h: 10 } },
   ],
   stalla: [],

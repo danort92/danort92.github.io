@@ -105,7 +105,7 @@ OGGETTI.pallina_rossa = { nome: 'La pallina rossa', atlas: 'ricordi', frame: 'ro
   ];
   L.dialoghi.fine = [];
   DOPO_LIVELLO[25] = [
-    { who: 'narratore', text: 'Quando ti svegli sei nel tuo letto. Accanto al cuscino c\'è una pallina rossa, ancora tiepida. Come se qualcuno l\'avesse appena riportata.' },
+    { who: 'narratore', text: 'Quando ti svegli sei nel tuo letto. Accanto al cuscino c\'è una pallina rossa. Come se qualcuno l\'avesse lasciata lì per te.' },
     { who: 'mordicchio', text: 'Hai dormito sorridendo, sai? E quella pallina... io non l\'avevo mai vista. Non è mia. Giuro.' },
   ];
   // al risveglio: Anastasia accanto al letto, la pallina lì vicino, e poi il ricordo nell'album

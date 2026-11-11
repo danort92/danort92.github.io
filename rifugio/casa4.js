@@ -14,18 +14,18 @@ const CASA4 = {
   muri: [   // dove i piedi non passano
     { x: 0, y: 146, w: 30, h: 16 }, { x: 54, y: 146, w: 38, h: 16 }, { x: 116, y: 146, w: 60, h: 16 },   // tra la fila alta e il soggiorno
     { x: 84, y: 32, w: 8, h: 122 },                                                                     // tra cucina e camera
-    { x: 100, y: 160, w: 6, h: 36 }, { x: 100, y: 222, w: 6, h: 46 },                                   // parete del bagno (porta a sinistra)
-    { x: 100, y: 254, w: 76, h: 14 },                                                                   // sotto il bagno
+    { x: 112, y: 160, w: 6, h: 36 }, { x: 112, y: 222, w: 6, h: 46 },                                   // parete del bagno (porta a sinistra)
+    { x: 112, y: 254, w: 64, h: 14 },                                                                   // sotto il bagno
   ],
   porte: {
     cucina: { dentro: { x: 42, y: 136 }, fuori: { x: 42, y: 172 } },
     camera: { dentro: { x: 104, y: 136 }, fuori: { x: 104, y: 172 } },
-    bagno: { dentro: { x: 120, y: 209 }, fuori: { x: 86, y: 209 } },
+    bagno: { dentro: { x: 128, y: 209 }, fuori: { x: 98, y: 209 } },
   },
   nomi: { cucina: 'Cucina', camera: 'Camera da letto', bagno: 'Bagno', soggiorno: 'Soggiorno' },
-  vasca: { x: 138, y: 166, w: 34, h: 18 }, lavandino: { x: 112, y: 160, w: 16, h: 12 }, tavolo: { x: 22, y: 104, w: 42, h: 12 },
+  vasca: { x: 154, y: 164, w: 18, h: 34 }, lavandino: { x: 124, y: 160, w: 16, h: 12 }, tavolo: { x: 22, y: 104, w: 42, h: 12 },
 };
-function zonaCasa(x, y) { if (y < 154) return x < 88 ? 'cucina' : 'camera'; if (y < 262 && x > 103) return 'bagno'; return 'soggiorno'; }
+function zonaCasa(x, y) { if (y < 154) return x < 88 ? 'cucina' : 'camera'; if (y < 262 && x > 115) return 'bagno'; return 'soggiorno'; }
 function nelMuro(x, y, m = 0) { return CASA4.muri.some(r => x > r.x - m && x < r.x + r.w + m && y > r.y - m && y < r.y + r.h + m); }
 // i punti intermedi per andare da (x0,y0) a (x1,y1) passando dalle porte
 function percorsoCasa(x0, y0, x1, y1) {
@@ -38,7 +38,7 @@ function percorsoCasa(x0, y0, x1, y1) {
   for (let i = 0; i < seq.length - 1; i++) {
     const a = seq[i], b = seq[i + 1];
     out.push(a);
-    if (zonaCasa(a.x, a.y) === 'soggiorno' && zonaCasa(b.x, b.y) === 'soggiorno' && ((a.x > 96 && a.y > 262 && b.y < 270 && b.x <= 100) || (b.x > 96 && b.y > 262 && a.y < 270 && a.x <= 100))) out.push({ x: 86, y: 280 });
+    if (zonaCasa(a.x, a.y) === 'soggiorno' && zonaCasa(b.x, b.y) === 'soggiorno' && ((a.x > 108 && a.y > 262 && b.y < 270 && b.x <= 112) || (b.x > 108 && b.y > 262 && a.y < 270 && a.x <= 112))) out.push({ x: 98, y: 280 });
   }
   return out.slice(1);
 }
@@ -79,7 +79,7 @@ const casa4Attiva = s => s && s.stanza === 'casa';
     const W = STANZA.w;
     // pavimento del bagno a piastrelle
     const b = this.add.graphics().setDepth(-9.6);
-    for (let y = 160; y < 256; y += 8) for (let x = 104; x < 176; x += 8) b.fillStyle(((x + y) / 8) % 2 ? 0xdfe8ec : 0xc9d7de, 1).fillRect(x, y, 8, 8);
+    for (let y = 160; y < 256; y += 8) for (let x = 112; x < 176; x += 8) { const x0 = Math.max(x, 118); b.fillStyle(((x + y) / 8) % 2 ? 0xdfe8ec : 0xc9d7de, 1).fillRect(x0, y, x + 8 - x0, 8); }
     // pavimento della cucina: piastrelle calde
     const k = this.add.graphics().setDepth(-9.6);
     for (let y = 32; y < 146; y += 8) for (let x = 0; x < 84; x += 8) k.fillStyle(((x + y) / 8) % 2 ? 0xe9c9a0 : 0xdcb88c, 1).fillRect(x, y, 8, 8);
@@ -92,8 +92,8 @@ const casa4Attiva = s => s && s.stanza === 'casa';
     const cima = (x, y, w, h) => { const g = this.add.graphics().setDepth(y + h); g.fillStyle(0x754c60, 1).fillRect(x, y, w, h); g.fillStyle(0x9a6a78, 1).fillRect(x + 1, y, w - 2, h - 1); };
     faccia(0, 146, 30, 14); faccia(54, 146, 38, 14); faccia(116, 146, 60, 14);
     cima(85, 32, 6, 114);
-    cima(101, 160, 4, 36); cima(101, 222, 4, 32);
-    faccia(100, 254, 76, 14);
+    cima(113, 160, 4, 36); cima(113, 222, 4, 32);
+    faccia(112, 254, 64, 14);
     // stipiti delle porte
     const st = this.add.graphics().setDepth(161);
     [[30, 146], [54, 146], [92, 146], [116, 146]].forEach(([x, y]) => st.fillStyle(0x8a5a48, 1).fillRect(x - 1, y - 3, 2, 17));
@@ -198,12 +198,12 @@ const casa4Attiva = s => s && s.stanza === 'casa';
   };
 })();
 // la lettiera di Mordicchio sta in bagno
-LETTIERA = () => (STANZA.h === CASA4.h ? { x: 156, y: 228, w: 22, h: 12 } : { x: STANZA.w - 20, y: STANZA.h - 22, w: 22, h: 12 });
+LETTIERA = () => (STANZA.h === CASA4.h ? { x: 152, y: 214, w: 22, h: 12 } : { x: STANZA.w - 20, y: STANZA.h - 22, w: 22, h: 12 });
 
 // ---------------- di notte: la luce solo nella stanza dove sei ----------------
 // Fuori è buio: si accende la luce della zona in cui entra Anastasia, le altre restano al buio.
 // (Via anche la lampada sul pavimento della cucina: accesa lì, di notte, non aveva senso.)
-const ZONE_LUCE = { cucina: [[0, 0, 88, 154]], camera: [[88, 0, 88, 154]], bagno: [[103, 154, 73, 108]], soggiorno: [[0, 154, 103, 246], [103, 262, 73, 138]] };
+const ZONE_LUCE = { cucina: [[0, 0, 88, 154]], camera: [[88, 0, 88, 154]], bagno: [[115, 154, 61, 108]], soggiorno: [[0, 154, 115, 246], [115, 262, 61, 138]] };
 { const i = ARREDO_INIZIALE.findIndex(a => a.id === 'lampada_verde'); if (i >= 0) ARREDO_INIZIALE.splice(i, 1); }
 (function () {
   const notte = () => { const h = Save.data.ora / 60; return h >= 19 || h < 6; };

@@ -7,7 +7,7 @@
 // =====================================================================
 const LAGO = { x: 42, y: 198, rx: 27, ry: 13 };
 const NEL_LAGO = (x, y, m = 0) => ((x - LAGO.x) / (LAGO.rx + m)) ** 2 + ((y - LAGO.y) / (LAGO.ry + m)) ** 2 < 1;
-const ALBERI = { arance: { x: 166, y: 92 }, pere: { x: 164, y: 178 }, mele: { x: 160, y: 220 } };
+const ALBERI = { arance: { x: 166, y: 92 }, pere: { x: 18, y: 178 }, mele: { x: 160, y: 220 } };   // (11/11) il pero va a sinistra, tra orto e laghetto
 const PAPERE = ['gaia', 'paperotto', 'ottavia'];
 
 Object.assign(Rifugio.prototype, {
