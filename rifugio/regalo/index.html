@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Il Rifugio di Mordicchio · per Anastasia</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Il Rifugio">
+<meta name="theme-color" content="#9bd4c3">
+<style>
+  @font-face { font-family: "Pixelify Sans"; font-weight: 400; font-display: swap; src: url(../vendor/pixelify-400.woff2) format("woff2"); }
+  @font-face { font-family: "Pixelify Sans"; font-weight: 600; font-display: swap; src: url(../vendor/pixelify-600.woff2) format("woff2"); }
+  :root { --prato: #9bd4c3; --crema: #fbf4dc; --carta: #f3e5c2; --testo: #5c4a3d; --titolo: #8a4a70; --bordo: #754c60; --verde: #67835c; --oro: #d79e61; color-scheme: light; }
+  * { box-sizing: border-box; }
+  html { background: var(--prato); }
+  body { margin: 0; font-family: "Pixelify Sans", ui-rounded, system-ui, sans-serif; color: var(--testo); background: var(--prato);
+    padding: max(20px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+  main { max-width: 460px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+  .px { image-rendering: pixelated; image-rendering: crisp-edges; background-repeat: no-repeat; display: inline-block; }
+  .scena { position: relative; height: 128px; background: linear-gradient(#f7d9a8 0 55%, #b5d27a 55%); border: 3px solid var(--bordo); border-radius: 10px; overflow: hidden; }
+  .sole { position: absolute; width: 44px; height: 44px; border-radius: 50%; background: #fff2c4; right: 34px; top: 16px; }
+  .casa { position: absolute; left: 18px; bottom: 48px; width: 64px; height: 40px; background: #e9d3b0; border: 2px solid var(--bordo); }
+  .casa::before { content: ""; position: absolute; left: -10px; top: -26px; border-left: 40px solid transparent; border-right: 40px solid transparent; border-bottom: 26px solid #a8574e; }
+  .casa::after { content: ""; position: absolute; left: 24px; bottom: 0; width: 14px; height: 20px; background: #90625d; }
+  .chi { position: absolute; bottom: 14px; display: flex; gap: 6px; align-items: flex-end; left: 50%; transform: translateX(-30%); }
+  .ana { width: 64px; height: 72px; background-image: url(../assets/girl.png); background-size: 768px 72px; background-position: 0 0; }
+  .mord { width: 64px; height: 64px; background-image: url(../assets/mordicchio.png); background-size: 320px 64px; background-position: -128px 0; }
+  .cuore { position: absolute; color: #d96f6f; font-size: 18px; animation: sale 2.6s infinite ease-out; opacity: 0; }
+  @keyframes sale { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(-46px); opacity: 0; } }
+  .carta { background: var(--crema); border: 3px solid var(--bordo); border-radius: 10px; padding: 18px 18px 16px; box-shadow: 0 4px 0 rgba(117, 76, 96, .25); }
+  h1 { font-weight: 600; color: var(--titolo); font-size: 28px; line-height: 1.15; margin: 0 0 6px; text-wrap: balance; }
+  h2 { font-weight: 600; color: var(--titolo); font-size: 19px; margin: 0 0 10px; }
+  p { margin: 0 0 10px; line-height: 1.45; font-size: 17px; }
+  .sotto { color: var(--verde); font-size: 16px; margin: 0; }
+  .cose { display: grid; gap: 10px; margin-top: 6px; }
+  .cosa { display: flex; gap: 12px; align-items: center; }
+  .cosa .ic { flex: 0 0 48px; height: 48px; border-radius: 8px; background: var(--carta); display: grid; place-items: center; }
+  .cosa p { margin: 0; font-size: 16px; }
+  ol { margin: 0; padding-left: 22px; display: grid; gap: 8px; font-size: 16px; line-height: 1.4; }
+  li::marker { color: var(--titolo); font-weight: 600; }
+  .nota { background: var(--carta); border-radius: 8px; padding: 10px 12px; font-size: 15px; line-height: 1.4; margin-top: 12px; }
+  .vai { display: block; text-align: center; text-decoration: none; font: 600 22px "Pixelify Sans", system-ui, sans-serif; color: var(--crema); background: var(--titolo); border: 3px solid var(--bordo); border-radius: 12px; padding: 16px; box-shadow: 0 5px 0 var(--bordo); }
+  .vai:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--bordo); }
+  .firma { text-align: center; color: var(--bordo); font-size: 15px; margin-top: 4px; }
+  b { color: var(--titolo); font-weight: 600; }
+</style>
+</head>
+<body>
+<main>
+  <div class="scena" aria-hidden="true">
+    <div class="sole"></div><div class="casa"></div>
+    <div class="chi"><span class="px ana"></span><span class="px mord"></span></div>
+    <span class="cuore" style="left:58%;bottom:70px">♥</span><span class="cuore" style="left:66%;bottom:64px;animation-delay:.9s">♥</span><span class="cuore" style="left:61%;bottom:76px;animation-delay:1.7s">♥</span>
+  </div>
+
+  <section class="carta">
+    <h1>Buon compleanno, Anastasia!</h1>
+    <p class="sotto">Un piccolo gioco fatto apposta per te, per i tuoi 30 anni.</p>
+  </section>
+
+  <section class="carta">
+    <h2>Il Rifugio di Mordicchio</h2>
+    <p>Mordicchio ti aspetta in una casetta con l'orto e il giardino. Fuori dalla porta c'è un sentiero.</p>
+    <div class="cose">
+      <div class="cosa"><span class="ic"><span class="px" style="width:32px;height:32px;background-image:url(../assets/pisolo.png);background-size:96px 32px"></span></span><p><b>30 tappe, una per ogni anno.</b> In ognuna c'è qualcuno che ha bisogno di te.</p></div>
+      <div class="cosa"><span class="ic"><span class="px" style="width:32px;height:32px;background-image:url(../assets/ciuffo.png);background-size:64px 32px"></span></span><p><b>Chi aiuti viene al rifugio</b>, oppure passa a trovarti: ognuno ha il suo carattere e le sue storie.</p></div>
+      <div class="cosa"><span class="ic"><span class="px" style="width:32px;height:32px;background-image:url(../assets/briciola.png);background-size:64px 32px"></span></span><p><b>Arreda la casa</b>, coltiva l'orto e cucina nel tuo van: pizze, primi, dolci e tanti altri piatti vegani.</p></div>
+    </div>
+  </section>
+
+  <section class="carta">
+    <h2>Come cominciare</h2>
+    <ol>
+      <li>Apri questa pagina con <b>Safari</b> e tocca il pulsante qui sotto, «Apri il gioco».</li>
+      <li>Nella pagina del gioco, tocca <b>Condividi</b> (il quadratino con la freccia) e poi <b>«Aggiungi alla schermata Home»</b>.</li>
+      <li>Chiudi Safari e apri <b>Il Rifugio</b> dall'icona sulla Home: da lì si gioca a schermo intero, anche senza connessione.</li>
+      <li>Togli il silenzioso e alza un po' il volume: c'è la musica.</li>
+    </ol>
+    <div class="nota">Gioca sempre dall'icona sulla Home: lì la partita si salva da sola e resta al sicuro. Se invece giochi da Safari, dopo qualche giorno senza aprirlo il telefono potrebbe cancellarla. Non c'è nessuna fretta, puoi fare qualche tappa al giorno quando ti va. Mordicchio ti spiega tutto strada facendo.</div>
+  </section>
+
+  <a class="vai" href="../">Apri il gioco</a>
+  <p class="firma">Made with love by Danilo</p>
+</main>
+</body>
+</html>
