@@ -166,7 +166,7 @@ const VAN = { ripara: 60, daTappa: 5, migliorie: [{ prezzo: 150, clienti: 4, nom
 // ---------------- OBIETTIVI CHE APRONO I CAPITOLI ----------------
 const CANCELLI = {
   11: { cosa: 'stalla', prezzo: 120, testo: 'Per accogliere gli animali dell\'alpeggio serve una stalla. Costruiscila dalla bacheca dei lavori, in giardino.' },
-  21: { cosa: 'van1', testo: 'Per arrivare in paese serve il van con il bancone nuovo. Lo trovi alla bacheca dei lavori, in giardino.' },
+  21: { cosa: 'van1', testo: 'Le prossime tappe sono in paese. Ci andiamo col van, e già che ci siamo vendiamo anche lì: ma con quel bancone vecchio facciamo brutta figura. Prima sistemiamolo, dalla bacheca dei lavori.' },
 };
 
 // ---------------- TAPPE ----------------
@@ -291,7 +291,7 @@ const Eco = {
     if (S.van < 0 && t >= VAN.daTappa) return { testo: 'Riparare il van', prezzo: VAN.ripara };
     const c = CANCELLI[next];
     if (c && c.cosa === 'stalla' && !S.lavori.stalla) return { testo: 'Costruire la stalla, per andare avanti', prezzo: c.prezzo };
-    if (c && c.cosa === 'van1' && S.van < 1) return { testo: 'Il bancone nuovo del van, per arrivare in paese', prezzo: VAN.migliorie[0].prezzo };
+    if (c && c.cosa === 'van1' && S.van < 1) return { testo: 'Il bancone nuovo del van, per vendere anche in paese', prezzo: VAN.migliorie[0].prezzo };
     return null;
   },
   // ---- costruzioni ----

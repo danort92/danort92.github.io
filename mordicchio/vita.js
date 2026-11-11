@@ -223,7 +223,7 @@ Object.assign(Rifugio.prototype, {
     hud.tweens.add({ targets: bg, alpha: 1, duration: 600 });
     const frase = (forzato ? 'Sono le 23. Mordicchio ti spinge verso il letto col muso.\n\n' : '') + pick(FRASI_NOTTE);
     const t = txt(hud, UW / 2, UH * 0.4, frase, 15, COL.crema, { align: 'center', wordWrap: { width: UW - 60 }, lineSpacing: 4 }).setOrigin(0.5).setAlpha(0); c.add(t);
-    const im = hud.add.image(UW / 2, UH * 0.4 - 70, 'mordicchio', 4).setScale(4).setAlpha(0); c.add(im);
+    const im = hud.add.image(UW / 2, t.y - t.height / 2 - 42, 'mordicchio', 4).setScale(4).setAlpha(0); c.add(im);   // sempre sopra la scritta, anche quando è lunga
     hud.tweens.add({ targets: [t, im], alpha: 1, delay: 500, duration: 600 });
     const rep = Eco.notte(S); Save.write();
     const testo = ['Giorno ' + S.giorno];
@@ -369,7 +369,7 @@ Object.assign(Rifugio.prototype, {
     const pp = Eco.prezzoParcella(S);
     if (pp != null) voci.push({ nome: 'Nuova parcella dell\'orto', det: 'Ne hai ' + S.orto.length + ' su 9', prezzo: pp, fai: () => Eco.compraParcella(S) });
     if (S.van < 0) voci.push({ nome: 'Riparare il van', det: Eco.tappeFatte(S) >= VAN.daTappa ? 'Vendi pizze e piatti a pranzo e a cena' : 'Dopo la tappa ' + VAN.daTappa, prezzo: VAN.ripara, fai: () => Eco.riparaVan(S) });
-    else if (VAN.migliorie[S.van]) { const g = VAN.migliorie[S.van]; voci.push({ nome: 'Van: ' + g.nome, det: Math.min(4, 2 + S.van + 1) + ' clienti per apertura' + (S.van === 0 ? '. Serve per arrivare in paese' : ''), prezzo: g.prezzo, fai: () => Eco.miglioraVan(S) }); }
+    else if (VAN.migliorie[S.van]) { const g = VAN.migliorie[S.van]; voci.push({ nome: 'Van: ' + g.nome, det: Math.min(4, 2 + S.van + 1) + ' clienti per apertura' + (S.van === 0 ? '. Serve prima delle tappe in paese' : ''), prezzo: g.prezzo, fai: () => Eco.miglioraVan(S) }); }
     if (!S.lavori.stalla) voci.push({ nome: 'Costruire la stalla', det: 'Serve per gli animali dell\'alpeggio (tappa 11)', prezzo: CANCELLI[11].prezzo, fai: () => { const ok = Eco.costruisci(S, 'stalla'); if (ok) { S.stallaAperta = true; ARREDO_INIZIALE_STALLA.forEach(a => S.arredi.push({ ...a, stanza: 'stalla' })); } return ok; } });
     if (!voci.length) sa.inner.add(txt(hud, 0, 10, 'Hai fatto tutti i lavori. Che rifugio!', 12, COL.testo));
     voci.forEach((v, i) => {
