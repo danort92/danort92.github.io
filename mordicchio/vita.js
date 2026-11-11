@@ -303,10 +303,12 @@ Object.assign(Rifugio.prototype, {
   ricettario(tab = 'ricette') {
     const S = Save.data, hud = this.hud;
     const m = hud.modal('Ricettario', Math.min(UH - 40, 580));
-    hud.button(UW / 2 - 40, m.y + 38, 84, 26, 'Ricette', () => { m.c.destroy(); hud.scroller = null; this.ricettario('ricette'); }, { parent: m.c, size: 12, color: tab === 'ricette' ? COL.titolo : '#9d866f' });
-    hud.button(UW / 2 + 50, m.y + 38, 84, 26, 'Dispensa', () => { m.c.destroy(); hud.scroller = null; this.ricettario('dispensa'); }, { parent: m.c, size: 12, color: tab === 'dispensa' ? COL.titolo : '#9d866f' });
+    // (11/11) tre schede: Prepara (la cucina per gli animali), Ricette, Dispensa
+    [['prepara', 'Prepara'], ['ricette', 'Ricette'], ['dispensa', 'Dispensa']].forEach(([k, l], i) =>
+      hud.button(UW / 2 - 133 + i * 90, m.y + 38, 84, 26, l, () => { m.c.destroy(); hud.scroller = null; this.ricettario(k); }, { parent: m.c, size: 12, color: tab === k ? COL.titolo : '#9d866f' }));
     const sa = hud.scrollArea(m.c, 24, m.y + 74, UW - 48, m.h - 86);
     let y = 0;
+    if (tab === 'prepara' && this.listaPrepara) return this.listaPrepara(m, sa);
     if (tab === 'dispensa') {
       const ks = Object.keys(S.ing).filter(k => S.ing[k] > 0);
       if (!ks.length) sa.inner.add(txt(hud, 0, 10, 'La dispensa è vuota.\nRaccogli dall\'orto o compra alla bancarella.', 12, COL.testo, { lineSpacing: 4 }));

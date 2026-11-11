@@ -49,27 +49,30 @@ const FRASI_PIATTO = {
 
   Object.assign(Rifugio.prototype, {
     // ---- il bancone: si sceglie cosa cucinare ----
+    // il bancone e il pulsante «Apri la cucina» aprono il libro della cucina sulla scheda «Prepara» (11/11)
     cucinaCasa() {
+      if (Save.data.piattoSulTavolo && !Save.data.piattoInMano) return this.riprendiPiatto();
+      this.ricettario('prepara');
+    },
+    listaPrepara(m, sa) {
       const S = Save.data, hud = this.hud;
-      if (S.piattoInMano) return hud.toast('Hai già in mano: ' + nomePiatto(S.piattoInMano) + '. Portalo a qualcuno!');
-      if (S.piattoSulTavolo) return this.riprendiPiatto();
-      if ((S.oggi.piattiDati || 0) >= PIATTI_AL_GIORNO) return hud.toast('Per oggi in cucina hai già preparato due piatti. Domani si ricomincia!');
+      const avviso = S.piattoInMano ? 'Hai in mano: ' + nomePiatto(S.piattoInMano) + '. Portalo a qualcuno, poi potrai prepararne un altro.'
+        : (S.oggi.piattiDati || 0) >= PIATTI_AL_GIORNO ? 'Per oggi hai già preparato due piatti. Domani si ricomincia!' : null;
+      const intro = txt(hud, 0, 0, avviso || 'Due piatti al giorno: preparali e portali agli animali. Se è il loro preferito, ti regalano un cuore.', 11, avviso ? COL.titolo : '#7d6a5c', { wordWrap: { width: UW - 48 }, lineSpacing: 2 });
+      sa.inner.add(intro);
+      let y = intro.height + 10;
       const ricette = Object.keys(S.ricette || {}).filter(r => RICETTE[r]);
       const voci = [CROCCHETTE].concat(ricette.sort((a, b) => Eco.puoiCucinare(S, b) - Eco.puoiCucinare(S, a)));
-      const m = hud.modal('In cucina', Math.min(UH - 40, 560));
-      m.c.add(txt(hud, 24, m.y + 42, 'Due piatti al giorno: preparali e portali agli animali. Se è il loro preferito, ti regalano un cuore.', 12, COL.testo, { wordWrap: { width: UW - 48 }, lineSpacing: 2 }));
-      const sa = hud.scrollArea(m.c, 24, m.y + 84, UW - 48, m.h - 96);
-      let y = 0;
       voci.forEach(id => {
-        const pronto = id === CROCCHETTE ? (S.ing.crocchette || 0) >= 1 : Eco.puoiCucinare(S, id);
+        const pronto = id === CROCCHETTE ? (S.ing.crocchette || 0) >= 1 : Eco.puoiCucinare(S, id), si = pronto && !avviso;
         const manca = id === CROCCHETTE ? [] : RICETTE[id].ing.filter((k, i, a) => (S.ing[k] || 0) < a.filter(x => x === k).length);
         const cell = hud.add.container(0, y), h = 44;
-        cell.add(hud.add.rectangle(0, 0, UW - 48, h - 4, pronto ? 0xf0f6dc : 0xfbf4dc).setOrigin(0).setStrokeStyle(2, 0xd79e61));
+        cell.add(hud.add.rectangle(0, 0, UW - 48, h - 4, si ? 0xf0f6dc : 0xfbf4dc).setOrigin(0).setStrokeStyle(2, 0xd79e61));
         cell.add(iconaPiatto(hud, 22, (h - 4) / 2, id).setScale(1.4));
         cell.add(stringi(txt(hud, 44, 5, nomePiatto(id), 12, COL.titolo), UW - 110));
         const det = id === CROCCHETTE ? (pronto ? 'Per gatti, Briciola, Ciro e Rossella. Ne hai ' + S.ing.crocchette + '.' : 'Finite: si comprano alla bancarella.') : pronto ? 'Pronto da cucinare' : 'Manca: ' + [...new Set(manca)].map(nomeIng).join(', ');
         cell.add(txt(hud, 44, 22, det, 10, pronto ? COL.verde : '#9d866f', { wordWrap: { width: UW - 110 } }));
-        if (pronto) {
+        if (si) {
           const z = hud.add.rectangle(0, 0, UW - 48, h - 4, 0, 0).setOrigin(0).setInteractive();
           z.on('pointerup', () => { if (hud.scrollDragged) return; m.c.destroy(); hud.scroller = null; hud.ctrl.frozen = false; this.cucina(id); });
           cell.add(z);

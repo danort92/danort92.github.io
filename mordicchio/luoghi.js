@@ -8,7 +8,7 @@
 //  Restano pulsanti solo per ciò che non è un posto: il Diario (amici, album, arreda).
 // =====================================================================
 const LUOGHI = {
-  casa: [{ id: 'cucina', nome: 'La cucina', x: 28, y: STANZA.muro + 10, r: 22, apri: 'Apri il libro delle ricette', azione: s => s.ricettario() }],
+  casa: [{ id: 'cucina', nome: 'La cucina', x: 28, y: STANZA.muro + 10, r: 22, apri: 'Apri la cucina', azione: s => s.cucinaCasa ? s.cucinaCasa() : s.ricettario() }],
   fuori: [
     { id: 'bancarella', nome: 'La bancarella', x: 128, y: 198, r: 24, apri: 'Apri la bancarella', azione: s => s.bottega(), box: { x: 110, y: 184, w: 36, h: 16 } },
     { id: 'bacheca', nome: 'I lavori', x: 66, y: 70, r: 20, apri: 'Guarda la bacheca dei lavori', azione: s => s.lavori(), box: { x: 56, y: 62, w: 20, h: 10 } },
@@ -16,7 +16,7 @@ const LUOGHI = {
   stalla: [],
 };
 const PRESENTAZIONI = {
-  cucina: 'Questa è la cucina. Qui c\'è il libro delle ricette, e si vede cosa c\'è in dispensa.',
+  cucina: 'Questa è la cucina: qui prepari i piatti, c\'è il libro delle ricette e vedi cosa c\'è in dispensa.',
   bancarella: 'La bancarella: con i semi ci trovi regali, mobili e ingredienti per la dispensa.',
   bacheca: 'La bacheca dei lavori: parcelle nuove per l\'orto, la stalla, il van. Si fa tutto da qui.',
 };
