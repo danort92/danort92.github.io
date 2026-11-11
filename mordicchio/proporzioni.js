@@ -7,8 +7,9 @@
 //  Il disegno (e getBounds) leggono la scala vera.
 // =====================================================================
 const SCALA_SPECIE = {
-  tempesta: 1.9, ombra: 1.6, nuvola: 1.4, fragola: 1.5, hana: 1.3,          // grandi, rispetto alla mucca
-  maky: 1.25, birba: 1.2, fiocco: 1.3, briciola: 1.1, wilma: 1.1,
+  // (11/11) Tempesta, Ombra, Nuvola, Fragola, Hana, Maky, Birba, Fiocco e Briciola sono ridisegnati alla loro misura vera:
+  // niente più ingrandimento, così i loro pixel sono grandi come quelli degli altri.
+  wilma: 1.1,
   ciuffo: 0.85, ghianda: 0.75, tubino: 0.72, pisolo: 0.75, spillo: 0.75,   // piccoli, rispetto al pulcino
   teodora: 0.8, ciro: 0.9, gaia: 0.9, paperotto: 0.8, zip: 0.55,
 };

@@ -39,6 +39,10 @@ const Save = {
 };
 function scoperto(id) { const S = Save.data; return S.scoperti[id] || (S.scoperti[id] = { adora: null, gradisce: null, sgradito: null, indizi: [] }); }
 function giorno() { return Save.data.completati.length; }
+// animali grandi disegnati alla loro misura vera (revisione 11/11): lato del fotogramma in px
+const LATO_SPRITE = { tempesta: 30, ombra: 26, fragola: 24, nuvola: 22, hana: 22, fiocco: 21, maky: 20, birba: 19, briciola: 18 };
+// nei riquadri (menu, diario, mappa) tutti gli animali hanno la stessa grandezza: s è la scala per un fotogramma da 16 px
+function scalaRitratto(tex, s) { return s * 16 / (tex === 'mucca' ? 32 : (LATO_SPRITE[tex] || 16)); }
 function bonusUnaVolta(k) { const S = Save.data; if (S.oggi[k]) return false; S.oggi[k] = true; return true; }
 function aggiungiCuori(id, n) { const r = Eco.aggiungiPunti(Save.data, id, n); Save.write(); return r; }
 function cuoriDi(id) { return Eco.punti(Save.data, id) / 4; }
@@ -353,7 +357,7 @@ class Boot extends Phaser.Scene {
     this.load.spritesheet('paesani', a + 'paesani.png', { frameWidth: 16, frameHeight: 18 });
     this.load.image('ritratto_rocky', a + 'ritratto_rocky.jpg');
     ['mordicchio', 'pisolo', 'ciuffo', 'ghianda', 'paperotto', 'papera', 'gallina', 'thiago', 'mitty', 'mino', 'max', 'wilma', 'maky', 'birba', 'fiocco', 'ombra', 'tempesta', 'ottavia', 'ciro', 'fragola', 'rossella', 'teodora', 'briciola', 'tubino', 'hana', 'nuvola', 'spillo', 'zip', 'erba', 'acqua', 'selciato'].forEach(k =>
-      this.load.spritesheet(k, a + k + '.png', { frameWidth: 16, frameHeight: 16 }));
+      this.load.spritesheet(k, a + k + '.png', { frameWidth: LATO_SPRITE[k] || 16, frameHeight: LATO_SPRITE[k] || 16 }));
     this.load.spritesheet('mucca', a + 'mucca.png', { frameWidth: 32, frameHeight: 32 });
     this.load.spritesheet('icone', a + 'icone_speciali.png', { frameWidth: 16, frameHeight: 16 });
     this.load.atlas('mobili', a + 'mobili.png', a + 'mobili.json');
@@ -641,7 +645,7 @@ class Rifugio extends Mondo {
     if (id !== 'mordicchio' && !(typeof LIBERI !== 'undefined' && LIBERI[id])) azioni.push(['Dove vive: ' + NOMI_STANZE[stanzaDi(id)], () => this.sceltaStanza(o)]);
     this.fineEvento && this.fineEvento(o);
     const h = 104 + azioni.length * 40, m = hud.modal(A.nome, h, () => { o.coccola = 1; });
-    m.c.add(hud.add.image(44, m.y + 64, A.tex, o.idleFrame).setScale(A.tex === 'mucca' ? 1.5 : 3));
+    m.c.add(hud.add.image(44, m.y + 64, A.tex, o.idleFrame).setScale(scalaRitratto(A.tex, 3)));
     m.c.add(txt(hud, 72, m.y + 46, A.carattere + ' · ' + A.specie, 12, COL.testo));
     cuoriFrames(cuoriDi(id)).forEach((fr, i) => m.c.add(hud.add.image(80 + i * 20, m.y + 72, 'icone', fr).setScale(1.2)));
     azioni.forEach(([l, cb], i) => hud.button(28, m.y + 96 + i * 40, UW - 56, 34, l, () => { m.c.destroy(); hud.scroller = null; hud.ctrl.frozen = false; cb(); }, { parent: m.c, size: 14 }));
@@ -747,13 +751,13 @@ class Rifugio extends Mondo {
       const righe = [['Adora', sc.adora], ['Gradisce', sc.gradisce], ['Non sopporta', sc.sgradito]];
       const ind = sc.indizi.map(s => '«' + s + '»');
       const L0 = LIVELLI.find(l => l.animale === k || l.ospite === k), amici = (typeof amiciDi === 'function' ? amiciDi(k) : []).filter(x => S.animali[x] && ANIMALI[x]).map(x => ANIMALI[x].nome);
-      const info = [(k === 'mordicchio' ? 'Sempre con te, ovunque.' : typeof LIBERI !== 'undefined' && LIBERI[k] ? LIBERI[k].dove + (L0 ? ' · incontro: «' + L0.nome + '»' : '') : 'Vive ' + ({ casa: 'in casa', stalla: 'in stalla', fuori: 'in giardino' })[typeof stanzaDi === 'function' ? stanzaDi(k) : 'casa'] + (L0 ? ' · incontro: «' + L0.nome + '»' : '')), amici.length ? 'Amici: ' + amici.join(', ') : null, (A.preferiti || []).length ? 'Posti preferiti: ' + [...new Set(A.preferiti.map(p => (OGGETTI[p] || {}).nome).filter(Boolean).map(n => n.replace(/ (verde|rosa|azzurr[oa])$/i, '')))].slice(0, 4).join(', ').toLowerCase() : null].filter(Boolean).join('\n');
+      const info = [(k === 'mordicchio' ? 'Sempre con te, ovunque.' : typeof LIBERI !== 'undefined' && LIBERI[k] ? LIBERI[k].dove + (L0 ? ' · incontro: «' + L0.nome + '»' : '') : 'Vive ' + ({ casa: 'in casa', stalla: 'in stalla', fuori: 'in giardino' })[typeof stanzaDi === 'function' ? stanzaDi(k) : 'casa'] + (L0 ? ' · incontro: «' + L0.nome + '»' : '')), amici.length ? 'Amici: ' + amici.join(', ') : null, (A.preferiti || []).length ? 'Posti preferiti: ' + [...new Set(A.preferiti.map(p => (OGGETTI[p] || {}).nome).filter(Boolean).map(n => n.replace(/ (verde|rosa|azzurr[oa])$/i, '')))].slice(0, 4).join(', ').toLowerCase() : null, typeof piattoPreferitoInfo === 'function' ? piattoPreferitoInfo(k) : null].filter(Boolean).join('\n');
       const carTxt = txt(hud, 60, 32, A.carattere + ' · ' + A.specie, 11, COL.testo, { wordWrap: { width: UW - 48 - 70 }, lineSpacing: 1 }), dy = Math.max(0, carTxt.height - 14);
       const infoTxt = txt(hud, 14, 128 + dy, info, 11, '#7d6a5c', { wordWrap: { width: UW - 80 }, lineSpacing: 2 });
       const indTxt = txt(hud, 14, 136 + dy + infoTxt.height, ind.length ? 'Cosa ti ha raccontato:\n' + ind.join('\n') : 'Accarezzalo per sentire cosa racconta.', 11, COL.testo, { wordWrap: { width: UW - 80 }, lineSpacing: 2 });
       const hh = 146 + dy + infoTxt.height + indTxt.height;
       card.add(hud.add.rectangle(0, 0, UW - 48, hh, 0xfbf4dc).setOrigin(0).setStrokeStyle(2, 0xd79e61));
-      card.add(hud.add.image(30, 34, A.tex, A.idle).setScale(A.tex === 'mucca' ? 1.25 : 2.5));
+      card.add(hud.add.image(30, 34, A.tex, A.idle).setScale(scalaRitratto(A.tex, 2.5)));
       card.add(txt(hud, 60, 12, A.nome, 15, COL.titolo));
       card.add(carTxt);
       cuoriFrames(cuoriDi(k)).forEach((fr, i) => card.add(hud.add.image(68 + i * 18, 58 + dy, 'icone', fr)));
@@ -770,7 +774,7 @@ class Rifugio extends Mondo {
     m.c.add(hud.add.image(34, m.y + 50, 'seme'));
     m.c.add(txt(hud, 46, m.y + 50, S.semi + ' semi', 13, COL.titolo).setOrigin(0, 0.5));
     hud.button(UW / 2 - 4, m.y + 38, 74, 26, 'Regali', () => { m.c.destroy(); this.bottega('regali'); }, { parent: m.c, size: 12, color: tab === 'regali' ? COL.titolo : '#9d866f' });
-    hud.button(UW / 2 + 74, m.y + 38, 74, 26, 'Mobili', () => { m.c.destroy(); this.bottega('arredi'); }, { parent: m.c, size: 12, color: tab === 'arredi' ? COL.titolo : '#9d866f' });
+    hud.button(UW / 2 + 74, m.y + 38, 74, 26, 'Arredo', () => { m.c.destroy(); this.bottega('arredi'); }, { parent: m.c, size: 12, color: tab === 'arredi' ? COL.titolo : '#9d866f' });
     const sa = hud.scrollArea(m.c, 24, m.y + 72, UW - 48, m.h - 84), cw = (UW - 48 - 16) / 3;
     BOTTEGA[tab].forEach((k, i) => {
       const o = tab === 'regali' ? REGALI[k] : OGGETTI[k], x = (i % 3) * (cw + 8), y = Math.floor(i / 3) * 96;
@@ -943,7 +947,7 @@ class Mappa extends Phaser.Scene {
       const c = this.add.container(p.x, p.y);
       // un cartello di legno per ogni luogo; quelli lontani sono ancora nella nebbia
       c.add(this.add.image(0, 6, 'cartello').setScale(2).setOrigin(0.5, 1).setTint(ok ? 0xffffff : 0x9a948c).setAlpha(ok ? 1 : 0.6));
-      if (fatto && L && ANIMALI[L.animale] && L.animale !== 'mordicchio') { const A = ANIMALI[L.animale]; c.add(this.add.image(20, 4, A.tex, A.idle).setScale(A.tex === 'mucca' ? 0.9 : 1.6).setOrigin(0.5, 1)); }
+      if (fatto && L && ANIMALI[L.animale] && L.animale !== 'mordicchio') { const A = ANIMALI[L.animale]; c.add(this.add.image(20, 4, A.tex, A.idle).setScale(scalaRitratto(A.tex, 1.6)).setOrigin(0.5, 1)); }
       if (fatto) c.add(this.add.image(-18, -20, 'icone', 3).setScale(1.2));
       if (prossima) { const sc = this.add.image(0, -40, 'scintilla').setScale(0.9); c.add(sc); this.tweens.add({ targets: sc, angle: 360, alpha: 0.4, yoyo: true, repeat: -1, duration: 900 }); this.tweens.add({ targets: c, scale: 1.08, yoyo: true, repeat: -1, duration: 700 }); }
       c.setSize(70, 64).setInteractive();

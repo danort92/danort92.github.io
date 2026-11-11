@@ -19,6 +19,22 @@ const PAESANI = [
   { nome: 'Tommaso, il ciclista', frame: 10, saluti: ['Trenta chilometri in bici. Adesso mi merito tutto.', 'Ho legato la bici al cancello. Il gatto la sta annusando.'] },
   { nome: 'Lucia, la bibliotecaria', frame: 7, saluti: ['Ho finito un libro bellissimo. Festeggio.', 'Parlo piano anche qui, è l\'abitudine. Una cosa buona, per favore.'] },
 ];
+// (revisione 11/11) più paesani: i limiti di clienti per apertura restano uguali, cambia solo quanto spesso torna ciascuno
+PAESANI.push(
+  { nome: 'Anna, la ceramista', frame: 2, saluti: ['Ho le mani piene d\'argilla. Lavate, giuro.', 'Ti faccio una ciotola nuova per Mordicchio. Col suo nome.'] },
+  { nome: 'Nonna Gemma', frame: 4, saluti: ['Sono uscita a fare due passi e mi sono persa nel profumo.', 'Mia nipote dice che qui si mangia benissimo. Verifico.'] },
+  { nome: 'Giorgia, l\'infermiera', frame: 6, saluti: ['Smonto ora dal turno di notte. Mi serve qualcosa di buono.', 'Mangio in piedi, come in corsia. Ma qui è più bello.'] },
+  { nome: 'Fatima, la farmacista', frame: 11, saluti: ['Pausa pranzo! Finalmente.', 'Ti ho portato dei cerotti con i gattini. Per ogni evenienza.'] },
+  { nome: 'Signora Ada, la sarta', frame: 12, saluti: ['Ho appena orlato tre pantaloni. Ho una fame da quattro.', 'Che bel grembiule. Se si scuce, passa da me.'] },
+  { nome: 'Davide, il meccanico', frame: 13, saluti: ['Il van come va? Se fa rumori strani, chiamami.', 'Mi lavo le mani e arrivo. Fatto.'] },
+  { nome: 'Luca, lo studente', frame: 14, saluti: ['Domani ho l\'esame. Oggi mangio e basta.', 'Ho un budget da studente. Ma per te faccio un\'eccezione.'] },
+  { nome: 'Il signor Aldo, pescatore', frame: 15, saluti: ['Io pesco e poi li ributto in acqua. Mi piace solo stare al fiume.', 'Al lago c\'era una nebbia... ora mi serve qualcosa di caldo.'] },
+  { nome: 'Chiara, la veterinaria', frame: 16, saluti: ['Come stanno i tuoi animali? Si vede che stanno bene.', 'Ho visto la mucca dal cancello. Che bella salute.'] },
+  { nome: 'Irene, l\'insegnante di yoga', frame: 17, saluti: ['Respiro profondo... che profumo!', 'Dopo la lezione mi merito una cosa buona. Con calma.'] },
+  { nome: 'Samuel, il falegname', frame: 18, saluti: ['Se ti serve una mensola, sai dove trovarmi.', 'Ho fatto una panca per la piazza. Adesso mi siedo e mangio.'] },
+  { nome: 'Ettore, il guardiaparco', frame: 19, saluti: ['Stamattina ho visto un camoscio. Te lo dico perché so che ti piace.', 'Giro del bosco finito. Tutto in ordine, anche il ruscello.'] },
+  { nome: 'Martina, la guida alpina', frame: 20, saluti: ['Sono scesa dal rifugio in quota apposta. Quasi.', 'Domani porto un gruppo in cima. Oggi carico le energie.'] },
+);
 PAESANI.forEach(p => { p.k = 'paesano' + p.frame; PERSONAGGI[p.k] = { nome: p.nome, tex: 'paesani', frame: p.frame }; });
 const vanVecchio = Rifugio.prototype.van;
 (function () {
@@ -31,6 +47,14 @@ const vanVecchio = Rifugio.prototype.van;
   Eco.chiudiVan = S => { Eco.passa(S, 60); };
   const notte = Eco.notte; Eco.notte = function (S) { const r = notte.apply(this, arguments); S.vanTurni = { g: S.giorno, fatti: [] }; S.vanOggi = false; return r; };
   // clienti diversi: niente doppioni nella stessa apertura, e chi è venuto l'ultima volta salta un giro
+  // richieste: niente doppioni ravvicinati (le ultime 4 aspettano), se ce ne sono altre possibili (revisione 11/11)
+  Eco.nuovaRichiesta = function (S, rnd) {
+    const note = Object.keys(S.ricette).map(k => RICETTE[k]);
+    const valide = RICHIESTE.filter(q => note.some(q.ok)); if (!valide.length) return RICHIESTE[0];
+    const ultime = S.vanRichieste || [], fresche = valide.filter(q => !ultime.includes(q.dice)), da = fresche.length ? fresche : valide;
+    const q = da[Math.floor(rnd() * da.length)];
+    S.vanRichieste = ultime.concat(q.dice).slice(-4); return q;
+  };
   Eco.scegliClienti = (S, n) => {
     const ultimi = S.vanUltimi || [], pool = PAESANI.filter(p => !ultimi.includes(p.nome)), scelti = [];
     const src = (pool.length >= n ? pool : PAESANI).slice();

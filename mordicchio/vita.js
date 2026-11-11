@@ -70,7 +70,7 @@ Object.assign(Rifugio.prototype, {
     }   // prima della costruzione: terreno libero, nessun cartello né recinto (revisione 10/11)
     this.add.image(STANZA.w - 10, 92, 'natura', 'albero').setOrigin(0.5, 1).setDepth(92);
     this.add.image(10, 84, 'natura', 'cespuglio').setOrigin(0.5, 1).setDepth(84);
-    this.add.image(STANZA.w - 16, STANZA.h - 20, 'natura', 'melo').setOrigin(0.5, 1).setDepth(STANZA.h - 20);
+    this.add.image(STANZA.w - 16, STANZA.h - 20, 'natura', 'albero').setOrigin(0.5, 1).setDepth(STANZA.h - 20);
     this.add.image(12, STANZA.h - 66, 'natura', 'fiore_rosa2').setDepth(-9); this.add.image(30, STANZA.h - 24, 'natura', 'fiore_giallo2').setDepth(-9);
     // cartello del sentiero
     this.add.image(STANZA.w / 2 + 16, STANZA.h - 4, 'cartello').setOrigin(0.5, 1).setDepth(STANZA.h);
@@ -268,7 +268,7 @@ Object.assign(Rifugio.prototype, {
     tr.n++;
     const rnd = Math.random, q = Eco.nuovaRichiesta(S, rnd), chi = pick(tr.ospiti), A = ANIMALI[chi];
     const m = hud.modal('Cliente ' + tr.n + ' di ' + tr.tot, Math.min(UH - 30, 560));
-    m.c.add(hud.add.image(48, m.y + 70, A.tex, A.idle).setScale(A.tex === 'mucca' ? 1.5 : 3));
+    m.c.add(hud.add.image(48, m.y + 70, A.tex, A.idle).setScale(scalaRitratto(A.tex, 3)));
     m.c.add(txt(hud, 80, m.y + 52, A.nome + ':\n«' + q.dice + '»', 13, COL.testo, { wordWrap: { width: UW - 110 }, lineSpacing: 2 }));
     const note = Object.keys(S.ricette).sort((a, b) => (q.ok(RICETTE[b]) - q.ok(RICETTE[a])) || (prezzoPiatto(b) - prezzoPiatto(a)));
     const sa = hud.scrollArea(m.c, 24, m.y + 104, UW - 48, m.h - 160);
@@ -336,7 +336,7 @@ Object.assign(Rifugio.prototype, {
     const hud = this.hud, S = Save.data;
     const m = hud.modal('La bancarella', Math.min(UH - 40, 580), () => this.attachHud());
     m.c.add(hud.add.image(34, m.y + 50, 'seme')); m.c.add(txt(hud, 46, m.y + 50, S.semi + ' semi', 13, COL.titolo).setOrigin(0, 0.5));
-    const tabs = [['regali', 'Regali'], ['dispensa', 'Dispensa'], ['arredi', 'Mobili'], ['lavori', 'Lavori']];
+    const tabs = [['regali', 'Regali'], ['dispensa', 'Dispensa'], ['arredi', 'Arredo'], ['lavori', 'Lavori']];
     tabs.forEach(([k, l], i) => hud.button(24 + i * ((UW - 48) / 4), m.y + 70, (UW - 48) / 4 - 4, 26, l, () => { m.c.destroy(); hud.scroller = null; this.bottega(k); }, { parent: m.c, size: 11, color: tab === k ? COL.titolo : '#9d866f' }));
     const sa = hud.scrollArea(m.c, 24, m.y + 104, UW - 48, m.h - 116), cw = (UW - 48 - 16) / 3;
     let voci;

@@ -142,6 +142,20 @@ const RICHIESTE = [
   { dice: 'Qualcosa di dolce!', ok: r => r.tipo === 'dolce' || r.tipo === 'sfizio' },
   { dice: 'Una delle tue specialità.', ok: r => !!r.sua },
   { dice: 'Qualcosa di leggero.', ok: r => r.tipo === 'piatto' || (r.ing.length <= 3 && r.tipo !== 'dolce') },
+  // (revisione 11/11) più richieste
+  { dice: 'Qualcosa con i legumi: ceci, lenticchie, fagioli...', ok: r => r.ing.some(k => ['ceci', 'lenticchie', 'fagioli', 'lupini'].includes(k)) },
+  { dice: 'Qualcosa di caldo, che scaldi.', ok: r => r.tipo === 'primo' || r.ing.includes('zucca') },
+  { dice: 'Qualcosa con la zucca.', ok: r => r.ing.includes('zucca') },
+  { dice: 'Ho voglia di riso.', ok: r => r.ing.includes('riso') },
+  { dice: 'Una cosa da mangiare con le mani.', ok: r => r.tipo === 'pizza' || r.tipo === 'sfizio' || r.ing.some(k => ['pane', 'piadine', 'tortillas'].includes(k)) },
+  { dice: 'Qualcosa col cioccolato. Non giudicarmi.', ok: r => r.ing.includes('cioccolato') },
+  { dice: 'Tante verdure dell\'orto, colorate!', ok: r => r.ing.filter(k => !DISPENSA[k] && !FRUTTI[k]).length >= 2 },
+  { dice: 'Qualcosa con la mozzarella che fila.', ok: r => r.ing.includes('mozzarella') },
+  { dice: 'Un piatto di pasta, uno qualsiasi.', ok: r => r.ing.includes('pasta') || r.ing.includes('sfoglie') },
+  { dice: 'Qualcosa con le carote.', ok: r => r.ing.includes('carota') },
+  { dice: 'Qualcosa con le melanzane o i peperoni.', ok: r => r.ing.includes('melanzane') || r.ing.includes('peperoni') },
+  { dice: 'Qualcosa con le olive.', ok: r => r.ing.includes('olive') },
+  { dice: 'Sorprendimi!', ok: r => true },
 ];
 
 // ---------------- VAN ----------------
