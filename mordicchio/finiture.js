@@ -85,3 +85,51 @@
     return b.apply(this, arguments);
   };
 })();
+
+// =====================================================================
+//  Rosa, la signora della bancarella (11/11)
+//  Di giorno (8–19) sta dietro al banco: ogni tanto si muove e dice qualcosa da sola, e quando
+//  Anastasia si avvicina la saluta. La sera è a casa: la bancarella funziona lo stesso
+//  («lascia i semi nella cassetta»). Prezzi e merce non cambiano.
+// =====================================================================
+const ROSA = { frame: 21, daOra: 8 * 60, aOra: 19 * 60 };
+const FRASI_ROSA = {
+  saluto: ['Buongiorno, cara! Cosa ti serve oggi?', 'Eccola! Per Mordicchio ho messo da parte le crocchette migliori.', 'Oggi ho delle cose buonissime. Guarda pure.', 'Ciao, Anastasia! Come stanno i tuoi animali?', 'Hai visto che bei semi? Freschi freschi.'],
+  dasola: ['Pomodori freschi! Carote dolci!', 'Chi vuole un gomitolo nuovo?', 'Oggi c\'è un bel sole per l\'orto.', 'Mmh, chi mi ha spostato le zucche?', 'Arredi per la casa, a buon prezzo!', 'Che pace, qui al rifugio.'],
+  sera: 'Rosa è tornata a casa. Sul banco c\'è un biglietto: «Lascia i semi nella cassetta. Mi fido!»',
+};
+(function () {
+  const presente = S => S.ora >= ROSA.daOra && S.ora < ROSA.aOra;
+  const crea = Rifugio.prototype.create;
+  Rifugio.prototype.create = function () {
+    this.rosa = null; this.__rosaSalutata = false; this.__rosaParla = 0;
+    const r = crea.apply(this, arguments);
+    if (this.stanza !== 'fuori' || typeof LUOGHI === 'undefined') return r;
+    const b = LUOGHI.fuori[0].box;
+    // in piedi accanto al banco (dietro al tendone non si vedrebbe), girata verso chi arriva
+    const rosa = this.add.sprite(b.x - 7, b.y + 16, 'paesani', ROSA.frame).setOrigin(0.5, 1).setDepth(b.y + 16);
+    this.rosa = rosa; rosa.setVisible(presente(Save.data));
+    this.tweens.add({ targets: rosa, y: rosa.y - 0.6, yoyo: true, repeat: -1, duration: 1400, ease: 'Sine.inOut' });
+    this.time.addEvent({ delay: 5200, loop: true, callback: () => { if (Math.random() < 0.35) rosa.setFlipX(!rosa.flipX); } });   // ogni tanto si gira verso il banco o verso il prato
+    this.__rosaParla = this.time.now + 15000 + Math.random() * 20000;
+    return r;
+  };
+  const upd = Rifugio.prototype.update;
+  Rifugio.prototype.update = function (t, d) {
+    upd.call(this, t, d);
+    const rosa = this.rosa; if (!rosa || !this.player) return;
+    const S = Save.data, c = presente(S); if (rosa.visible !== c) rosa.setVisible(c);
+    const hud = this.hud; if (!hud || hud.dialog || this.modo !== 'gioca') return;
+    const vicina = Math.hypot(this.player.x - rosa.x, this.player.y - rosa.y) < 34;
+    if (vicina && !this.__rosaSalutata) {
+      this.__rosaSalutata = true;
+      if (c) hud.bubble(rosa, pick(FRASI_ROSA.saluto), 3200);
+      else hud.bubble({ x: rosa.x, y: rosa.y + 6, displayHeight: 8 }, FRASI_ROSA.sera, 4200);
+    }
+    if (!vicina && Math.hypot(this.player.x - rosa.x, this.player.y - rosa.y) > 70) this.__rosaSalutata = false;   // allontanata: al prossimo arrivo saluta di nuovo
+    if (c && t > this.__rosaParla) {
+      this.__rosaParla = t + 40000 + Math.random() * 40000;
+      if (Math.hypot(this.player.x - rosa.x, this.player.y - rosa.y) < 110 && !(hud.quieto && hud.quieto())) hud.bubble(rosa, pick(FRASI_ROSA.dasola), 3000);
+    }
+  };
+})();

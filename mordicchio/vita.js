@@ -338,8 +338,10 @@ Object.assign(Rifugio.prototype, {
     const hud = this.hud, S = Save.data;
     const m = hud.modal('La bancarella', Math.min(UH - 40, 580), () => this.attachHud());
     m.c.add(hud.add.image(34, m.y + 50, 'seme')); m.c.add(txt(hud, 46, m.y + 50, S.semi + ' semi', 13, COL.titolo).setOrigin(0, 0.5));
-    const tabs = [['regali', 'Regali'], ['dispensa', 'Dispensa'], ['arredi', 'Arredo'], ['lavori', 'Lavori']];
-    tabs.forEach(([k, l], i) => hud.button(24 + i * ((UW - 48) / 4), m.y + 70, (UW - 48) / 4 - 4, 26, l, () => { m.c.destroy(); hud.scroller = null; this.bottega(k); }, { parent: m.c, size: 11, color: tab === k ? COL.titolo : '#9d866f' }));
+    // (11/11) i lavori stanno solo nella bacheca; alla bancarella si comprano «Ingredienti» (in cucina si chiamano «Dispensa»)
+    if (tab === 'lavori') tab = 'regali';
+    const tabs = [['regali', 'Regali'], ['dispensa', 'Ingredienti'], ['arredi', 'Arredo']];
+    tabs.forEach(([k, l], i) => hud.button(24 + i * ((UW - 48) / 3), m.y + 70, (UW - 48) / 3 - 4, 26, l, () => { m.c.destroy(); hud.scroller = null; this.bottega(k); }, { parent: m.c, size: 11, color: tab === k ? COL.titolo : '#9d866f' }));
     const sa = hud.scrollArea(m.c, 24, m.y + 104, UW - 48, m.h - 116), cw = (UW - 48 - 16) / 3;
     let voci;
     if (tab === 'regali') voci = Object.keys(PREZZI_REGALI).map(k => ({ k, nome: REGALI[k].nome, prezzo: PREZZI_REGALI[k], icona: () => iconaRegalo(hud, cw / 2, 26, k), compra: () => Eco.compraRegalo(S, k), msg: 'Comprato: ' + REGALI[k].nome }));
