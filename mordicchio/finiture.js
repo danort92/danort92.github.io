@@ -72,3 +72,16 @@
     const w = this.__lw; return conPixel(this, px => segmento(px, x1, y1, x2, y2, w));
   };
 })();
+
+// =====================================================================
+//  Mordicchio non parla nel sonno (11/11)
+//  Se sta dormendo, le sue nuvolette parlate non compaiono (restano solo quelle tra asterischi, tipo *russa*).
+// =====================================================================
+(function () {
+  const b = Hud.prototype.bubble;
+  Hud.prototype.bubble = function (o, testo) {
+    const r = game.scene.getScene('Rifugio');
+    if (o && r && r.sys.isActive() && o === r.cat && r.gattoDormiente && r.gattoDormiente() && typeof testo === 'string' && !/^\*/.test(testo.trim())) return null;
+    return b.apply(this, arguments);
+  };
+})();

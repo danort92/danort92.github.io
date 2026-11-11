@@ -16,6 +16,8 @@ const TEMPO = {
 
 // ---------------- ORTO ----------------
 // notti per maturare, quanti ne raccogli, costo della semina, da quale tappa si sblocca
+// (11/11) due blocchi: 2 notti le verdure semplici, 3 tutte le altre (zucca, asparagi, melanzane e carciofi erano a 4:
+//  con la cucina degli animali servono anche per piatti preferiti, e arrivano tardi nel gioco)
 const COLTURE = {
   pomodorini: { nome: 'Pomodorini', notti: 2, resa: 4, costo: 2, da: 0 },
   rucola:     { nome: 'Rucola',     notti: 2, resa: 3, costo: 1, da: 0 },
@@ -25,15 +27,15 @@ const COLTURE = {
   patate:     { nome: 'Patate',     notti: 3, resa: 4, costo: 2, da: 4 },
   spinaci:    { nome: 'Spinaci',    notti: 3, resa: 3, costo: 2, da: 7 },
   friarielli: { nome: 'Friarielli', notti: 3, resa: 3, costo: 2, da: 9 },
-  zucca:      { nome: 'Zucca',      notti: 4, resa: 2, costo: 3, da: 12 },
-  asparagi:   { nome: 'Asparagi',   notti: 4, resa: 3, costo: 3, da: 14 },
+  zucca:      { nome: 'Zucca',      notti: 3, resa: 2, costo: 3, da: 12 },
+  asparagi:   { nome: 'Asparagi',   notti: 3, resa: 3, costo: 3, da: 14 },
   zucchine:   { nome: 'Zucchine',   notti: 3, resa: 3, costo: 2, da: 17 },
-  melanzane:  { nome: 'Melanzane',  notti: 4, resa: 3, costo: 3, da: 20 },
+  melanzane:  { nome: 'Melanzane',  notti: 3, resa: 3, costo: 3, da: 20 },
   peperoni:   { nome: 'Peperoni',   notti: 3, resa: 3, costo: 2, da: 23 },
   fagioli:    { nome: 'Fagioli',    notti: 3, resa: 3, costo: 2, da: 3 },
   cetrioli:   { nome: 'Cetrioli',   notti: 2, resa: 3, costo: 1, da: 5 },
   pomodori:   { nome: 'Pomodori',   notti: 3, resa: 3, costo: 2, da: 8 },
-  carciofi:   { nome: 'Carciofi',   notti: 4, resa: 3, costo: 3, da: 15 },
+  carciofi:   { nome: 'Carciofi',   notti: 3, resa: 3, costo: 3, da: 15 },
 };
 // ---------------- ALBERI DA FRUTTA (in giardino, gratis: ogni tanto si coglie) ----------------
 const FRUTTI = {

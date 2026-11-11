@@ -183,7 +183,7 @@ const FRASI_PIATTO = {
     if (this.stanza === 'casa' && !(S.consigli && S.consigli.cucina) && (S.completati || []).length >= 2) {
       const prova = (n) => {
         if (!this.sys.isActive() || n > 30) return;
-        if (!this.momentoTranquillo || !this.momentoTranquillo() || (this.hud.quieto && this.hud.quieto()) || !this.cat || !this.cat.visible) return this.time.delayedCall(3000, () => prova(n + 1));
+        if (!this.momentoTranquillo || !this.momentoTranquillo() || (this.hud.quieto && this.hud.quieto()) || !this.cat || !this.cat.visible || this.gattoDormiente()) return this.time.delayedCall(3000, () => prova(n + 1));
         S.consigli = S.consigli || {}; S.consigli.cucina = true; Save.write();
         this.hud.bubble(this.cat, 'Vai al bancone della cucina e toccalo: puoi preparare qualcosa per noi. Io dico solo: crocchette.', 4500);
       };

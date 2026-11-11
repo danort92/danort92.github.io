@@ -72,7 +72,7 @@ Object.assign(Rifugio.prototype, {
     const c = hud.add.container(0, 0).setDepth(50); hud.layer.add(c); this.btnLuogo = c;
     hud.button(UW / 2 - 110, UH - 66, 220, 42, l.apri, () => this.apriLuogo(l), { parent: c, size: 14 });
     const S = Save.data; S.consigli = S.consigli || {};
-    if (!S.consigli['luogo-' + l.id]) { S.consigli['luogo-' + l.id] = true; Save.write(); this.hud.bubble(this.cat, PRESENTAZIONI[l.id], 4800); }
+    if (!S.consigli['luogo-' + l.id] && this.cat && this.cat.visible && !this.gattoDormiente()) { /* se Mordicchio dorme, lo dirà un'altra volta */ S.consigli['luogo-' + l.id] = true; Save.write(); this.hud.bubble(this.cat, PRESENTAZIONI[l.id], 4800); }
   },
   apriLuogo(l) {
     if (this.btnLuogo) { this.btnLuogo.destroy(); this.btnLuogo = null; } this.luogoOra = null;

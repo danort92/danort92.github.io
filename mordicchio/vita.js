@@ -209,7 +209,7 @@ Object.assign(Rifugio.prototype, {
       if (presto) { Sfx.no && Sfx.no(); m.close(); this.hud.bubble(this.cat && this.cat.visible && !this.cat.assente ? this.cat : this.player, pick(['È ancora presto per dormire. La giornata non è finita!', 'A letto adesso? Ma c\'è ancora il sole!', 'Dormire? Prima facciamo ancora qualcosa. Il letto ci aspetta stasera.']), 3200); return; }
       m.close(); this.dormi(false);
     }, { parent: m.c, size: 13, color: presto ? '#9d866f' : undefined });
-    m.c.add(txt(hud, UW / 2, y + 52, presto ? 'Si va a letto dalle ' + Math.floor(ORA_LETTO / 60) + ', alle 23 comunque.' : 'Alle 23 Mordicchio ti porta a letto comunque.', 11, '#9d866f').setOrigin(0.5));
+    m.c.add(txt(hud, UW / 2, y + 52, 'Se fai tardi, alle 23 ci pensa Mordicchio a mandarti a letto.', 11, '#9d866f').setOrigin(0.5));
   },
   riposa() {
     const S = Save.data; this.cameras.main.fadeOut(300, 40, 30, 50);

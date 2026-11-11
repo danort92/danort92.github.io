@@ -151,7 +151,12 @@ Object.assign(Rifugio.prototype, {
   Rifugio.prototype.libera = function (list) {
     const ev = this.eventoOggi, o = list && list[0];
     if (o && o.active && !this.interrottoDaTocco) {
-      if (ev === 'mordicchio_posto' && o === this.cat) this.tesoroQui('ramoscello', { x: this.player.x + 10, y: this.player.y + 4 });
+      if (ev === 'mordicchio_posto' && o === this.cat) {
+        const S = Save.data, gia = S.tesori && S.tesori.ramoscello;
+        this.tesoroQui('ramoscello', { x: this.player.x + 10, y: this.player.y + 4 });
+        // (11/11) Mordicchio spiega il ramoscello: è il suo regalo dopo il pisolino
+        if (!gia) this.time.delayedCall(700, () => { if (this.sys.isActive() && this.cat && this.cat.visible) this.hud.bubble(this.cat, 'Ti ho portato una cosa. Un ramoscello perfetto. L\'ho scelto con cura.', 3800); });
+      }
       if (ev === 'gioco' && this.stanza !== 'fuori') this.tesoroQui('pallina_carta', { x: o.x, y: o.y + 4 });
       if (ev === 'foglia') this.tesoroQui('foglia_rossa', { x: o.x + 6, y: o.y + 2 });
     }
