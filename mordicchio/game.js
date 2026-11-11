@@ -356,7 +356,7 @@ class Boot extends Phaser.Scene {
     this.load.spritesheet('girl', a + 'girl.png', { frameWidth: 16, frameHeight: 18 });
     this.load.spritesheet('paesani', a + 'paesani.png', { frameWidth: 16, frameHeight: 18 });
     this.load.image('ritratto_rocky', a + 'ritratto_rocky.jpg');
-    ['mordicchio', 'pisolo', 'ciuffo', 'ghianda', 'paperotto', 'papera', 'gallina', 'thiago', 'mitty', 'mino', 'max', 'wilma', 'maky', 'birba', 'fiocco', 'ombra', 'tempesta', 'ottavia', 'ciro', 'fragola', 'rossella', 'teodora', 'briciola', 'tubino', 'hana', 'nuvola', 'spillo', 'zip', 'erba', 'acqua', 'selciato'].forEach(k =>
+    ['mordicchio', 'mordicchio_titolo', 'pisolo', 'ciuffo', 'ghianda', 'paperotto', 'papera', 'gallina', 'thiago', 'mitty', 'mino', 'max', 'wilma', 'maky', 'birba', 'fiocco', 'ombra', 'tempesta', 'ottavia', 'ciro', 'fragola', 'rossella', 'teodora', 'briciola', 'tubino', 'hana', 'nuvola', 'spillo', 'zip', 'erba', 'acqua', 'selciato'].forEach(k =>
       this.load.spritesheet(k, a + k + '.png', { frameWidth: LATO_SPRITE[k] || 16, frameHeight: LATO_SPRITE[k] || 16 }));
     this.load.spritesheet('mucca', a + 'mucca.png', { frameWidth: 32, frameHeight: 32 });
     this.load.spritesheet('icone', a + 'icone_speciali.png', { frameWidth: 16, frameHeight: 16 });
@@ -405,7 +405,7 @@ class Titolo extends Phaser.Scene {
     g.add(this.add.image(-10, 20, 'natura', 'fiore_rosa2'));
     g.add(this.add.image(24, 22, 'natura', 'fiore_giallo2'));
     const girl = this.add.sprite(-4, 14, 'girl', 0).setOrigin(0.5, 1);
-    const cat = this.add.sprite(12, 15, 'mordicchio', 2).setOrigin(0.5, 1);
+    const cat = this.add.sprite(12, 15, 'mordicchio_titolo', 2).setOrigin(0.5, 1);   // solo qui il contorno è quasi nero (11/11)
     g.add([girl, cat]);
     this.tweens.add({ targets: cat, y: 14, yoyo: true, repeat: -1, duration: 700 });
     txt(this, cx, UH * 0.17, 'Il Rifugio di', 22, '#fbf4dc', { stroke: COL.scuro, strokeThickness: 5 }).setOrigin(0.5);
