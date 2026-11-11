@@ -17,7 +17,7 @@ const LUOGHI = {
 };
 const PRESENTAZIONI = {
   cucina: 'Questa è la cucina: qui prepari i piatti, c\'è il libro delle ricette e vedi cosa c\'è in dispensa.',
-  bancarella: 'La bancarella: con i semi ci trovi regali, mobili e ingredienti per la dispensa.',
+  bancarella: 'La bancarella: con i semi ci trovi regali, arredi e ingredienti per la dispensa.',
   bacheca: 'La bacheca dei lavori: parcelle nuove per l\'orto, la stalla, il van. Si fa tutto da qui.',
 };
 

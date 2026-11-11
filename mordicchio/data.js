@@ -720,7 +720,7 @@ const DOPO_LIVELLO = {
   ],
   2: [
     { who: "mordicchio", text: "Ciuffo ha già fatto il giro del giardino tre volte. Tre. Tre." },
-    { who: "mordicchio", text: "Con i semi che raccogli puoi comprare regali e mobili alla bancarella, in giardino." },
+    { who: "mordicchio", text: "Con i semi che raccogli puoi comprare regali, arredi e ingredienti alla bancarella, in giardino." },
   ],
   3: [{ who: "mordicchio", text: "Pina si è messa vicino alla finestra. Dice che vuole vedere il cielo." }],
   4: [{ who: "mordicchio", text: "Ghianda ha già nascosto qualcosa. Non so cosa, ma lo sento." }],
@@ -956,7 +956,7 @@ Object.assign(DOPO_LIVELLO, {
   ],
   2: [
     { who: "mordicchio", text: "Ciuffo ha già fatto il giro del giardino tre volte. Tre." },
-    { who: "mordicchio", text: "Con i semi che trovi puoi comprare regali e mobili alla bancarella, in giardino." },
+    { who: "mordicchio", text: "Con i semi che trovi puoi comprare regali, arredi e ingredienti alla bancarella, in giardino." },
   ],
   3: [{ who: "mordicchio", text: "Pina si è messa vicino all'orto. Dice che da lì si vede tutto il cielo." }],
   4: [{ who: "mordicchio", text: "Ghianda ha già nascosto qualcosa. Non so cosa, ma lo scopriremo." }],

@@ -41,7 +41,7 @@ const FRASI_PIATTO = {
   const prepara = scena => {
     if (scena.textures.exists('crocchette')) return;
     const g = scena.make.graphics({ x: 0, y: 0, add: false });
-    g.fillStyle(0x504086).fillRect(2, 8, 12, 6); g.fillStyle(0xd0453a).fillRect(3, 9, 10, 4); g.fillStyle(0xe8705a).fillRect(3, 9, 10, 1);
+    g.fillStyle(0x6a2e2a).fillRect(2, 8, 12, 6); g.fillStyle(0xd0453a).fillRect(3, 9, 10, 4); g.fillStyle(0xe8705a).fillRect(3, 9, 10, 1);
     [[4, 6], [6, 5], [8, 6], [10, 5], [5, 7], [7, 7], [9, 7], [11, 7]].forEach(([x, y]) => { g.fillStyle(0x8a5a32).fillRect(x, y, 2, 2); g.fillStyle(0xb47a46).fillRect(x, y, 1, 1); });
     g.generateTexture('crocchette', 16, 16); g.destroy();
   };

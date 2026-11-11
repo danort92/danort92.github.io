@@ -143,9 +143,9 @@ Object.assign(Rifugio.prototype, {
     if (this.stanza !== 'fuori' || !this.vanImg || !(S.van >= 2)) return r;
     const x = VAN_XY.x + 12, y = VAN_XY.y - 15 + 5, d = this.vanImg.depth;
     const g = this.add.graphics().setDepth(d + 0.1);
-    g.fillStyle(0x504086, 1).fillRect(x - 2, y - 7, 5, 8);   // contorno
+    g.fillStyle(0x3e3a44, 1).fillRect(x - 2, y - 7, 5, 8);   // contorno
     g.fillStyle(0x6e6a72, 1).fillRect(x - 1, y - 6, 3, 7);
-    g.fillStyle(0x504086, 1).fillRect(x - 3, y - 8, 7, 2);   // cappello
+    g.fillStyle(0x3e3a44, 1).fillRect(x - 3, y - 8, 7, 2);   // cappello
     this.comignolo = { x: x + 0.5, y: y - 9 };
     const sbuffo = () => {
       if (!this.sys.isActive()) return;
