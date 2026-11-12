@@ -1357,6 +1357,23 @@ window.game = game;
   window.addEventListener('webglcontextrestored', () => { location.reload(); }, true);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && perso) location.reload(); });
 })();
+// iPhone, aprendo dall'icona: a volte le misure dello schermo (notch, barra in basso) arrivano un attimo dopo
+// l'avvio, e il gioco resta disegnato sotto il notch e sotto la barra. Nei primi secondi si rimisura e,
+// se le misure sono cambiate, si riparte subito (al massimo due volte, per non entrare in un giro).
+(function () {
+  const t0 = Date.now(); let n = 0; try { n = +sessionStorage.getItem('rifugio_rimisura') || 0; } catch (e) {}
+  const controlla = () => {
+    const w = Math.round(VW() * DPR), h = Math.round(VH() * DPR);
+    if ((Math.abs(w - CW) > 2 || Math.abs(h - CH) > 2) && n < 2 && Date.now() - t0 < 5000) {
+      try { sessionStorage.setItem('rifugio_rimisura', n + 1); } catch (e) {}
+      location.reload(); return true;
+    }
+    return false;
+  };
+  [250, 800, 2000, 4000].forEach(ms => setTimeout(controlla, ms));
+  window.addEventListener('resize', () => setTimeout(controlla, 150));
+  setTimeout(() => { try { sessionStorage.removeItem('rifugio_rimisura'); } catch (e) {} }, 8000);
+})();
 let _rs = null;
 window.addEventListener('resize', () => {
   clearTimeout(_rs);
