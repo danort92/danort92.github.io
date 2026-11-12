@@ -261,6 +261,7 @@ Object.assign(Rifugio.prototype, {
   cliente() {
     const S = Save.data, hud = this.hud, tr = this.turno;
     if (tr.n >= tr.tot) {
+      this.turno = null;   // turno finito: prima restava «aperto» e bloccava farfalla e compratore fino al riavvio
       Eco.chiudiVan(S); Save.write(); this.aggiornaOra(); Musica.suona('casa');
       hud.say([{ who: 'mordicchio', text: 'Van chiuso! Stasera abbiamo incassato ' + tr.incasso + ' semi. ' + pick(['Il profumo di pizza mi è rimasto nel pelo.', 'Io ho fatto la guardia al bancone. Lavoro importante.', 'Domani ne facciamo ancora di più, vero?']) }]);
       this.semiTxt && this.semiTxt.setText(S.semi + ' semi'); return;

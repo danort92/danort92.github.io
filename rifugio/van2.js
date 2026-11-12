@@ -82,6 +82,7 @@ Object.assign(Rifugio.prototype, {
   cliente() {
     const S = Save.data, hud = this.hud, tr = this.turno;
     if (tr.n >= tr.tot) {
+      this.turno = null;   // turno finito: prima restava «aperto» e bloccava farfalla e compratore fino al riavvio
       Eco.chiudiVan(S); Save.write(); this.aggiornaOra(); Musica.suona('casa');
       const p = Eco.prossimoTurno(S);
       hud.say([{ who: 'mordicchio', text: 'Van chiuso! ' + (tr.nomeTurno === 'a pranzo' ? 'A pranzo' : 'Stasera') + ' abbiamo incassato ' + tr.incasso + ' semi. ' + pick(['Il profumo di pizza mi è rimasto nel pelo.', 'Io ho fatto la guardia al bancone. Lavoro importante.', 'Nonna Rina mi ha chiamato «bel micione». Ha ragione.', 'Qualcuno mi ha fatto i complimenti per il pizzetto.']) + (p ? ' Si riapre ' + p.nome + '.' : '') }]);
@@ -159,4 +160,10 @@ Object.assign(Rifugio.prototype, {
     this.time.delayedCall(300, sbuffo);
     return r;
   };
+})();
+
+// un turno del van non sopravvive a un cambio di stanza (la scena si riusa: prima il turno restava appeso)
+(function () {
+  const crea = Rifugio.prototype.create;
+  Rifugio.prototype.create = function () { this.turno = null; return crea.apply(this, arguments); };
 })();
